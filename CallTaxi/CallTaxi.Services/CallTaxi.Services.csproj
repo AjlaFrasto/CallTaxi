@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CallTaxi.Model\CallTaxi.Model.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallTaxi.WebAPI", "CallTaxi.WebAPI\CallTaxi.WebAPI.csproj", "{9E75E6BF-66D2-44D2-A5C5-20CCF13C57E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallTaxi.WebAPI", "CallTaxi.WebAPI\CallTaxi.WebAPI.csproj", "{9E75E6BF-66D2-44D2-A5C5-20CCF13C57E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallTaxi.Model", "CallTaxi.Model\CallTaxi.Model.csproj", "{426FDBE6-9CD8-4614-8032-E488B77FC88D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallTaxi.Services", "CallTaxi.Services\CallTaxi.Services.csproj", "{3CD97ADE-EFCC-4EEC-8BE5-3D89C15CA0F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{9E75E6BF-66D2-44D2-A5C5-20CCF13C57E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E75E6BF-66D2-44D2-A5C5-20CCF13C57E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E75E6BF-66D2-44D2-A5C5-20CCF13C57E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426FDBE6-9CD8-4614-8032-E488B77FC88D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426FDBE6-9CD8-4614-8032-E488B77FC88D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426FDBE6-9CD8-4614-8032-E488B77FC88D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426FDBE6-9CD8-4614-8032-E488B77FC88D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CD97ADE-EFCC-4EEC-8BE5-3D89C15CA0F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CD97ADE-EFCC-4EEC-8BE5-3D89C15CA0F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CD97ADE-EFCC-4EEC-8BE5-3D89C15CA0F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CD97ADE-EFCC-4EEC-8BE5-3D89C15CA0F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
