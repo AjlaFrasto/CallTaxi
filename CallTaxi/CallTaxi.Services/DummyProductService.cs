@@ -36,20 +36,20 @@ namespace eCommerce.Services
             //var result = from product in queryable
             //             where search.Code != null && product.Code == search.Code
             //             select product;
-            if (!string.IsNullOrWhiteSpace(search?.Code))
-            {
-                queryable = queryable.Where(x => x.Code == search.Code);
-            }
+            //if (!string.IsNullOrWhiteSpace(search?.Code))
+            //{
+            //    queryable = queryable.Where(x => x.Code == search.Code);
+            //}
             
-            if(!string.IsNullOrWhiteSpace(search?.CodeGTE))
-            {
-                queryable = queryable.Where(x => x.Code.StartsWith(search.CodeGTE));
-            }
+            //if(!string.IsNullOrWhiteSpace(search?.CodeGTE))
+            //{
+            //    queryable = queryable.Where(x => x.Code.StartsWith(search.CodeGTE));
+            //}
 
-            if (!string.IsNullOrWhiteSpace(search?.FTS))
-            {
-                queryable = queryable.Where(x => x.Code.Contains(search.FTS, StringComparison.CurrentCultureIgnoreCase) || (x.Name != null && x.Name.Contains(search.FTS, StringComparison.CurrentCultureIgnoreCase)));
-            }
+            //if (!string.IsNullOrWhiteSpace(search?.FTS))
+            //{
+            //    queryable = queryable.Where(x => x.Code.Contains(search.FTS, StringComparison.CurrentCultureIgnoreCase) || (x.Name != null && x.Name.Contains(search.FTS, StringComparison.CurrentCultureIgnoreCase)));
+            //}
 
             return queryable.ToList();
         }

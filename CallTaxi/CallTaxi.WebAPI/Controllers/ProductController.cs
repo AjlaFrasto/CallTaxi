@@ -1,29 +1,18 @@
 ﻿using eCommerce.Model;
 using eCommerce.Model.SearchObjects;
+using eCommerce.Model.Responses;
 using eCommerce.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using eCommerce.Model.Requests;
 
 namespace eCommerce.WebAPI.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController : BaseCRUDController<ProductResponse, ProductSearchObject, ProductInsertRequest, ProductUpdateRequest>
     {
-        protected readonly IProductService _productService;
-        public ProductController(IProductService service) {
-            _productService = service;
-        }
-
-        [HttpGet("")]
-        public IEnumerable<Product> Get([FromQuery]ProductSearchObject? search)
+        public ProductController(IProductService service) : base(service)
         {
-            return _productService.Get(search);
-        }
-
-        [HttpGet("{id}")]
-        public Product Get(int id)
-        {
-            return _productService.Get(id);
         }
     }
 }

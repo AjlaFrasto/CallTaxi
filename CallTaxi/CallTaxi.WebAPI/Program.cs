@@ -20,11 +20,11 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 //Ensure database is created
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<CallTaxiDbContext>();
-    dbContext.Database.EnsureCreated();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<CallTaxiDbContext>();
+//    dbContext.Database.EnsureCreated();
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
