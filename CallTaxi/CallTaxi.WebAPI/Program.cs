@@ -1,5 +1,6 @@
 using eCommerce.Services;
 using eCommerce.Services.Database;
+using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +9,9 @@ builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IUserService, UserService>();
 //builder.Services.AddTransient<IProductTypeService, ProductTypeService>();
 
-//Configure database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Server=localhost;Database=CallTaxiDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+builder.Services.AddMapster();
+// Configure database
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=.;Database=CallTaxiDb;User Id=your_user;Password=your_password;TrustServerCertificate=True;Trusted_Connection=True;";
 builder.Services.AddDatabaseServices(connectionString);
 
 builder.Services.AddControllers();
@@ -19,7 +21,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//Ensure database is created
+// Ensure database is created
 //using (var scope = app.Services.CreateScope())
 //{
 //    var dbContext = scope.ServiceProvider.GetRequiredService<CallTaxiDbContext>();

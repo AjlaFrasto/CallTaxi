@@ -14,7 +14,7 @@ namespace eCommerce.Services
 {
     public class ProductService : BaseCRUDService<ProductResponse, ProductSearchObject, Database.Product, ProductInsertRequest, ProductUpdateRequest>, IProductService
     {
-        public ProductService(eCommerceDbContext context, IMapper mapper) : base(context, mapper)
+        public ProductService(CallTaxiDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
     }
