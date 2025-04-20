@@ -12,7 +12,8 @@ using MapsterMapper;
 namespace eCommerce.Services
 {
     public abstract class BaseCRUDService<T, TSearch, TEntity, TInsert, TUpdate> 
-    : BaseService<T, TSearch, TEntity> where T : class where TSearch : BaseSearchObject where TEntity : class, new() where TInsert : class where TUpdate : class
+    : BaseService<T, TSearch, TEntity>, ICRUDService<T, TSearch, TInsert, TUpdate> 
+    where T : class where TSearch : BaseSearchObject where TEntity : class, new() where TInsert : class where TUpdate : class
     {
         protected readonly CallTaxiDbContext _context;
 
@@ -87,17 +88,5 @@ namespace eCommerce.Services
 
         }
 
-        // private ProductTypeResponse MapToResponse(ProductType productType)
-        // {
-        //     return new ProductTypeResponse
-        //     {
-        //         Id = productType.Id,
-        //         Name = productType.Name,
-        //         Description = productType.Description,
-        //         IsActive = productType.IsActive,
-        //         CreatedAt = productType.CreatedAt,
-        //         UpdatedAt = productType.UpdatedAt
-        //     };
-        // }
     }
 } 

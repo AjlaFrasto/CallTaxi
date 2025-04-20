@@ -17,5 +17,17 @@ namespace eCommerce.Services
         public ProductService(CallTaxiDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
+
+        protected override IQueryable<Database.Product> ApplyFilter(IQueryable<Database.Product> query, ProductSearchObject search)
+        {
+            if (!string.IsNullOrEmpty(search.FTS))
+            {
+                query = query.Where(p => p.Name.Contains(search.FTS) || p.Description.Contains(search.FTS));
+            }
+
+        
+
+            return query;
+        }   
     }
 }
