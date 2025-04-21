@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace eCommerce.Model.Requests
@@ -30,5 +31,8 @@ namespace eCommerce.Model.Requests
         // Only used when creating a new user
         [MinLength(6)]
         public string? Password { get; set; }
+        
+        // Collection of role IDs to assign to the user
+        public List<int> RoleIds { get; set; } = new List<int>();
     }
 } 
