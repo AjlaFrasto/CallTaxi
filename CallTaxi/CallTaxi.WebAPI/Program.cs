@@ -4,6 +4,7 @@ using eCommerce.WebAPI.Filters;
 using Mapster;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
+using CallTaxi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,11 @@ builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IUserService, UserService>();
 //builder.Services.AddTransient<IProductTypeService, ProductTypeService>();
 builder.Services.AddTransient<IRoleService, RoleService>();
+
+// Add new services
+builder.Services.AddTransient<IBrandService, BrandService>();
+builder.Services.AddTransient<IVehicleTierService, VehicleTierService>();
+builder.Services.AddTransient<IVehicleService, VehicleService>();
 
 builder.Services.AddMapster();
 // Configure database

@@ -12,6 +12,9 @@ namespace eCommerce.Services.Database
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<VehicleTier> VehicleTiers { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -59,7 +62,38 @@ namespace eCommerce.Services.Database
                 .HasIndex(ur => new { ur.UserId, ur.RoleId })
                 .IsUnique();
 
+            // Configure Brand entity
+            modelBuilder.Entity<Brand>()
+                .HasIndex(b => b.Name)
+                .IsUnique();
 
+            // Configure VehicleTier entity
+            modelBuilder.Entity<VehicleTier>()
+                .HasIndex(vt => vt.Name)
+                .IsUnique();
+
+            // Configure Vehicle entity
+            modelBuilder.Entity<Vehicle>()
+                .HasIndex(v => v.LicensePlate)
+                .IsUnique();
+
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.Brand)
+                .WithMany()
+                .HasForeignKey(v => v.BrandId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.User)
+                .WithMany()
+                .HasForeignKey(v => v.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.VehicleTier)
+                .WithMany()
+                .HasForeignKey(v => v.VehicleTierId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 } 
