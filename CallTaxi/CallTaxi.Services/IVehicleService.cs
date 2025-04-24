@@ -5,7 +5,7 @@ using eCommerce.Services;
 
 namespace CallTaxi.Services
 {
-    public interface IVehicleService : ICRUDService<VehicleResponse, VehicleSearchObject, VehicleUpsertRequest, VehicleUpsertRequest>
+    public interface IVehicleService : ICRUDService<VehicleResponse, VehicleSearchObject, VehicleInsertRequest, VehicleUpdateRequest>
     {
     }
 } 

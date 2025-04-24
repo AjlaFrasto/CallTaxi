@@ -5,18 +5,21 @@ using eCommerce.Model.Responses;
 using eCommerce.Model.SearchObjects;
 using eCommerce.Services;
 using eCommerce.Services.Database;
+using eCommerce.Services.ProductStateMachine;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace CallTaxi.Services
 {
-    public class VehicleService : BaseCRUDService<VehicleResponse, VehicleSearchObject, Vehicle, VehicleUpsertRequest, VehicleUpsertRequest>, IVehicleService
+    public class VehicleService : BaseCRUDService<VehicleResponse, VehicleSearchObject, Vehicle, VehicleInsertRequest, VehicleUpdateRequest>, IVehicleService
     {
-        public VehicleService(CallTaxiDbContext context, IMapper mapper) : base(context, mapper)
+        protected readonly BaseVehicleState _baseVehicleState;
+        public VehicleService(CallTaxiDbContext context, IMapper mapper, BaseVehicleState baseVehicleState) : base(context, mapper)
         {
+            _baseVehicleState = baseVehicleState;
         }
 
-        public override async Task<VehicleResponse> CreateAsync(VehicleUpsertRequest request)
+        public override async Task<VehicleResponse> CreateAsync(VehicleInsertRequest request)
         {
             // Validate foreign keys
             var brand = await _context.Set<Brand>().FindAsync(request.BrandId);
@@ -31,30 +34,23 @@ namespace CallTaxi.Services
             if (vehicleTier == null)
                 throw new InvalidOperationException($"Vehicle Tier with ID {request.VehicleTierId} does not exist.");
 
-            return await base.CreateAsync(request);
+
+
+            var baseState = _baseVehicleState.GetProductState("Initial");
+            var result = await baseState.CreateAsync(request);
+
+            return result;
+            // return base.CreateAsync(request);
         }
 
-        //public override async Task<PagedResult<VehicleResponse>> GetAsync(VehicleSearchObject search)
-        //{
-        //    var query = _context.Set<Vehicle>().AsQueryable();
-        //    query = ApplyFilter(query, search);
 
-        //    var result = await GetAsync<VehicleResponse>(query, search);
-
-        //    // Enrich responses with related data
-        //    foreach (var vehicle in result.Items)
-        //    {
-        //        var brand = await _context.Set<Brand>().FindAsync(vehicle.BrandId);
-        //        if (brand != null)
-        //            vehicle.BrandName = brand.Name;
-
-        //        var vehicleTier = await _context.Set<VehicleTier>().FindAsync(vehicle.VehicleTierId);
-        //        if (vehicleTier != null)
-        //            vehicle.VehicleTierName = vehicleTier.Name;
-        //    }
-
-        //    return result;
-        //}
+        public override async Task<VehicleResponse?> UpdateAsync(int id, VehicleUpdateRequest request)
+        {
+            var entity = await _context.Vehicles.FindAsync(id);
+            var baseState = _baseVehicleState.GetProductState(entity.StateMachine);
+            return await baseState.UpdateAsync(id, request);
+            // return base.UpdateAsync(id, request);
+        }
 
         protected override IQueryable<Vehicle> ApplyFilter(IQueryable<Vehicle> query, VehicleSearchObject search)
         {

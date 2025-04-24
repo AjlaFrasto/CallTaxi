@@ -5,6 +5,7 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using CallTaxi.Services;
+using eCommerce.Services.ProductStateMachine;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,13 @@ builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IUserService, UserService>();
 //builder.Services.AddTransient<IProductTypeService, ProductTypeService>();
 builder.Services.AddTransient<IRoleService, RoleService>();
+
+// State Machine
+builder.Services.AddTransient<BaseVehicleState>();
+builder.Services.AddTransient<InitialVehicleState>();
+builder.Services.AddTransient<DraftVehicleState>();
+//builder.Services.AddTransient<ActiveProductState>();
+//builder.Services.AddTransient<DeactivatedProductState>();
 
 // Add new services
 builder.Services.AddTransient<IBrandService, BrandService>();
