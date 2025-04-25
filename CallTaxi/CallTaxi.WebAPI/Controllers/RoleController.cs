@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace eCommerce.WebAPI.Controllers
 {
-    // [Authorize(Roles = "Administrator")]
-    [AllowAnonymous]
+
     public class RoleController : BaseCRUDController<RoleResponse, RoleSearchObject, RoleUpsertRequest, RoleUpsertRequest>
     {
         public RoleController(IRoleService service) : base(service)

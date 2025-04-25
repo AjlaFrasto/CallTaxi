@@ -36,6 +36,10 @@ namespace eCommerce.Services.ProductStateMachine
         {
                 throw new UserException("Not allowed in current state");
         }
+        public virtual async Task<bool> DeleteAsync(int id)
+        {
+                throw new UserException("Not allowed in current state");
+        }
         
         public virtual async Task<VehicleResponse> AcceptAsync(int id)
         {
@@ -47,17 +51,18 @@ namespace eCommerce.Services.ProductStateMachine
                 throw new UserException("Not allowed in current state");
         }
 
+
         public BaseVehicleState GetProductState(string stateName) {
             switch (stateName)
             {
                 case "Initial":
                     return _serviceProvider.GetService<InitialVehicleState>();
-                case "Draft":
-                    return _serviceProvider.GetService<DraftVehicleState>();
-                //case nameof(ActiveProductState):
-                //    return _serviceProvider.GetService<ActiveProductState>();
-                //case nameof(DeactivatedProductState):
-                //    return _serviceProvider.GetService<DeactivatedProductState>();   
+                case "Pending":
+                    return _serviceProvider.GetService<PendingVehicleState>();
+                case "Accepted":
+                    return _serviceProvider.GetService<AcceptedVehicleState>();
+                case "Rejected":
+                    return _serviceProvider.GetService<RejectedVehicleState>();
 
                 default:
                     throw new Exception($"State {stateName} not defined");

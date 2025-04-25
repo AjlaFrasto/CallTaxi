@@ -19,6 +19,7 @@ namespace CallTaxi.Services
             _baseVehicleState = baseVehicleState;
         }
 
+
         public override async Task<VehicleResponse> CreateAsync(VehicleInsertRequest request)
         {
             // Validate foreign keys
@@ -42,7 +43,6 @@ namespace CallTaxi.Services
             return result;
             // return base.CreateAsync(request);
         }
-
 
         public override async Task<VehicleResponse?> UpdateAsync(int id, VehicleUpdateRequest request)
         {
@@ -86,5 +86,32 @@ namespace CallTaxi.Services
 
             return query.Include(v => v.Brand).Include(v => v.VehicleTier);
         }
+
+        public async Task<VehicleResponse> AcceptAsync(int id)
+        {
+            var entity = await _context.Vehicles.FindAsync(id);
+            var baseState = _baseVehicleState.GetProductState(entity.StateMachine);
+
+            return await baseState.AcceptAsync(id);
+        }
+
+        public async Task<VehicleResponse> RejectAsync(int id)
+        {
+            var entity = await _context.Vehicles.FindAsync(id);
+            var baseState = _baseVehicleState.GetProductState(entity.StateMachine);
+
+            return await baseState.RejectAsync(id);
+        }
+
+        public override async Task<bool> DeleteAsync(int id)
+        {
+            var entity = await _context.Vehicles.FindAsync(id);
+            if (entity == null)
+                return false;
+
+            var baseState = _baseVehicleState.GetProductState(entity.StateMachine);
+            return await baseState.DeleteAsync(id);
+        }
+
     }
 } 

@@ -25,9 +25,6 @@ namespace CallTaxi.Model.Requests
         public int SeatsCount { get; set; }
 
         [Required]
-        public string StateMachine { get; set; }
-
-        [Required]
         public bool PetFriendly { get; set; }
 
         [Required]

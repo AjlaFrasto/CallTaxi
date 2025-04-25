@@ -18,9 +18,9 @@ builder.Services.AddTransient<IRoleService, RoleService>();
 // State Machine
 builder.Services.AddTransient<BaseVehicleState>();
 builder.Services.AddTransient<InitialVehicleState>();
-builder.Services.AddTransient<DraftVehicleState>();
-//builder.Services.AddTransient<ActiveProductState>();
-//builder.Services.AddTransient<DeactivatedProductState>();
+builder.Services.AddTransient<PendingVehicleState>();
+builder.Services.AddTransient<AcceptedVehicleState>();
+builder.Services.AddTransient<RejectedVehicleState>();
 
 // Add new services
 builder.Services.AddTransient<IBrandService, BrandService>();

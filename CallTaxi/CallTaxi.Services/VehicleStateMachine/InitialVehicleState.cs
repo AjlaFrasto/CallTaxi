@@ -22,23 +22,17 @@ namespace eCommerce.Services.ProductStateMachine
 
         public override async Task<VehicleResponse> CreateAsync(VehicleInsertRequest request)
         {
-            // var entity = new TEntity();
-            // MapInsertToEntity(entity, request);
-            // _context.Set<TEntity>().Add(entity);
 
-            // await BeforeInsert(entity, request);
-
-            // await _context.SaveChangesAsync();
-            // return MapToResponse(entity);
             var entity = new Database.Vehicle();
             _mapper.Map(request, entity);
 
-            //entity.StateMachine = nameof(DraftProductState);
+            entity.StateMachine = "Pending";
 
             _context.Vehicles.Add(entity);
             await _context.SaveChangesAsync();
 
             return _mapper.Map<VehicleResponse>(entity);
         }
+
     }
 } 
