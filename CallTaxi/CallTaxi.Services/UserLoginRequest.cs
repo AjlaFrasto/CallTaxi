@@ -1,5 +1,4 @@
-
-namespace eCommerce.Model.Requests
+namespace CallTaxi.Model.Requests
 {
     public class UserLoginRequest
     {

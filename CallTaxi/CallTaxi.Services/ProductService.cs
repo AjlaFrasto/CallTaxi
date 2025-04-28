@@ -1,16 +1,17 @@
-﻿using eCommerce.Model;
-using eCommerce.Model.SearchObjects;
-using eCommerce.Model.Responses;
-using eCommerce.Services.Database;
+﻿using CallTaxi.Model;
+using CallTaxi.Model.SearchObjects;
+using CallTaxi.Model.Responses;
+using CallTaxi.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using eCommerce.Model.Requests;
+using CallTaxi.Model.Requests;
 using MapsterMapper;
-namespace eCommerce.Services
+
+namespace CallTaxi.Services
 {
     public class ProductService : BaseCRUDService<ProductResponse, ProductSearchObject, Database.Product, ProductInsertRequest, ProductUpdateRequest>, IProductService
     {

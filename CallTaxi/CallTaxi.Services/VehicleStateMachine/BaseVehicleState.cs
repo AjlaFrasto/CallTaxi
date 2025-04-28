@@ -1,19 +1,17 @@
-using eCommerce.Services.Database;
+using CallTaxi.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using eCommerce.Model.Responses;
-using eCommerce.Model.Requests;
-using eCommerce.Model.SearchObjects;
+using CallTaxi.Model.Responses;
+using CallTaxi.Model.Requests;
+using CallTaxi.Model.SearchObjects;
 using System.Linq;
 using System;
 using MapsterMapper;
-using eCommerce.Model;
+using CallTaxi.Model;
 using Microsoft.Extensions.DependencyInjection;
-using CallTaxi.Model.Responses;
-using CallTaxi.Model.Requests;
 
-namespace eCommerce.Services.ProductStateMachine
+namespace CallTaxi.Services.VehicleStateMachine
 {
    public class BaseVehicleState
    {
@@ -25,7 +23,6 @@ namespace eCommerce.Services.ProductStateMachine
             _serviceProvider = serviceProvider;
             _context = context;
             _mapper = mapper;
-
         }
         public virtual async Task<VehicleResponse> CreateAsync(VehicleInsertRequest request)
         {
@@ -50,7 +47,6 @@ namespace eCommerce.Services.ProductStateMachine
         {
                 throw new UserException("Not allowed in current state");
         }
-
 
         public BaseVehicleState GetProductState(string stateName) {
             switch (stateName)

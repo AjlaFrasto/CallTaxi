@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using CallTaxi.Model.Responses;
-using eCommerce.Model.Responses;
 
-namespace eCommerce.Model.Messages
+namespace CallTaxi.Model.Messages
 {
     public class VehiclePending
     {

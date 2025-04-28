@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing.Drawing2D;
-using eCommerce.Services.Database;
 
-namespace eCommerce.Services.Database
+namespace CallTaxi.Services.Database
 {
     public class Vehicle
     {

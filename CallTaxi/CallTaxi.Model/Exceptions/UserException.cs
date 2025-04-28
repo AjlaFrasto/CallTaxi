@@ -1,6 +1,6 @@
 using System;
 
-namespace eCommerce.Model
+namespace CallTaxi.Model
 {
     public class UserException : Exception
     {

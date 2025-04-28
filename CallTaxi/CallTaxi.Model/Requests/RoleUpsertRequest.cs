@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace eCommerce.Model.Requests
+namespace CallTaxi.Model.Requests
 {
     public class RoleUpsertRequest
     {

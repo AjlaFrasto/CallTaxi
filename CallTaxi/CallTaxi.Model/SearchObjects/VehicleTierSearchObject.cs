@@ -1,4 +1,4 @@
-using eCommerce.Model.SearchObjects;
+using CallTaxi.Model.SearchObjects;
 
 namespace CallTaxi.Model.SearchObjects
 {

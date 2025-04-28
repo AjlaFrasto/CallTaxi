@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace eCommerce.Model.SearchObjects
+namespace CallTaxi.Model.SearchObjects
 {
     public class RoleSearchObject : BaseSearchObject
     {

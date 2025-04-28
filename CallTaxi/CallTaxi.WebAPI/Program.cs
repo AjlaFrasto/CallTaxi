@@ -1,11 +1,10 @@
-using eCommerce.Services;
-using eCommerce.Services.Database;
-using eCommerce.WebAPI.Filters;
+using CallTaxi.Services;
+using CallTaxi.Services.Database;
 using Mapster;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
-using CallTaxi.Services;
-using eCommerce.Services.ProductStateMachine;
+using CallTaxi.Services.VehicleStateMachine;
+using CallTaxi.WebAPI.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 

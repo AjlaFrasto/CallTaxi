@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace eCommerce.Services.Database
+namespace CallTaxi.Services.Database
 {
     public class CallTaxiDbContext : DbContext
     {

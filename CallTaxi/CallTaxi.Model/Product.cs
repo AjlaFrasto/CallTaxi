@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace eCommerce.Model
+namespace CallTaxi.Model
 {
     public class Product
     {

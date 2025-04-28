@@ -1,6 +1,6 @@
 using System;
 
-namespace eCommerce.Model.Responses
+namespace CallTaxi.Model.Responses
 {
     public class ProductResponse
     {

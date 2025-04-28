@@ -1,18 +1,15 @@
-using eCommerce.Services.Database;
+using CallTaxi.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using eCommerce.Model.Responses;
-using eCommerce.Model.Requests;
-using eCommerce.Model.SearchObjects;
+using CallTaxi.Model.Responses;
+using CallTaxi.Model.Requests;
+using CallTaxi.Model.SearchObjects;
 using System.Linq;
 using System;
 using MapsterMapper;
-using eCommerce.Model;
-using CallTaxi.Model.Responses;
-using CallTaxi.Model.Requests;
 
-namespace eCommerce.Services.ProductStateMachine
+namespace CallTaxi.Services.VehicleStateMachine
 {
     public class RejectedVehicleState : BaseVehicleState
     {
@@ -46,4 +43,4 @@ namespace eCommerce.Services.ProductStateMachine
             return true;
         }
     }
-} 
+}

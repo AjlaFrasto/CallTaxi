@@ -1,5 +1,5 @@
-using eCommerce.Model.Requests;
-using eCommerce.Services;
+using CallTaxi.Model.Requests;
+using CallTaxi.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace eCommerce.WebAPI.Filters
+namespace CallTaxi.WebAPI.Filters
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
@@ -37,7 +37,7 @@ namespace eCommerce.WebAPI.Filters
             var password = credentials[1];
 
             var user = await _userService.AuthenticateAsync(new UserLoginRequest { Username = username, Password = password });
-            
+
             if (user == null)
                 return AuthenticateResult.Fail("Invalid credentials");
 
@@ -50,7 +50,7 @@ namespace eCommerce.WebAPI.Filters
                 new Claim(ClaimTypes.Surname, user.LastName),
                 new Claim(ClaimTypes.Email, user.Email)
             };
-            
+
             // Add role claims
             if (user.Roles != null)
             {
@@ -59,7 +59,7 @@ namespace eCommerce.WebAPI.Filters
                     claims.Add(new Claim(ClaimTypes.Role, role.Name));
                 }
             }
-            
+
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);

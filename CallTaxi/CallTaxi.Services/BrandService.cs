@@ -1,9 +1,8 @@
 using CallTaxi.Model.Requests;
 using CallTaxi.Model.Responses;
 using CallTaxi.Model.SearchObjects;
-using eCommerce.Model.SearchObjects;
-using eCommerce.Services;
-using eCommerce.Services.Database;
+using CallTaxi.Services;
+using CallTaxi.Services.Database;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 

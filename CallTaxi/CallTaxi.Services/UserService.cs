@@ -1,15 +1,15 @@
-using eCommerce.Services.Database;
+using CallTaxi.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using eCommerce.Model.Responses;
-using eCommerce.Model.Requests;
-using eCommerce.Model.SearchObjects;
 using System.Linq;
 using System;
 using System.Security.Cryptography;
+using CallTaxi.Model.Responses;
+using CallTaxi.Model.SearchObjects;
+using CallTaxi.Model.Requests;
 
-namespace eCommerce.Services
+namespace CallTaxi.Services
 {
     public class UserService : IUserService
     {
@@ -26,26 +26,26 @@ namespace eCommerce.Services
         public async Task<List<UserResponse>> GetAsync(UserSearchObject search)
         {
             var query = _context.Users.AsQueryable();
-            
+
             if (!string.IsNullOrEmpty(search.Username))
             {
                 query = query.Where(u => u.Username.Contains(search.Username));
             }
-            
+
             if (!string.IsNullOrEmpty(search.Email))
             {
                 query = query.Where(u => u.Email.Contains(search.Email));
             }
-            
+
             if (!string.IsNullOrEmpty(search.FTS))
             {
-                query = query.Where(u => 
-                    u.FirstName.Contains(search.FTS) || 
-                    u.LastName.Contains(search.FTS) || 
-                    u.Username.Contains(search.FTS) || 
+                query = query.Where(u =>
+                    u.FirstName.Contains(search.FTS) ||
+                    u.LastName.Contains(search.FTS) ||
+                    u.Username.Contains(search.FTS) ||
                     u.Email.Contains(search.FTS));
             }
-            
+
             var users = await query.ToListAsync();
             return users.Select(MapToResponse).ToList();
         }
@@ -77,12 +77,12 @@ namespace eCommerce.Services
             {
                 throw new InvalidOperationException("A user with this email already exists.");
             }
-            
+
             if (await _context.Users.AnyAsync(u => u.Username == request.Username))
             {
                 throw new InvalidOperationException("A user with this username already exists.");
             }
-            
+
             var user = new User
             {
                 FirstName = request.FirstName,
@@ -140,7 +140,7 @@ namespace eCommerce.Services
             {
                 throw new InvalidOperationException("A user with this email already exists.");
             }
-            
+
             if (await _context.Users.AnyAsync(u => u.Username == request.Username && u.Id != id))
             {
                 throw new InvalidOperationException("A user with this username already exists.");
@@ -160,12 +160,12 @@ namespace eCommerce.Services
                 user.PasswordHash = HashPassword(request.Password, out salt);
                 user.PasswordSalt = Convert.ToBase64String(salt);
             }
-            
+
             // Update roles
             // First, remove all existing roles
             var existingUserRoles = await _context.UserRoles.Where(ur => ur.UserId == id).ToListAsync();
             _context.UserRoles.RemoveRange(existingUserRoles);
-            
+
             // Then add the new roles
             if (request.RoleIds != null && request.RoleIds.Count > 0)
             {
@@ -184,7 +184,7 @@ namespace eCommerce.Services
                     }
                 }
             }
-            
+
             await _context.SaveChangesAsync();
             return await GetUserResponseWithRolesAsync(user.Id);
         }
@@ -223,12 +223,12 @@ namespace eCommerce.Services
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Id == userId);
-            
+
             if (user == null)
                 throw new InvalidOperationException("User not found");
-            
+
             var response = MapToResponse(user);
-            
+
             // Add roles to the response
             response.Roles = user.UserRoles
                 .Where(ur => ur.Role.IsActive)
@@ -239,7 +239,7 @@ namespace eCommerce.Services
                     Description = ur.Role.Description
                 })
                 .ToList();
-            
+
             return response;
         }
 
@@ -249,7 +249,7 @@ namespace eCommerce.Services
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
-            
+
             if (user == null)
                 return null;
 
@@ -261,7 +261,7 @@ namespace eCommerce.Services
             await _context.SaveChangesAsync();
 
             var response = MapToResponse(user);
-            
+
             // Add roles to the response
             response.Roles = user.UserRoles
                 .Where(ur => ur.Role.IsActive)
@@ -272,7 +272,7 @@ namespace eCommerce.Services
                     Description = ur.Role.Description
                 })
                 .ToList();
-            
+
             return response;
         }
         private bool VerifyPassword(string password, string passwordHash, string passwordSalt)
@@ -283,4 +283,4 @@ namespace eCommerce.Services
             return hash.SequenceEqual(hashBytes);
         }
     }
-} 
+}

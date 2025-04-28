@@ -1,8 +1,8 @@
-using eCommerce.Model.Requests;
-using eCommerce.Model.Responses;
-using eCommerce.Model.SearchObjects;
+using CallTaxi.Model.Requests;
+using CallTaxi.Model.Responses;
+using CallTaxi.Model.SearchObjects;
 
-namespace eCommerce.Services
+namespace CallTaxi.Services
 {
     public interface IRoleService : ICRUDService<RoleResponse, RoleSearchObject, RoleUpsertRequest, RoleUpsertRequest>
     {

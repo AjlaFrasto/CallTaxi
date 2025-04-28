@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace eCommerce.Services.Database
+namespace CallTaxi.Services.Database
 {
     public class User
     {

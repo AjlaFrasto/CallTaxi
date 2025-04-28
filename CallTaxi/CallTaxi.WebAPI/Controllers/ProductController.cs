@@ -1,14 +1,14 @@
-﻿using eCommerce.Model;
-using eCommerce.Model.SearchObjects;
-using eCommerce.Model.Responses;
-using eCommerce.Services;
+﻿using CallTaxi.Model;
+using CallTaxi.Model.SearchObjects;
+using CallTaxi.Model.Responses;
+using CallTaxi.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using eCommerce.Model.Requests;
+using CallTaxi.Model.Requests;
 using Microsoft.AspNetCore.Authorization;
 
-namespace eCommerce.WebAPI.Controllers
+namespace CallTaxi.WebAPI.Controllers
 {
    
     public class ProductController : BaseCRUDController<ProductResponse, ProductSearchObject, ProductInsertRequest, ProductUpdateRequest>

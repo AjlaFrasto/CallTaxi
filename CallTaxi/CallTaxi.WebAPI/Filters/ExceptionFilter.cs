@@ -1,6 +1,6 @@
-using eCommerce.Model;
-using eCommerce.Model.Requests;
-using eCommerce.Services;
+using CallTaxi.Model;
+using CallTaxi.Model.Requests;
+using CallTaxi.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace eCommerce.WebAPI.Filters
+namespace CallTaxi.WebAPI.Filters
 {
     public class ExceptionFilter : ExceptionFilterAttribute
     {

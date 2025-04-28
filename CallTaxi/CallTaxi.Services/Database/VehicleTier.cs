@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace eCommerce.Services.Database
+namespace CallTaxi.Services.Database
 {
     public class VehicleTier
     {

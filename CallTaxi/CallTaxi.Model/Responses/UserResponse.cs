@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace eCommerce.Model.Responses
+namespace CallTaxi.Model.Responses
 {
     public class UserResponse
     {

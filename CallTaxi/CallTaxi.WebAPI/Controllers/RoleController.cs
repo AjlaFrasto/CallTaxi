@@ -1,7 +1,8 @@
-using eCommerce.Model.Requests;
-using eCommerce.Model.Responses;
-using eCommerce.Model.SearchObjects;
-using eCommerce.Services;
+using CallTaxi.Model.Requests;
+using CallTaxi.Model.Responses;
+using CallTaxi.Model.SearchObjects;
+using CallTaxi.Services;
+using CallTaxi.WebAPI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;

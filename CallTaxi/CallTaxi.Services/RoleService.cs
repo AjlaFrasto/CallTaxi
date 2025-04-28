@@ -1,14 +1,14 @@
-using eCommerce.Model.Requests;
-using eCommerce.Model.Responses;
-using eCommerce.Model.SearchObjects;
-using eCommerce.Services.Database;
+using CallTaxi.Model.Requests;
+using CallTaxi.Model.Responses;
+using CallTaxi.Model.SearchObjects;
+using CallTaxi.Services.Database;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace eCommerce.Services
+namespace CallTaxi.Services
 {
     public class RoleService : BaseCRUDService<RoleResponse, RoleSearchObject, Database.Role, RoleUpsertRequest, RoleUpsertRequest>, IRoleService
     {
@@ -54,4 +54,4 @@ namespace eCommerce.Services
             }
         }
     }
-} 
+}

@@ -1,18 +1,16 @@
-using eCommerce.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using eCommerce.Model.Responses;
-using eCommerce.Model.Requests;
-using eCommerce.Model.SearchObjects;
+using CallTaxi.Model.Responses;
+using CallTaxi.Model.Requests;
+using CallTaxi.Model.SearchObjects;
 using System.Linq;
 using System;
 using MapsterMapper;
-using eCommerce.Model;
-using CallTaxi.Model.Responses;
-using CallTaxi.Model.Requests;
+using CallTaxi.Model;
+using CallTaxi.Services.Database;
 
-namespace eCommerce.Services.ProductStateMachine
+namespace CallTaxi.Services.VehicleStateMachine
 {
     public class AcceptedVehicleState : BaseVehicleState
     {
@@ -38,8 +36,8 @@ namespace eCommerce.Services.ProductStateMachine
             var entity = await _context.Vehicles.FindAsync(id);
             if (entity == null)
                 return false;
-                
-            
+
+
             // Then perform the actual delete
             _context.Vehicles.Remove(entity);
             await _context.SaveChangesAsync();
@@ -47,4 +45,4 @@ namespace eCommerce.Services.ProductStateMachine
             return true;
         }
     }
-} 
+}
