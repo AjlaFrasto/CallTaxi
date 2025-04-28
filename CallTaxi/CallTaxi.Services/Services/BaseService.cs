@@ -8,8 +8,9 @@ using CallTaxi.Model.SearchObjects;
 using System.Linq;
 using System;
 using MapsterMapper;
+using CallTaxi.Services.Interfaces;
 
-namespace CallTaxi.Services
+namespace CallTaxi.Services.Services
 {
     public abstract class BaseService<T, TSearch, TEntity> : IService<T, TSearch> where T : class where TSearch : BaseSearchObject where TEntity : class
     {
@@ -28,7 +29,8 @@ namespace CallTaxi.Services
             query = ApplyFilter(query, search);
 
             int? totalCount = null;
-            if (search.IncludeTotalCount){
+            if (search.IncludeTotalCount)
+            {
                 totalCount = await query.CountAsync();
             }
 
@@ -44,11 +46,11 @@ namespace CallTaxi.Services
                 }
             }
 
-            
-            
+
+
             var list = await query.ToListAsync();
             return new PagedResult<T>
-            {   
+            {
                 Items = list.Select(MapToResponse).ToList(),
                 TotalCount = totalCount
             };
@@ -64,13 +66,14 @@ namespace CallTaxi.Services
             var entity = await _context.Set<TEntity>().FindAsync(id);
             if (entity == null)
                 return null;
-            
+
             return MapToResponse(entity);
         }
 
-        protected virtual T MapToResponse(TEntity entity) {
+        protected virtual T MapToResponse(TEntity entity)
+        {
             return _mapper.Map<T>(entity);
         }
-        
+
     }
-} 
+}

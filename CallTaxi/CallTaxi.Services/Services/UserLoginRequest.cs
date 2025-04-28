@@ -1,4 +1,4 @@
-namespace CallTaxi.Model.Requests
+namespace CallTaxi.Services.Services
 {
     public class UserLoginRequest
     {

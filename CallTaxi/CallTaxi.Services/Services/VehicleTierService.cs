@@ -2,10 +2,11 @@ using CallTaxi.Model.Requests;
 using CallTaxi.Model.Responses;
 using CallTaxi.Model.SearchObjects;
 using CallTaxi.Services.Database;
+using CallTaxi.Services.Interfaces;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace CallTaxi.Services
+namespace CallTaxi.Services.Services
 {
     public class VehicleTierService : BaseCRUDService<VehicleTierResponse, VehicleTierSearchObject, VehicleTier, VehicleTierUpsertRequest, VehicleTierUpsertRequest>, IVehicleTierService
     {
@@ -23,4 +24,4 @@ namespace CallTaxi.Services
             return query;
         }
     }
-} 
+}

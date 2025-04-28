@@ -1,12 +1,12 @@
 using CallTaxi.Model.Requests;
 using CallTaxi.Model.Responses;
 using CallTaxi.Model.SearchObjects;
-using CallTaxi.Services;
 using CallTaxi.Services.Database;
+using CallTaxi.Services.Interfaces;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace CallTaxi.Services
+namespace CallTaxi.Services.Services
 {
     public class BrandService : BaseCRUDService<BrandResponse, BrandSearchObject, Brand, BrandUpsertRequest, BrandUpsertRequest>, IBrandService
     {
@@ -24,4 +24,4 @@ namespace CallTaxi.Services
             return query;
         }
     }
-} 
+}

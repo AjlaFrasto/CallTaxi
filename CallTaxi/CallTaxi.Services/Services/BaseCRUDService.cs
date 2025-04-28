@@ -8,11 +8,12 @@ using CallTaxi.Model.SearchObjects;
 using System.Linq;
 using System;
 using MapsterMapper;
+using CallTaxi.Services.Interfaces;
 
-namespace CallTaxi.Services
+namespace CallTaxi.Services.Services
 {
-    public abstract class BaseCRUDService<T, TSearch, TEntity, TInsert, TUpdate> 
-    : BaseService<T, TSearch, TEntity>, ICRUDService<T, TSearch, TInsert, TUpdate> 
+    public abstract class BaseCRUDService<T, TSearch, TEntity, TInsert, TUpdate>
+    : BaseService<T, TSearch, TEntity>, ICRUDService<T, TSearch, TInsert, TUpdate>
     where T : class where TSearch : BaseSearchObject where TEntity : class, new() where TInsert : class where TUpdate : class
     {
         protected readonly CallTaxiDbContext _context;
@@ -37,7 +38,7 @@ namespace CallTaxi.Services
 
         protected virtual async Task BeforeInsert(TEntity entity, TInsert request)
         {
-            
+
         }
 
 
@@ -89,4 +90,4 @@ namespace CallTaxi.Services
         }
 
     }
-} 
+}

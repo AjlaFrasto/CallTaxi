@@ -8,8 +8,9 @@ using System.Security.Cryptography;
 using CallTaxi.Model.Responses;
 using CallTaxi.Model.SearchObjects;
 using CallTaxi.Model.Requests;
+using CallTaxi.Services.Interfaces;
 
-namespace CallTaxi.Services
+namespace CallTaxi.Services.Services
 {
     public class UserService : IUserService
     {

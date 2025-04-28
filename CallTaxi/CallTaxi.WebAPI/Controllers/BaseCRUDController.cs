@@ -1,7 +1,7 @@
 using CallTaxi.Model.Requests;
 using CallTaxi.Model.Responses;
 using CallTaxi.Model.SearchObjects;
-using CallTaxi.Services;
+using CallTaxi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;

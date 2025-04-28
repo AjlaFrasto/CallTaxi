@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CallTaxi.Model.Requests;
 
-namespace CallTaxi.Services
+namespace CallTaxi.Services.Interfaces
 {
     public interface IProductService : ICRUDService<ProductResponse, ProductSearchObject, ProductInsertRequest, ProductUpdateRequest>
     {
