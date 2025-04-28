@@ -29,7 +29,7 @@ namespace CallTaxi.Model.Requests
         public bool IsActive { get; set; } = true;
         
         // Only used when creating a new user
-        [MinLength(6)]
+        [MinLength(4)]
         public string? Password { get; set; }
         
         // Collection of role IDs to assign to the user

@@ -1,5 +1,5 @@
-﻿using EasyNetQ;
-using eCommerce.Model.Messages;
+﻿using CallTaxi.Model.Messages;
+using EasyNetQ;
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
 
