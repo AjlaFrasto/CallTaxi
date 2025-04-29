@@ -23,6 +23,10 @@ namespace CallTaxi.WebAPI.Controllers
             return await _crudService.CreateAsync(request);
         }
 
+
+        /// <summary>
+        /// Only test if RabbitMQ is installed, every call sends an email through RabbitMQ
+        /// </summary>
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator,Driver")]
         public override async Task<VehicleResponse?> Update(int id, [FromBody] VehicleUpdateRequest request)
@@ -37,14 +41,20 @@ namespace CallTaxi.WebAPI.Controllers
             return await _crudService.DeleteAsync(id);
         }
 
-        [HttpPut("{id}/activate")]
+        /// <summary>
+        /// Changes StateMachine in Vehicle from Pending to Accepted
+        /// </summary>
+        [HttpPut("{id}/accept")]
         [Authorize(Roles = "Administrator")]
         public virtual async Task<VehicleResponse?> AcceptAsync(int id)
         {
             return await _vehicleService.AcceptAsync(id);
         }
 
-        [HttpPut("{id}/deactivate")]
+        /// <summary>
+        /// Changes StateMachine in Vehicle from Pending to Rejected
+        /// </summary>
+        [HttpPut("{id}/reject")]
         [Authorize(Roles = "Administrator")]
         public virtual async Task<VehicleResponse?> RejectAsync(int id)
         {

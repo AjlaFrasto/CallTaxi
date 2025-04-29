@@ -6,6 +6,7 @@ using CallTaxi.Services.VehicleStateMachine;
 using CallTaxi.WebAPI.Filters;
 using CallTaxi.Services.Services;
 using CallTaxi.Services.Interfaces;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,8 +45,14 @@ builder.Services.AddControllers(x =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+// Za dodavanje opisnog teksta pored swagger call-a
+var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+
 builder.Services.AddSwaggerGen(c =>
 {
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
     c.AddSecurityDefinition("BasicAuthentication", new OpenApiSecurityScheme
     {
         Name = "Authorization",

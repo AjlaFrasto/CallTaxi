@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>34bcfbd1-376a-4045-9a68-a79f0610d109</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <!-- This hides warnings about missing comments -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,5 +20,6 @@
     <ProjectReference Include="..\CallTaxi.Model\CallTaxi.Model.csproj" />
     <ProjectReference Include="..\CallTaxi.Services\CallTaxi.Services.csproj" />
   </ItemGroup>
+
 
 </Project>
