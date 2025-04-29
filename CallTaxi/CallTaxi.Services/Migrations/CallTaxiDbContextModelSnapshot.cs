@@ -41,6 +41,58 @@ namespace CallTaxi.Services.Migrations
                         .IsUnique();
 
                     b.ToTable("Brands");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Mercedes-Benz"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "BMW"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Audi"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Volkswagen"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Toyota"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Honda"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Ford"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Hyundai"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Kia"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Skoda"
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.Product", b =>
@@ -397,6 +449,36 @@ namespace CallTaxi.Services.Migrations
                     b.HasIndex("VehicleTierId");
 
                     b.ToTable("Vehicles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BrandId = 1,
+                            Color = "Black",
+                            LicensePlate = "A123-ABC",
+                            Name = "Mercedes-Benz E-Class",
+                            PetFriendly = true,
+                            SeatsCount = 3,
+                            StateMachine = "Accepted",
+                            UserId = 2,
+                            VehicleTierId = 2,
+                            YearOfManufacture = 2022
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BrandId = 4,
+                            Color = "White",
+                            LicensePlate = "B456-DEF",
+                            Name = "Volkswagen Passat",
+                            PetFriendly = false,
+                            SeatsCount = 4,
+                            StateMachine = "Accepted",
+                            UserId = 3,
+                            VehicleTierId = 1,
+                            YearOfManufacture = 2021
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.VehicleTier", b =>
@@ -422,6 +504,26 @@ namespace CallTaxi.Services.Migrations
                         .IsUnique();
 
                     b.ToTable("VehicleTiers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Basic vehicle tier for everyday rides.",
+                            Name = "Standard"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Comfortable rides with experienced drivers and newer vehicles.",
+                            Name = "Premium"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "High-end vehicles offering top-tier comfort and amenities.",
+                            Name = "Luxury"
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.UserRole", b =>

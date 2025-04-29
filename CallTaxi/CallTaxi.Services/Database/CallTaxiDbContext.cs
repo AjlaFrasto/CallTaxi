@@ -11,7 +11,6 @@ namespace CallTaxi.Services.Database
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
-        public DbSet<Product> Products { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<VehicleTier> VehicleTiers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -29,15 +28,7 @@ namespace CallTaxi.Services.Database
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
-                
-            // Configure Product entity
-            modelBuilder.Entity<Product>()
-                .HasIndex(p => p.Name);
-                
-            modelBuilder.Entity<Product>()
-                .HasIndex(p => p.SKU)
-                .IsUnique()
-                .HasFilter("[SKU] IS NOT NULL");
+               
 
             // Configure Role entity
             modelBuilder.Entity<Role>()

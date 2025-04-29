@@ -7,7 +7,6 @@ namespace CallTaxi.Services.Database
     {
         private const string DefaultPhoneNumber = "+387 62 667 961";
         
-        // Pre-computed hash and salt for password "test" using the same algorithm
         private const string TestMailSender = "calltaxi.sender@gmail.com";
         private const string TestMailReceiver = "calltaxi.receiver@gmail.com";
 
@@ -149,6 +148,74 @@ namespace CallTaxi.Services.Database
                     UserId = 5, 
                     RoleId = 3, 
                     DateAssigned = fixedDate // User Two with User role
+                }
+            );
+
+            // Seed Vehicle Tiers
+            modelBuilder.Entity<VehicleTier>().HasData(
+                new VehicleTier
+                {
+                    Id = 1,
+                    Name = "Standard",
+                    Description = "Basic vehicle tier for everyday rides."
+                },
+                new VehicleTier
+                {
+                    Id = 2,
+                    Name = "Premium",
+                    Description = "Comfortable rides with experienced drivers and newer vehicles."
+                },
+                new VehicleTier
+                {
+                    Id = 3,
+                    Name = "Luxury",
+                    Description = "High-end vehicles offering top-tier comfort and amenities."
+                }
+            );
+
+            // Seed Brands
+            modelBuilder.Entity<Brand>().HasData(
+                new Brand { Id = 1, Name = "Mercedes-Benz" },
+                new Brand { Id = 2, Name = "BMW" },
+                new Brand { Id = 3, Name = "Audi" },
+                new Brand { Id = 4, Name = "Volkswagen" },
+                new Brand { Id = 5, Name = "Toyota" },
+                new Brand { Id = 6, Name = "Honda" },
+                new Brand { Id = 7, Name = "Ford" },
+                new Brand { Id = 8, Name = "Hyundai" },
+                new Brand { Id = 9, Name = "Kia" },
+                new Brand { Id = 10, Name = "Skoda" }
+            );
+
+            // Seed Vehicles
+            modelBuilder.Entity<Vehicle>().HasData(
+                new Vehicle
+                {
+                    Id = 1,
+                    LicensePlate = "A123-ABC",
+                    Name = "Mercedes-Benz E-Class",
+                    YearOfManufacture = 2022,
+                    Color = "Black",
+                    BrandId = 1, // Mercedes-Benz
+                    VehicleTierId = 2, // Premium
+                    UserId = 2, // First driver
+                    StateMachine = "Accepted",
+                    PetFriendly = true,
+                    SeatsCount = 3,
+                },
+                new Vehicle
+                {
+                    Id = 2,
+                    LicensePlate = "B456-DEF",
+                    Name = "Volkswagen Passat",
+                    YearOfManufacture = 2021,
+                    Color = "White",
+                    BrandId = 4, // Volkswagen
+                    VehicleTierId = 1, // Standard
+                    UserId = 3, // Second driver
+                    StateMachine = "Accepted",
+                    PetFriendly = false,
+                    SeatsCount = 4,
                 }
             );
         }

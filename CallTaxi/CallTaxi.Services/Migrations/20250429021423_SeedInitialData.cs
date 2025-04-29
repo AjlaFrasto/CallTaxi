@@ -163,6 +163,23 @@ namespace CallTaxi.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Brands",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Mercedes-Benz" },
+                    { 2, "BMW" },
+                    { 3, "Audi" },
+                    { 4, "Volkswagen" },
+                    { 5, "Toyota" },
+                    { 6, "Honda" },
+                    { 7, "Ford" },
+                    { 8, "Hyundai" },
+                    { 9, "Kia" },
+                    { 10, "Skoda" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "Name" },
                 values: new object[,]
@@ -185,6 +202,16 @@ namespace CallTaxi.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "VehicleTiers",
+                columns: new[] { "Id", "Description", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Basic vehicle tier for everyday rides.", "Standard" },
+                    { 2, "Comfortable rides with experienced drivers and newer vehicles.", "Premium" },
+                    { 3, "High-end vehicles offering top-tier comfort and amenities.", "Luxury" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "Id", "DateAssigned", "RoleId", "UserId" },
                 values: new object[,]
@@ -194,6 +221,15 @@ namespace CallTaxi.Services.Migrations
                     { 3, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 3 },
                     { 4, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 4 },
                     { 5, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 5 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Vehicles",
+                columns: new[] { "Id", "BrandId", "Color", "LicensePlate", "Name", "PetFriendly", "SeatsCount", "StateMachine", "UserId", "VehicleTierId", "YearOfManufacture" },
+                values: new object[,]
+                {
+                    { 1, 1, "Black", "A123-ABC", "Mercedes-Benz E-Class", true, 3, "Accepted", 2, 2, 2022 },
+                    { 2, 4, "White", "B456-DEF", "Volkswagen Passat", false, 4, "Accepted", 3, 1, 2021 }
                 });
 
             migrationBuilder.CreateIndex(
