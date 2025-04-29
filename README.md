@@ -3,7 +3,7 @@
 ## Desktop Application
 
 ### Admin
-- **Username:** desktop
+- **Username:** admin
 - **Password:** test
 
 ## Mobile Application
@@ -13,7 +13,7 @@
 - **Password:** test
 
 ### Regular User
-- **Username:** mobile
+- **Username:** user
 - **Password:** test
 
 ## RabbitMQ Test E-mail Adresses
