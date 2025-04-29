@@ -56,7 +56,9 @@ namespace CallTaxi.Services.Database
                     PasswordSalt = "6raKZCuEsvnBBxPKHGpRtA==", 
                     IsActive = true, 
                     CreatedAt = fixedDate,
-                    PhoneNumber = DefaultPhoneNumber
+                    PhoneNumber = DefaultPhoneNumber,
+                    GenderId = 1, // Male
+                    CityId = 5 // Sarajevo
                 },
                 new User 
                 { 
@@ -69,7 +71,9 @@ namespace CallTaxi.Services.Database
                     PasswordSalt = "O5R9WmM6IPCCMci/BCG/eg==", 
                     IsActive = true, 
                     CreatedAt = fixedDate,
-                    PhoneNumber = DefaultPhoneNumber
+                    PhoneNumber = DefaultPhoneNumber,
+                    GenderId = 1, // Male
+                    CityId = 5 // Banja Luka
                 },
                 new User 
                 { 
@@ -82,7 +86,9 @@ namespace CallTaxi.Services.Database
                     PasswordSalt = "pfNS+OLBaQeGqBIzXXcWuA==", 
                     IsActive = true, 
                     CreatedAt = fixedDate,
-                    PhoneNumber = DefaultPhoneNumber
+                    PhoneNumber = DefaultPhoneNumber,
+                    GenderId = 1, // Male
+                    CityId = 5 // Tuzla
                 },
                 new User 
                 { 
@@ -95,7 +101,9 @@ namespace CallTaxi.Services.Database
                     PasswordSalt = "c3ZKo0va3tYfnYuNKkHDbQ==", 
                     IsActive = true, 
                     CreatedAt = fixedDate,
-                    PhoneNumber = DefaultPhoneNumber
+                    PhoneNumber = DefaultPhoneNumber,
+                    GenderId = 2, // Female
+                    CityId = 1 // Zenica
                 },
                 new User 
                 { 
@@ -108,7 +116,9 @@ namespace CallTaxi.Services.Database
                     PasswordSalt = "4ayImwSF0Q1QlxPABDp9Mw==", 
                     IsActive = true, 
                     CreatedAt = fixedDate,
-                    PhoneNumber = DefaultPhoneNumber
+                    PhoneNumber = DefaultPhoneNumber,
+                    GenderId = 1, // Male
+                    CityId = 5 // Mostar
                 }
             );
 

@@ -98,6 +98,18 @@ namespace CallTaxi.Services.Database
                 .HasIndex(c => c.Name)
                 .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Gender)
+                .WithMany()
+                .HasForeignKey(u => u.GenderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.City)
+                .WithMany()
+                .HasForeignKey(u => u.CityId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             // Seed initial data
             modelBuilder.SeedData();
         }

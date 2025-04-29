@@ -8,5 +8,7 @@ namespace CallTaxi.Model.SearchObjects
     {
         public string? Username { get; set; }
         public string? Email { get; set; }
+        public int? GenderId { get; set; }
+        public int? CityId { get; set; }
     }
 } 

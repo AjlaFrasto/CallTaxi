@@ -22,9 +22,15 @@ namespace CallTaxi.Model.Requests
         [MaxLength(100)]
         public string Username { get; set; } = string.Empty;
         
-        [MaxLength(20)]
         [Phone]
+        [MaxLength(20)]
         public string? PhoneNumber { get; set; }
+        
+        [Required]
+        public int GenderId { get; set; }
+        
+        [Required]
+        public int CityId { get; set; }
         
         public bool IsActive { get; set; } = true;
         

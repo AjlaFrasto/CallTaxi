@@ -9,22 +9,21 @@ using CallTaxi.Model.Responses;
 using CallTaxi.Model.SearchObjects;
 using CallTaxi.Model.Requests;
 using CallTaxi.Services.Interfaces;
+using MapsterMapper;
 
 namespace CallTaxi.Services.Services
 {
-    public class UserService : IUserService
+    public class UserService : BaseService<UserResponse, UserSearchObject, User>, IUserService
     {
-        private readonly CallTaxiDbContext _context;
         private const int SaltSize = 16;
         private const int KeySize = 32;
         private const int Iterations = 10000;
 
-        public UserService(CallTaxiDbContext context)
+        public UserService(CallTaxiDbContext context, IMapper mapper) : base(context, mapper)
         {
-            _context = context;
         }
 
-        public async Task<List<UserResponse>> GetAsync(UserSearchObject search)
+        public override async Task<PagedResult<UserResponse>> GetAsync(UserSearchObject search)
         {
             var query = _context.Users.AsQueryable();
 
@@ -47,14 +46,61 @@ namespace CallTaxi.Services.Services
                     u.Email.Contains(search.FTS));
             }
 
+            if (search.GenderId.HasValue)
+            {
+                query = query.Where(u => u.GenderId == search.GenderId.Value);
+            }
+
+            if (search.CityId.HasValue)
+            {
+                query = query.Where(u => u.CityId == search.CityId.Value);
+            }
+
+            query = query
+                .Include(u => u.Gender)
+                .Include(u => u.City)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role);
+
+            int? totalCount = null;
+            if (search.IncludeTotalCount)
+            {
+                totalCount = await query.CountAsync();
+            }
+
+            if (!search.RetrieveAll)
+            {
+                if (search.Page.HasValue)
+                {
+                    query = query.Skip(search.Page.Value * search.PageSize.Value);
+                }
+                if (search.PageSize.HasValue)
+                {
+                    query = query.Take(search.PageSize.Value);
+                }
+            }
+
             var users = await query.ToListAsync();
-            return users.Select(MapToResponse).ToList();
+            return new PagedResult<UserResponse>
+            {
+                Items = users.Select(MapToResponse).ToList(),
+                TotalCount = totalCount
+            };
         }
 
-        public async Task<UserResponse?> GetByIdAsync(int id)
+        public override async Task<UserResponse?> GetByIdAsync(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            return user != null ? MapToResponse(user) : null;
+            var user = await _context.Users
+                .Include(u => u.Gender)
+                .Include(u => u.City)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+                return null;
+
+            return MapToResponse(user);
         }
 
         private string HashPassword(string password, out byte[] salt)
@@ -84,16 +130,8 @@ namespace CallTaxi.Services.Services
                 throw new InvalidOperationException("A user with this username already exists.");
             }
 
-            var user = new User
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                Username = request.Username,
-                PhoneNumber = request.PhoneNumber,
-                IsActive = request.IsActive,
-                CreatedAt = DateTime.UtcNow
-            };
+            var user = _mapper.Map<User>(request);
+            user.CreatedAt = DateTime.UtcNow;
 
             // Handle password if provided
             if (!string.IsNullOrEmpty(request.Password))
@@ -147,12 +185,7 @@ namespace CallTaxi.Services.Services
                 throw new InvalidOperationException("A user with this username already exists.");
             }
 
-            user.FirstName = request.FirstName;
-            user.LastName = request.LastName;
-            user.Email = request.Email;
-            user.Username = request.Username;
-            user.PhoneNumber = request.PhoneNumber;
-            user.IsActive = request.IsActive;
+            _mapper.Map(request, user);
 
             // Handle password if provided
             if (!string.IsNullOrEmpty(request.Password))
@@ -201,35 +234,10 @@ namespace CallTaxi.Services.Services
             return true;
         }
 
-        private UserResponse MapToResponse(User user)
+        protected override UserResponse MapToResponse(User user)
         {
-            return new UserResponse
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Username = user.Username,
-                PhoneNumber = user.PhoneNumber,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                LastLoginAt = user.LastLoginAt
-            };
-        }
-
-        // New method to get user with roles
-        private async Task<UserResponse> GetUserResponseWithRolesAsync(int userId)
-        {
-            var user = await _context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
-                throw new InvalidOperationException("User not found");
-
-            var response = MapToResponse(user);
-
+            var response = _mapper.Map<UserResponse>(user);
+            
             // Add roles to the response
             response.Roles = user.UserRoles
                 .Where(ur => ur.Role.IsActive)
@@ -244,9 +252,26 @@ namespace CallTaxi.Services.Services
             return response;
         }
 
+        private async Task<UserResponse> GetUserResponseWithRolesAsync(int userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Gender)
+                .Include(u => u.City)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                throw new InvalidOperationException("User not found");
+
+            return MapToResponse(user);
+        }
+
         public async Task<UserResponse?> AuthenticateAsync(UserLoginRequest request)
         {
             var user = await _context.Users
+                .Include(u => u.Gender)
+                .Include(u => u.City)
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
@@ -261,21 +286,9 @@ namespace CallTaxi.Services.Services
             user.LastLoginAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            var response = MapToResponse(user);
-
-            // Add roles to the response
-            response.Roles = user.UserRoles
-                .Where(ur => ur.Role.IsActive)
-                .Select(ur => new RoleResponse
-                {
-                    Id = ur.Role.Id,
-                    Name = ur.Role.Name,
-                    Description = ur.Role.Description
-                })
-                .ToList();
-
-            return response;
+            return MapToResponse(user);
         }
+
         private bool VerifyPassword(string password, string passwordHash, string passwordSalt)
         {
             var salt = Convert.FromBase64String(passwordSalt);
@@ -283,5 +296,7 @@ namespace CallTaxi.Services.Services
             var hashBytes = new Rfc2898DeriveBytes(password, salt, Iterations).GetBytes(KeySize);
             return hash.SequenceEqual(hashBytes);
         }
+
+      
     }
 }

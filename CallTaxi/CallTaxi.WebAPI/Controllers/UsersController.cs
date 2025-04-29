@@ -2,7 +2,6 @@ using CallTaxi.Model.Requests;
 using CallTaxi.Model.Responses;
 using CallTaxi.Model.SearchObjects;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using CallTaxi.Services.Interfaces;
 
@@ -20,7 +19,7 @@ namespace CallTaxi.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserResponse>>> Get([FromQuery] UserSearchObject? search = null)
+        public async Task<ActionResult<PagedResult<UserResponse>>> Get([FromQuery] UserSearchObject? search = null)
         {
             return await _userService.GetAsync(search ?? new UserSearchObject());
         }

@@ -14,7 +14,7 @@ namespace CallTaxi.Services.Services
 {
     public abstract class BaseService<T, TSearch, TEntity> : IService<T, TSearch> where T : class where TSearch : BaseSearchObject where TEntity : class
     {
-        private readonly CallTaxiDbContext _context;
+        protected readonly CallTaxiDbContext _context;
         protected readonly IMapper _mapper;
 
         public BaseService(CallTaxiDbContext context, IMapper mapper)
