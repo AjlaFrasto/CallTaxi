@@ -218,6 +218,36 @@ namespace CallTaxi.Services.Database
                     SeatsCount = 4,
                 }
             );
+
+            // Seed Genders
+            modelBuilder.Entity<Gender>().HasData(
+                new Gender { Id = 1, Name = "Male" },
+                new Gender { Id = 2, Name = "Female" }
+            );
+
+            // Seed Cities
+            modelBuilder.Entity<City>().HasData(
+                new City { Id = 1, Name = "Sarajevo" },
+                new City { Id = 2, Name = "Banja Luka" },
+                new City { Id = 3, Name = "Tuzla" },
+                new City { Id = 4, Name = "Zenica" },
+                new City { Id = 5, Name = "Mostar" },
+                new City { Id = 6, Name = "Bihać" },
+                new City { Id = 7, Name = "Brčko" },
+                new City { Id = 8, Name = "Bijeljina" },
+                new City { Id = 9, Name = "Prijedor" },
+                new City { Id = 10, Name = "Trebinje" },
+                new City { Id = 11, Name = "Doboj" },
+                new City { Id = 12, Name = "Cazin" },
+                new City { Id = 13, Name = "Velika Kladuša" },
+                new City { Id = 14, Name = "Visoko" },
+                new City { Id = 15, Name = "Zavidovići" },
+                new City { Id = 16, Name = "Gračanica" },
+                new City { Id = 17, Name = "Konjic" },
+                new City { Id = 18, Name = "Livno" },
+                new City { Id = 19, Name = "Srebrenik" },
+                new City { Id = 20, Name = "Gradačac" }
+            );
         }
     }
 } 

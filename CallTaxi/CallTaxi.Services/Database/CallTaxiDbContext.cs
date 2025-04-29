@@ -14,6 +14,8 @@ namespace CallTaxi.Services.Database
         public DbSet<Brand> Brands { get; set; }
         public DbSet<VehicleTier> VehicleTiers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Gender> Genders { get; set; }
+        public DbSet<City> Cities { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -85,6 +87,16 @@ namespace CallTaxi.Services.Database
                 .WithMany()
                 .HasForeignKey(v => v.VehicleTierId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure Gender entity
+            modelBuilder.Entity<Gender>()
+                .HasIndex(g => g.Name)
+                .IsUnique();
+
+            // Configure City entity
+            modelBuilder.Entity<City>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
 
             // Seed initial data
             modelBuilder.SeedData();
