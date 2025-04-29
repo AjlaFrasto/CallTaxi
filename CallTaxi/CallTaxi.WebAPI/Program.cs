@@ -94,4 +94,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// In your Program.cs or Startup.cs
+DataSeeder.SeedData(app.Services);
+
 app.Run();
