@@ -73,14 +73,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-
-// Ensure database is created
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<CallTaxiDbContext>();
-//    dbContext.Database.EnsureCreated();
-//}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -93,8 +85,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// In your Program.cs or Startup.cs
-DataSeeder.SeedData(app.Services);
 
 app.Run();

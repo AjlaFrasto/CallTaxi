@@ -94,6 +94,9 @@ namespace CallTaxi.Services.Database
                 .WithMany()
                 .HasForeignKey(v => v.VehicleTierId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Seed initial data
+            modelBuilder.SeedData();
         }
     }
 } 

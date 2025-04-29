@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTaxi.Services.Migrations
 {
     [DbContext(typeof(CallTaxiDbContext))]
-    [Migration("20250429005726_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250429020426_SeedInitialData")]
+    partial class SeedInitialData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,6 +124,32 @@ namespace CallTaxi.Services.Migrations
                         .IsUnique();
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "System administrator with full access",
+                            IsActive = true,
+                            Name = "Administrator"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Taxi driver role",
+                            IsActive = true,
+                            Name = "Driver"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Regular user role",
+                            IsActive = true,
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.User", b =>
@@ -184,6 +210,73 @@ namespace CallTaxi.Services.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "calltaxi.receiver@gmail.com",
+                            FirstName = "Denis",
+                            IsActive = true,
+                            LastName = "Mušić",
+                            PasswordHash = "3KbrBi5n9zdQnceWWOK5zaeAwfEjsluyhRQUbNkcgLQ=",
+                            PasswordSalt = "6raKZCuEsvnBBxPKHGpRtA==",
+                            PhoneNumber = "+387 62 667 961",
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "example1@gmail.com",
+                            FirstName = "Amel",
+                            IsActive = true,
+                            LastName = "Musić",
+                            PasswordHash = "kDPVcZaikiII7vXJbMEw6B0xZ245I29ocaxBjLaoAC0=",
+                            PasswordSalt = "O5R9WmM6IPCCMci/BCG/eg==",
+                            PhoneNumber = "+387 62 667 961",
+                            Username = "driver"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "example2@gmail.com",
+                            FirstName = "Adil",
+                            IsActive = true,
+                            LastName = "Joldić",
+                            PasswordHash = "BiWDuil9svAKOYzii5wopQW3YqjVfQrzGE2iwH/ylY4=",
+                            PasswordSalt = "pfNS+OLBaQeGqBIzXXcWuA==",
+                            PhoneNumber = "+387 62 667 961",
+                            Username = "driver2"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "calltaxi.sender@gmail.com",
+                            FirstName = "Ajla",
+                            IsActive = true,
+                            LastName = "Frašto",
+                            PasswordHash = "KUF0Jsocq9AqdwR9JnT2OrAqm5gDj7ecQvNwh6fW/Bs=",
+                            PasswordSalt = "c3ZKo0va3tYfnYuNKkHDbQ==",
+                            PhoneNumber = "+387 62 667 961",
+                            Username = "user"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "example3@gmail.com",
+                            FirstName = "Elmir",
+                            IsActive = true,
+                            LastName = "Babović",
+                            PasswordHash = "juUTOe91pl0wpxh00N7eCzScw63/1gzn5vrGMsRCAhY=",
+                            PasswordSalt = "4ayImwSF0Q1QlxPABDp9Mw==",
+                            PhoneNumber = "+387 62 667 961",
+                            Username = "user2"
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.UserRole", b =>
@@ -211,6 +304,43 @@ namespace CallTaxi.Services.Migrations
                         .IsUnique();
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateAssigned = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DateAssigned = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 2,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DateAssigned = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 2,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DateAssigned = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 3,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DateAssigned = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 3,
+                            UserId = 5
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.Vehicle", b =>
