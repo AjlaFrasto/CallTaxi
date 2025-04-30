@@ -16,6 +16,7 @@ namespace CallTaxi.Services.Database
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Gender> Genders { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<Chat> Chats { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -108,6 +109,19 @@ namespace CallTaxi.Services.Database
                 .HasOne(u => u.City)
                 .WithMany()
                 .HasForeignKey(u => u.CityId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure Chat entity
+            modelBuilder.Entity<Chat>()
+                .HasOne(c => c.Sender)
+                .WithMany()
+                .HasForeignKey(c => c.SenderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Chat>()
+                .HasOne(c => c.Receiver)
+                .WithMany()
+                .HasForeignKey(c => c.ReceiverId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             // Seed initial data
