@@ -8,7 +8,7 @@ using CallTaxi.Services.Interfaces;
 namespace CallTaxi.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CallTaxi.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class BaseCRUDController<T, TSearch, TInsert, TUpdate> 
             : BaseController<T, TSearch> where T : class where TSearch : BaseSearchObject, new() where TInsert : class where TUpdate : class
     {

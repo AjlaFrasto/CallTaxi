@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CallTaxi.WebAPI.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
     public class CityController : BaseCRUDController<CityResponse, CitySearchObject, CityUpsertRequest, CityUpsertRequest>
     {
         public CityController(ICityService service) : base(service)
