@@ -20,9 +20,9 @@ namespace CallTaxi.WebAPI.Controllers
         }
 
         [HttpPost("{id}/accept")]
-        public async Task<DriveRequestResponse> AcceptRequest(int id)
+        public async Task<DriveRequestResponse> AcceptRequest(int id, [FromBody] DriveRequestAcceptRequest request)
         {
-            return await _driveRequestService.AcceptRequest(id);
+            return await _driveRequestService.AcceptRequest(id, request.DriverId, request.VehicleId);
         }
 
         [HttpPost("{id}/complete")]

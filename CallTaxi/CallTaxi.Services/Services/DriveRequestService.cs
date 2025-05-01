@@ -94,37 +94,57 @@ namespace CallTaxi.Services.Services
                 response.StatusName = entity.Status.Name;
             }
 
+            // Map driver information if available
+            if (entity.Driver != null)
+            {
+                response.DriverId = entity.DriverId;
+                response.DriverName = $"{entity.Driver.FirstName} {entity.Driver.LastName}";
+            }
+
+            // Map vehicle information if available
+            if (entity.Vehicle != null)
+            {
+                response.VehicleId = entity.VehicleId;
+                response.VehicleName = entity.Vehicle.Name;
+                response.VehicleLicensePlate = entity.Vehicle.LicensePlate;
+            }
+
             return response;
         }
 
-        protected override IQueryable<DriveRequest> ApplyFilter(IQueryable<DriveRequest> query, DriveRequestSearchObject search)
+        protected override IQueryable<DriveRequest> ApplyFilter(IQueryable<DriveRequest> query, DriveRequestSearchObject search = null)
         {
-            if (search.UserId.HasValue)
+            query = query
+                .Include(x => x.User)
+                .Include(x => x.Driver)
+                .Include(x => x.Vehicle)
+                .Include(x => x.VehicleTier)
+                .Include(x => x.Status);
+
+            if (search != null)
             {
-                query = query.Where(dr => dr.UserId == search.UserId.Value);
+                if (search.UserId.HasValue)
+                    query = query.Where(x => x.UserId == search.UserId);
+
+                if (search.DriverId.HasValue)
+                    query = query.Where(x => x.DriverId == search.DriverId);
+
+                if (search.VehicleTierId.HasValue)
+                    query = query.Where(x => x.VehicleTierId == search.VehicleTierId);
+
+                if (!string.IsNullOrWhiteSpace(search.Status))
+                {
+                    query = query.Where(x => x.Status.Name == search.Status);
+                }
+
+                if (search.CreatedFrom.HasValue)
+                    query = query.Where(x => x.CreatedAt >= search.CreatedFrom.Value);
+
+                if (search.CreatedTo.HasValue)
+                    query = query.Where(x => x.CreatedAt <= search.CreatedTo.Value);
             }
 
-            if (search.VehicleTierId.HasValue)
-            {
-                query = query.Where(dr => dr.VehicleTierId == search.VehicleTierId.Value);
-            }
-
-            if (!string.IsNullOrEmpty(search.Status))
-            {
-                query = query.Where(dr => dr.Status.Name == search.Status);
-            }
-
-            if (search.CreatedFrom.HasValue)
-            {
-                query = query.Where(dr => dr.CreatedAt >= search.CreatedFrom.Value);
-            }
-
-            if (search.CreatedTo.HasValue)
-            {
-                query = query.Where(dr => dr.CreatedAt <= search.CreatedTo.Value);
-            }
-
-            return query;
+            return base.ApplyFilter(query, search);
         }
 
         protected override async Task BeforeInsert(DriveRequest entity, DriveRequestUpsertRequest request)
@@ -148,26 +168,56 @@ namespace CallTaxi.Services.Services
             entity.StatusId = STATUS_PENDING;
         }
 
-        public async Task<DriveRequestResponse> AcceptRequest(int id)
+        public async Task<DriveRequestResponse> AcceptRequest(int id, int driverId, int vehicleId)
         {
             var request = await _context.DriveRequests
-                .Include(x => x.User)
-                .Include(x => x.VehicleTier)
-                .Include(x => x.Status)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .Include(dr => dr.VehicleTier)
+                .FirstOrDefaultAsync(dr => dr.Id == id);
 
             if (request == null)
-            {
-                throw new InvalidOperationException("Drive request not found.");
-            }
+                throw new Exception("Drive request not found");
 
-            if (request.StatusId != STATUS_PENDING)
-            {
-                throw new InvalidOperationException("Only pending requests can be accepted.");
-            }
+            var pendingStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Pending");
 
-            request.StatusId = STATUS_ACCEPTED;
+            if (request.StatusId != pendingStatus?.Id)
+                throw new Exception("Cannot accept a request that is not in pending state");
+
+            // Validate that the driver exists and has the Driver role
+            var driver = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == driverId && 
+                                        u.UserRoles.Any(ur => ur.Role.Name == "Driver"));
+
+            if (driver == null)
+                throw new Exception("Driver not found or user is not a driver");
+
+            // Validate that the vehicle exists, belongs to the driver, and matches the required tier
+            var vehicle = await _context.Vehicles
+                .FirstOrDefaultAsync(v => v.Id == vehicleId);
+
+            if (vehicle == null)
+                throw new Exception("Vehicle not found");
+
+            if (vehicle.UserId != driverId)
+                throw new Exception("Vehicle does not belong to the specified driver");
+
+            if (vehicle.VehicleTierId != request.VehicleTierId)
+                throw new Exception("Vehicle tier does not match the request requirements");
+
+            // Update request status
+            var acceptedStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Accepted");
+
+            if (acceptedStatus == null)
+                throw new Exception("Accepted status not found");
+
+            request.StatusId = acceptedStatus.Id;
+            request.DriverId = driverId;
+            request.VehicleId = vehicleId;
             request.AcceptedAt = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
             return MapToResponse(request);
@@ -176,23 +226,26 @@ namespace CallTaxi.Services.Services
         public async Task<DriveRequestResponse> CompleteRequest(int id)
         {
             var request = await _context.DriveRequests
-                .Include(x => x.User)
-                .Include(x => x.VehicleTier)
-                .Include(x => x.Status)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(dr => dr.Id == id);
 
             if (request == null)
-            {
-                throw new InvalidOperationException("Drive request not found.");
-            }
+                throw new Exception("Drive request not found");
 
-            if (request.StatusId != STATUS_ACCEPTED)
-            {
-                throw new InvalidOperationException("Only accepted requests can be completed.");
-            }
+            var acceptedStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Accepted");
 
-            request.StatusId = STATUS_COMPLETED;
+            if (request.StatusId != acceptedStatus?.Id)
+                throw new Exception("Cannot complete a request that is not in accepted state");
+
+            var completedStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Completed");
+
+            if (completedStatus == null)
+                throw new Exception("Completed status not found");
+
+            request.StatusId = completedStatus.Id;
             request.CompletedAt = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
             return MapToResponse(request);
@@ -201,22 +254,25 @@ namespace CallTaxi.Services.Services
         public async Task<DriveRequestResponse> CancelRequest(int id)
         {
             var request = await _context.DriveRequests
-                .Include(x => x.User)
-                .Include(x => x.VehicleTier)
-                .Include(x => x.Status)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(dr => dr.Id == id);
 
             if (request == null)
-            {
-                throw new InvalidOperationException("Drive request not found.");
-            }
+                throw new Exception("Drive request not found");
 
-            if (request.StatusId != STATUS_PENDING)
-            {
-                throw new InvalidOperationException("Only pending requests can be cancelled.");
-            }
+            var pendingStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Pending");
 
-            request.StatusId = STATUS_CANCELLED;
+            if (request.StatusId != pendingStatus?.Id)
+                throw new Exception("Can only cancel pending requests");
+
+            var cancelledStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Cancelled");
+
+            if (cancelledStatus == null)
+                throw new Exception("Cancelled status not found");
+
+            request.StatusId = cancelledStatus.Id;
+
             await _context.SaveChangesAsync();
 
             return MapToResponse(request);

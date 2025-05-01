@@ -134,6 +134,18 @@ namespace CallTaxi.Services.Database
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<DriveRequest>()
+                .HasOne(dr => dr.Driver)
+                .WithMany()
+                .HasForeignKey(dr => dr.DriverId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DriveRequest>()
+                .HasOne(dr => dr.Vehicle)
+                .WithMany()
+                .HasForeignKey(dr => dr.VehicleId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DriveRequest>()
                 .HasOne(dr => dr.VehicleTier)
                 .WithMany()
                 .HasForeignKey(dr => dr.VehicleTierId)

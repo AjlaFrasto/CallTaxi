@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CallTaxi.Services.Database
 {
@@ -12,6 +13,10 @@ namespace CallTaxi.Services.Database
 
         [Required]
         public int VehicleTierId { get; set; }
+
+        // Driver and Vehicle are nullable as they're only set when request is accepted
+        public int? DriverId { get; set; }
+        public int? VehicleId { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -38,8 +43,19 @@ namespace CallTaxi.Services.Database
         public int StatusId { get; set; }
 
         // Navigation properties
+        [ForeignKey("UserId")]
         public User User { get; set; } = null!;
+
+        [ForeignKey("DriverId")]
+        public User? Driver { get; set; }
+
+        [ForeignKey("VehicleId")]
+        public Vehicle? Vehicle { get; set; }
+
+        [ForeignKey("VehicleTierId")]
         public VehicleTier VehicleTier { get; set; } = null!;
+
+        [ForeignKey("StatusId")]
         public DriveRequestStatus Status { get; set; } = null!;
     }
 } 

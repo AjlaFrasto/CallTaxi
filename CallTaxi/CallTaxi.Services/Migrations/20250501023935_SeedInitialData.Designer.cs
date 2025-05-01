@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTaxi.Services.Migrations
 {
     [DbContext(typeof(CallTaxiDbContext))]
-    [Migration("20250501010407_DriveReq")]
-    partial class DriveReq
+    [Migration("20250501023935_SeedInitialData")]
+    partial class SeedInitialData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -276,6 +276,9 @@ namespace CallTaxi.Services.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("int");
+
                     b.Property<string>("EndLocation")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -289,11 +292,13 @@ namespace CallTaxi.Services.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VehicleId")
                         .HasColumnType("int");
 
                     b.Property<int>("VehicleTierId")
@@ -301,11 +306,65 @@ namespace CallTaxi.Services.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("StatusId");
+
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VehicleId");
 
                     b.HasIndex("VehicleTierId");
 
                     b.ToTable("DriveRequests");
+                });
+
+            modelBuilder.Entity("CallTaxi.Services.Database.DriveRequestStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DriveRequestStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Request is waiting to be accepted by a driver",
+                            Name = "Pending"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Request has been accepted by a driver",
+                            Name = "Accepted"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Drive has been completed",
+                            Name = "Completed"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Request has been cancelled",
+                            Name = "Cancelled"
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.Gender", b =>
@@ -764,11 +823,27 @@ namespace CallTaxi.Services.Migrations
 
             modelBuilder.Entity("CallTaxi.Services.Database.DriveRequest", b =>
                 {
+                    b.HasOne("CallTaxi.Services.Database.User", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("CallTaxi.Services.Database.DriveRequestStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("CallTaxi.Services.Database.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("CallTaxi.Services.Database.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("CallTaxi.Services.Database.VehicleTier", "VehicleTier")
                         .WithMany()
@@ -776,7 +851,13 @@ namespace CallTaxi.Services.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Driver");
+
+                    b.Navigation("Status");
+
                     b.Navigation("User");
+
+                    b.Navigation("Vehicle");
 
                     b.Navigation("VehicleTier");
                 });

@@ -9,6 +9,16 @@ namespace CallTaxi.Model.Responses
         public string UserName { get; set; } = string.Empty;
         public int VehicleTierId { get; set; }
         public string VehicleTierName { get; set; } = string.Empty;
+
+        // Driver information (nullable)
+        public int? DriverId { get; set; }
+        public string? DriverName { get; set; }
+
+        // Vehicle information (nullable)
+        public int? VehicleId { get; set; }
+        public string? VehicleName { get; set; }
+        public string? VehicleLicensePlate { get; set; }
+
         public string StartLocation { get; set; } = string.Empty;
         public string EndLocation { get; set; } = string.Empty;
         public decimal BasePrice { get; set; }

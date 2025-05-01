@@ -273,6 +273,9 @@ namespace CallTaxi.Services.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("int");
+
                     b.Property<string>("EndLocation")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -292,14 +295,21 @@ namespace CallTaxi.Services.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("VehicleId")
+                        .HasColumnType("int");
+
                     b.Property<int>("VehicleTierId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DriverId");
+
                     b.HasIndex("StatusId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VehicleId");
 
                     b.HasIndex("VehicleTierId");
 
@@ -810,6 +820,11 @@ namespace CallTaxi.Services.Migrations
 
             modelBuilder.Entity("CallTaxi.Services.Database.DriveRequest", b =>
                 {
+                    b.HasOne("CallTaxi.Services.Database.User", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("CallTaxi.Services.Database.DriveRequestStatus", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
@@ -822,15 +837,24 @@ namespace CallTaxi.Services.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("CallTaxi.Services.Database.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("CallTaxi.Services.Database.VehicleTier", "VehicleTier")
                         .WithMany()
                         .HasForeignKey("VehicleTierId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Driver");
+
                     b.Navigation("Status");
 
                     b.Navigation("User");
+
+                    b.Navigation("Vehicle");
 
                     b.Navigation("VehicleTier");
                 });
