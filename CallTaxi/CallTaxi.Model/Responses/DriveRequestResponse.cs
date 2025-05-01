@@ -16,6 +16,7 @@ namespace CallTaxi.Model.Responses
         public DateTime CreatedAt { get; set; }
         public DateTime? AcceptedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public int StatusId { get; set; }
+        public string StatusName { get; set; } = string.Empty;
     }
 } 

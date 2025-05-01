@@ -35,10 +35,11 @@ namespace CallTaxi.Services.Database
         public DateTime? CompletedAt { get; set; }
 
         [Required]
-        public string Status { get; set; } = "Pending"; // Pending, Accepted, Completed, Cancelled
+        public int StatusId { get; set; }
 
         // Navigation properties
         public User User { get; set; } = null!;
         public VehicleTier VehicleTier { get; set; } = null!;
+        public DriveRequestStatus Status { get; set; } = null!;
     }
 } 

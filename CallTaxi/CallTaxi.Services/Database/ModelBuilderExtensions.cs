@@ -258,6 +258,34 @@ namespace CallTaxi.Services.Database
                 new City { Id = 19, Name = "Srebrenik" },
                 new City { Id = 20, Name = "Gradačac" }
             );
+
+            // Seed DriveRequestStatus
+            modelBuilder.Entity<DriveRequestStatus>().HasData(
+                new DriveRequestStatus 
+                { 
+                    Id = 1, 
+                    Name = "Pending",
+                    Description = "Request is waiting to be accepted by a driver"
+                },
+                new DriveRequestStatus 
+                { 
+                    Id = 2, 
+                    Name = "Accepted",
+                    Description = "Request has been accepted by a driver"
+                },
+                new DriveRequestStatus 
+                { 
+                    Id = 3, 
+                    Name = "Completed",
+                    Description = "Drive has been completed"
+                },
+                new DriveRequestStatus 
+                { 
+                    Id = 4, 
+                    Name = "Cancelled",
+                    Description = "Request has been cancelled"
+                }
+            );
         }
     }
 } 
