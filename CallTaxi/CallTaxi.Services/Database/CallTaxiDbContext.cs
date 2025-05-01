@@ -19,6 +19,7 @@ namespace CallTaxi.Services.Database
         public DbSet<Chat> Chats { get; set; }
         public DbSet<DriveRequest> DriveRequests { get; set; }
         public DbSet<DriveRequestStatus> DriveRequestStatuses { get; set; }
+        public DbSet<Review> Reviews { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -157,6 +158,24 @@ namespace CallTaxi.Services.Database
                 .WithMany()
                 .HasForeignKey(dr => dr.StatusId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure Review entity
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.DriveRequest)
+                .WithMany()
+                .HasForeignKey(r => r.DriveRequestId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Only allow one review per drive request per user
+            modelBuilder.Entity<Review>()
+                .HasIndex(r => new { r.DriveRequestId, r.UserId })
+                .IsUnique();
 
             // Seed initial data
             modelBuilder.SeedData();
