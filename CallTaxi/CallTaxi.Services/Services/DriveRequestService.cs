@@ -17,6 +17,74 @@ namespace CallTaxi.Services.Services
         {
         }
 
+        public override async Task<PagedResult<DriveRequestResponse>> GetAsync(DriveRequestSearchObject search)
+        {
+            var query = _context.DriveRequests
+                .Include(x => x.User)
+                .Include(x => x.VehicleTier)
+                .AsQueryable();
+
+            query = ApplyFilter(query, search);
+
+            int? totalCount = null;
+            if (search.IncludeTotalCount)
+            {
+                totalCount = await query.CountAsync();
+            }
+
+            if (!search.RetrieveAll)
+            {
+                if (search.Page.HasValue)
+                {
+                    query = query.Skip(search.Page.Value * search.PageSize.Value);
+                }
+                if (search.PageSize.HasValue)
+                {
+                    query = query.Take(search.PageSize.Value);
+                }
+            }
+
+            var list = await query.ToListAsync();
+
+            var result = new PagedResult<DriveRequestResponse>
+            {
+                Items = list.Select(x => MapToResponse(x)).ToList(),
+                TotalCount = totalCount
+            };
+
+            return result;
+        }
+
+        public override async Task<DriveRequestResponse?> GetByIdAsync(int id)
+        {
+            var entity = await _context.DriveRequests
+                .Include(x => x.User)
+                .Include(x => x.VehicleTier)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (entity == null)
+                return null;
+
+            return MapToResponse(entity);
+        }
+
+        protected override DriveRequestResponse MapToResponse(DriveRequest entity)
+        {
+            var response = base.MapToResponse(entity);
+            
+            if (entity.User != null)
+            {
+                response.UserName = $"{entity.User.FirstName} {entity.User.LastName}";
+            }
+            
+            if (entity.VehicleTier != null)
+            {
+                response.VehicleTierName = entity.VehicleTier.Name;
+            }
+
+            return response;
+        }
+
         protected override IQueryable<DriveRequest> ApplyFilter(IQueryable<DriveRequest> query, DriveRequestSearchObject search)
         {
             if (search.UserId.HasValue)
@@ -70,7 +138,11 @@ namespace CallTaxi.Services.Services
 
         public async Task<DriveRequestResponse> AcceptRequest(int id)
         {
-            var request = await _context.DriveRequests.FindAsync(id);
+            var request = await _context.DriveRequests
+                .Include(x => x.User)
+                .Include(x => x.VehicleTier)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
             if (request == null)
             {
                 throw new InvalidOperationException("Drive request not found.");
@@ -85,12 +157,16 @@ namespace CallTaxi.Services.Services
             request.AcceptedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<DriveRequestResponse>(request);
+            return MapToResponse(request);
         }
 
         public async Task<DriveRequestResponse> CompleteRequest(int id)
         {
-            var request = await _context.DriveRequests.FindAsync(id);
+            var request = await _context.DriveRequests
+                .Include(x => x.User)
+                .Include(x => x.VehicleTier)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
             if (request == null)
             {
                 throw new InvalidOperationException("Drive request not found.");
@@ -105,12 +181,16 @@ namespace CallTaxi.Services.Services
             request.CompletedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<DriveRequestResponse>(request);
+            return MapToResponse(request);
         }
 
         public async Task<DriveRequestResponse> CancelRequest(int id)
         {
-            var request = await _context.DriveRequests.FindAsync(id);
+            var request = await _context.DriveRequests
+                .Include(x => x.User)
+                .Include(x => x.VehicleTier)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
             if (request == null)
             {
                 throw new InvalidOperationException("Drive request not found.");
@@ -124,7 +204,7 @@ namespace CallTaxi.Services.Services
             request.Status = "Cancelled";
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<DriveRequestResponse>(request);
+            return MapToResponse(request);
         }
     }
 } 
