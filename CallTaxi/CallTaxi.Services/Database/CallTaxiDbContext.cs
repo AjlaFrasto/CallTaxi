@@ -17,6 +17,7 @@ namespace CallTaxi.Services.Database
         public DbSet<Gender> Genders { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Chat> Chats { get; set; }
+        public DbSet<DriveRequest> DriveRequests { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -122,6 +123,19 @@ namespace CallTaxi.Services.Database
                 .HasOne(c => c.Receiver)
                 .WithMany()
                 .HasForeignKey(c => c.ReceiverId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure DriveRequest entity
+            modelBuilder.Entity<DriveRequest>()
+                .HasOne(dr => dr.User)
+                .WithMany()
+                .HasForeignKey(dr => dr.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DriveRequest>()
+                .HasOne(dr => dr.VehicleTier)
+                .WithMany()
+                .HasForeignKey(dr => dr.VehicleTierId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             // Seed initial data
