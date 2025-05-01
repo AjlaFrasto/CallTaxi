@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTaxi.Services.Migrations
 {
     [DbContext(typeof(CallTaxiDbContext))]
-    [Migration("20250501023935_SeedInitialData")]
+    [Migration("20250501032334_SeedInitialData")]
     partial class SeedInitialData
     {
         /// <inheritdoc />
@@ -317,6 +317,56 @@ namespace CallTaxi.Services.Migrations
                     b.HasIndex("VehicleTierId");
 
                     b.ToTable("DriveRequests");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AcceptedAt = new DateTime(2023, 12, 27, 1, 0, 0, 0, DateTimeKind.Utc),
+                            BasePrice = 20.00m,
+                            CompletedAt = new DateTime(2023, 12, 27, 2, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2023, 12, 27, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DriverId = 2,
+                            EndLocation = "43.8247222,18.3313889",
+                            FinalPrice = 25.00m,
+                            StartLocation = "43.8562586,18.4130763",
+                            StatusId = 3,
+                            UserId = 4,
+                            VehicleId = 1,
+                            VehicleTierId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AcceptedAt = new DateTime(2023, 12, 29, 1, 0, 0, 0, DateTimeKind.Utc),
+                            BasePrice = 10.00m,
+                            CompletedAt = new DateTime(2023, 12, 29, 2, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2023, 12, 29, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DriverId = 3,
+                            EndLocation = "44.2036111,17.9077778",
+                            FinalPrice = 12.00m,
+                            StartLocation = "44.2019444,17.9080556",
+                            StatusId = 3,
+                            UserId = 4,
+                            VehicleId = 2,
+                            VehicleTierId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AcceptedAt = new DateTime(2023, 12, 30, 1, 0, 0, 0, DateTimeKind.Utc),
+                            BasePrice = 15.00m,
+                            CompletedAt = new DateTime(2023, 12, 30, 2, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2023, 12, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DriverId = 2,
+                            EndLocation = "43.3458333,17.8083333",
+                            FinalPrice = 18.00m,
+                            StartLocation = "43.3372222,17.8150000",
+                            StatusId = 3,
+                            UserId = 5,
+                            VehicleId = 1,
+                            VehicleTierId = 2
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.DriveRequestStatus", b =>
@@ -396,6 +446,69 @@ namespace CallTaxi.Services.Migrations
                         {
                             Id = 2,
                             Name = "Female"
+                        });
+                });
+
+            modelBuilder.Entity("CallTaxi.Services.Database.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DriveRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("DriveRequestId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("Reviews");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Comment = "Excellent service! The driver was very professional and the car was comfortable.",
+                            CreatedAt = new DateTime(2023, 12, 27, 3, 0, 0, 0, DateTimeKind.Utc),
+                            DriveRequestId = 1,
+                            Rating = 5,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Comment = "Good ride, everything was on time.",
+                            CreatedAt = new DateTime(2023, 12, 29, 3, 0, 0, 0, DateTimeKind.Utc),
+                            DriveRequestId = 2,
+                            Rating = 4,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Comment = "Perfect experience! Will definitely use this service again.",
+                            CreatedAt = new DateTime(2023, 12, 30, 3, 0, 0, 0, DateTimeKind.Utc),
+                            DriveRequestId = 3,
+                            Rating = 5,
+                            UserId = 5
                         });
                 });
 
@@ -860,6 +973,25 @@ namespace CallTaxi.Services.Migrations
                     b.Navigation("Vehicle");
 
                     b.Navigation("VehicleTier");
+                });
+
+            modelBuilder.Entity("CallTaxi.Services.Database.Review", b =>
+                {
+                    b.HasOne("CallTaxi.Services.Database.DriveRequest", "DriveRequest")
+                        .WithMany()
+                        .HasForeignKey("DriveRequestId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CallTaxi.Services.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("DriveRequest");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.User", b =>

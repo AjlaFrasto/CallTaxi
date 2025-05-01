@@ -286,6 +286,95 @@ namespace CallTaxi.Services.Database
                     Description = "Request has been cancelled"
                 }
             );
+
+            // Seed DriveRequests (Completed)
+            modelBuilder.Entity<DriveRequest>().HasData(
+                // User 4's first completed drive (Premium tier)
+                new DriveRequest
+                {
+                    Id = 1,
+                    UserId = 4, // Ajla Frašto
+                    VehicleTierId = 2, // Premium
+                    DriverId = 2, // Amel Musić
+                    VehicleId = 1, // Mercedes-Benz E-Class
+                    StartLocation = "43.8562586,18.4130763", // Sarajevo City Center (Baščaršija)
+                    EndLocation = "43.8247222,18.3313889", // Sarajevo International Airport
+                    BasePrice = 20.00m,
+                    FinalPrice = 25.00m,
+                    CreatedAt = fixedDate.AddDays(-5),
+                    AcceptedAt = fixedDate.AddDays(-5).AddHours(1),
+                    CompletedAt = fixedDate.AddDays(-5).AddHours(2),
+                    StatusId = 3 // Completed
+                },
+                // User 4's second completed drive (Standard tier)
+                new DriveRequest
+                {
+                    Id = 2,
+                    UserId = 4, // Ajla Frašto
+                    VehicleTierId = 1, // Standard
+                    DriverId = 3, // Adil Joldić
+                    VehicleId = 2, // Volkswagen Passat
+                    StartLocation = "44.2019444,17.9080556", // Zenica Train Station
+                    EndLocation = "44.2036111,17.9077778", // Zenica City Center (Trg Alije Izetbegovića)
+                    BasePrice = 10.00m,
+                    FinalPrice = 12.00m,
+                    CreatedAt = fixedDate.AddDays(-3),
+                    AcceptedAt = fixedDate.AddDays(-3).AddHours(1),
+                    CompletedAt = fixedDate.AddDays(-3).AddHours(2),
+                    StatusId = 3 // Completed
+                },
+                // User 5's completed drive (Premium tier)
+                new DriveRequest
+                {
+                    Id = 3,
+                    UserId = 5, // Elmir Babović
+                    VehicleTierId = 2, // Premium
+                    DriverId = 2, // Amel Musić
+                    VehicleId = 1, // Mercedes-Benz E-Class
+                    StartLocation = "43.3372222,17.8150000", // Mostar Old Bridge (Stari Most)
+                    EndLocation = "43.3458333,17.8083333", // Mostar Train Station
+                    BasePrice = 15.00m,
+                    FinalPrice = 18.00m,
+                    CreatedAt = fixedDate.AddDays(-2),
+                    AcceptedAt = fixedDate.AddDays(-2).AddHours(1),
+                    CompletedAt = fixedDate.AddDays(-2).AddHours(2),
+                    StatusId = 3 // Completed
+                }
+            );
+
+            // Seed Reviews
+            modelBuilder.Entity<Review>().HasData(
+                // Review for User 4's first drive
+                new Review
+                {
+                    Id = 1,
+                    DriveRequestId = 1,
+                    UserId = 4, // Ajla Frašto
+                    Rating = 5,
+                    Comment = "Excellent service! The driver was very professional and the car was comfortable.",
+                    CreatedAt = fixedDate.AddDays(-5).AddHours(3)
+                },
+                // Review for User 4's second drive
+                new Review
+                {
+                    Id = 2,
+                    DriveRequestId = 2,
+                    UserId = 4, // Ajla Frašto
+                    Rating = 4,
+                    Comment = "Good ride, everything was on time.",
+                    CreatedAt = fixedDate.AddDays(-3).AddHours(3)
+                },
+                // Review for User 5's drive
+                new Review
+                {
+                    Id = 3,
+                    DriveRequestId = 3,
+                    UserId = 5, // Elmir Babović
+                    Rating = 5,
+                    Comment = "Perfect experience! Will definitely use this service again.",
+                    CreatedAt = fixedDate.AddDays(-2).AddHours(3)
+                }
+            );
         }
     }
 } 

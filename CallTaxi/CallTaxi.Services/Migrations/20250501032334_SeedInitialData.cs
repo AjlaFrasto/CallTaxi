@@ -271,6 +271,33 @@ namespace CallTaxi.Services.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DriveRequestId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reviews_DriveRequests_DriveRequestId",
+                        column: x => x.DriveRequestId,
+                        principalTable: "DriveRequests",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Reviews_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "Brands",
                 columns: new[] { "Id", "Name" },
@@ -388,6 +415,26 @@ namespace CallTaxi.Services.Migrations
                     { 2, 4, "White", "B456-DEF", "Volkswagen Passat", false, 4, "Accepted", 3, 1, 2021 }
                 });
 
+            migrationBuilder.InsertData(
+                table: "DriveRequests",
+                columns: new[] { "Id", "AcceptedAt", "BasePrice", "CompletedAt", "CreatedAt", "DriverId", "EndLocation", "FinalPrice", "StartLocation", "StatusId", "UserId", "VehicleId", "VehicleTierId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 12, 27, 1, 0, 0, 0, DateTimeKind.Utc), 20.00m, new DateTime(2023, 12, 27, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 27, 0, 0, 0, 0, DateTimeKind.Utc), 2, "43.8247222,18.3313889", 25.00m, "43.8562586,18.4130763", 3, 4, 1, 2 },
+                    { 2, new DateTime(2023, 12, 29, 1, 0, 0, 0, DateTimeKind.Utc), 10.00m, new DateTime(2023, 12, 29, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 29, 0, 0, 0, 0, DateTimeKind.Utc), 3, "44.2036111,17.9077778", 12.00m, "44.2019444,17.9080556", 3, 4, 2, 1 },
+                    { 3, new DateTime(2023, 12, 30, 1, 0, 0, 0, DateTimeKind.Utc), 15.00m, new DateTime(2023, 12, 30, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 30, 0, 0, 0, 0, DateTimeKind.Utc), 2, "43.3458333,17.8083333", 18.00m, "43.3372222,17.8150000", 3, 5, 1, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Reviews",
+                columns: new[] { "Id", "Comment", "CreatedAt", "DriveRequestId", "Rating", "UserId" },
+                values: new object[,]
+                {
+                    { 1, "Excellent service! The driver was very professional and the car was comfortable.", new DateTime(2023, 12, 27, 3, 0, 0, 0, DateTimeKind.Utc), 1, 5, 4 },
+                    { 2, "Good ride, everything was on time.", new DateTime(2023, 12, 29, 3, 0, 0, 0, DateTimeKind.Utc), 2, 4, 4 },
+                    { 3, "Perfect experience! Will definitely use this service again.", new DateTime(2023, 12, 30, 3, 0, 0, 0, DateTimeKind.Utc), 3, 5, 5 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Brands_Name",
                 table: "Brands",
@@ -440,6 +487,17 @@ namespace CallTaxi.Services.Migrations
                 table: "Genders",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_DriveRequestId_UserId",
+                table: "Reviews",
+                columns: new[] { "DriveRequestId", "UserId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_UserId",
+                table: "Reviews",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_Name",
@@ -515,19 +573,22 @@ namespace CallTaxi.Services.Migrations
                 name: "Chats");
 
             migrationBuilder.DropTable(
-                name: "DriveRequests");
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
+
+            migrationBuilder.DropTable(
+                name: "DriveRequests");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "DriveRequestStatuses");
 
             migrationBuilder.DropTable(
                 name: "Vehicles");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Brands");
