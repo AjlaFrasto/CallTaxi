@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallTaxi.Model", "CallTaxi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallTaxi.Services", "CallTaxi.Services\CallTaxi.Services.csproj", "{3CD97ADE-EFCC-4EEC-8BE5-3D89C15CA0F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallTaxi.Subscriber", "CallTaxi.Subscriber\CallTaxi.Subscriber.csproj", "{40D773A7-8BF1-40A9-8CA3-CFA6ADE6F19F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallTaxi.Subscriber", "CallTaxi.Subscriber\CallTaxi.Subscriber.csproj", "{40D773A7-8BF1-40A9-8CA3-CFA6ADE6F19F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{426FDBE6-9CD8-4614-8032-E488B77FC88D} = {426FDBE6-9CD8-4614-8032-E488B77FC88D}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallTaxi.RabbitMQ", "CallTaxi.RabbitMQ\CallTaxi.RabbitMQ.csproj", "{8BCA5AFF-6EA2-49B3-B9B4-7EA61229948E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{426FDBE6-9CD8-4614-8032-E488B77FC88D} = {426FDBE6-9CD8-4614-8032-E488B77FC88D}
 	EndProjectSection
@@ -36,6 +41,10 @@ Global
 		{40D773A7-8BF1-40A9-8CA3-CFA6ADE6F19F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40D773A7-8BF1-40A9-8CA3-CFA6ADE6F19F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40D773A7-8BF1-40A9-8CA3-CFA6ADE6F19F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BCA5AFF-6EA2-49B3-B9B4-7EA61229948E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BCA5AFF-6EA2-49B3-B9B4-7EA61229948E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BCA5AFF-6EA2-49B3-B9B4-7EA61229948E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BCA5AFF-6EA2-49B3-B9B4-7EA61229948E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,6 +7,8 @@ using CallTaxi.WebAPI.Filters;
 using CallTaxi.Services.Services;
 using CallTaxi.Services.Interfaces;
 using System.Reflection;
+using CallTaxi.RabbitMQ;
+using CallTaxi.RabbitMQ.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,14 +34,19 @@ builder.Services.AddTransient<IDriveRequestService, DriveRequestService>();
 builder.Services.AddTransient<IDriveRequestStatusService, DriveRequestStatusService>();
 builder.Services.AddTransient<IReviewService, ReviewService>();
 
-builder.Services.AddMapster();
 // Configure database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=.;Database=CallTaxiDb;User Id=your_user;Password=your_password;TrustServerCertificate=True;Trusted_Connection=True;";
 builder.Services.AddDatabaseServices(connectionString);
 
+// Add RabbitMQ services
+builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddHostedService<BackgroundWorkerService>();
+
+builder.Services.AddMapster();
+
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
 
 builder.Services.AddControllers(x =>
     {
@@ -73,7 +80,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
 
 var app = builder.Build();
 

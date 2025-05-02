@@ -1,16 +1,17 @@
+using System;
+using System.Threading.Tasks;
 using CallTaxi.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using CallTaxi.Model.Responses;
 using CallTaxi.Model.Requests;
 using CallTaxi.Model.SearchObjects;
 using System.Linq;
-using System;
 using MapsterMapper;
 using CallTaxi.Model;
 using EasyNetQ;
-using CallTaxi.Model.Messages;
+using CallTaxi.RabbitMQ;
+using CallTaxi.RabbitMQ.Models;
 
 namespace CallTaxi.Services.VehicleStateMachine
 {
@@ -22,7 +23,12 @@ namespace CallTaxi.Services.VehicleStateMachine
 
         public override async Task<VehicleResponse> UpdateAsync(int id, VehicleUpdateRequest request)
         {
-            var entity = await _context.Vehicles.FindAsync(id);
+            var entity = await _context.Vehicles
+                .Include(v => v.Brand)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            if (entity == null)
+                throw new InvalidOperationException($"Vehicle with ID {id} not found");
 
             _mapper.Map(request, entity);
 
@@ -32,11 +38,18 @@ namespace CallTaxi.Services.VehicleStateMachine
 
             var response = _mapper.Map<VehicleResponse>(entity);
 
-            var vehiclePending = new VehiclePending
+            // Create RabbitMQ notification DTO
+            var notificationDto = new VehicleNotificationDto
             {
-                Vehicle = response
+                BrandName = entity.Brand.Name,
+                Name = entity.Name
             };
-            await bus.PubSub.PublishAsync(vehiclePending);
+
+            var vehicleNotification = new VehicleNotification
+            {
+                Vehicle = notificationDto
+            };
+            await bus.PubSub.PublishAsync(vehicleNotification);
 
             return response;
         }
