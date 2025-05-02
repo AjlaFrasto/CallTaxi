@@ -9,6 +9,9 @@ using System;
 using MapsterMapper;
 using CallTaxi.Model;
 using CallTaxi.Services.Database;
+using EasyNetQ;
+using CallTaxi.RabbitMQ;
+using CallTaxi.RabbitMQ.Models;
 
 namespace CallTaxi.Services.VehicleStateMachine
 {
@@ -20,7 +23,12 @@ namespace CallTaxi.Services.VehicleStateMachine
 
         public override async Task<VehicleResponse> UpdateAsync(int id, VehicleUpdateRequest request)
         {
-            var entity = await _context.Vehicles.FindAsync(id);
+            var entity = await _context.Vehicles
+                .Include(v => v.Brand)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            if (entity == null)
+                throw new InvalidOperationException($"Vehicle with ID {id} not found");
 
             _mapper.Map(request, entity);
 
@@ -28,7 +36,24 @@ namespace CallTaxi.Services.VehicleStateMachine
 
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<VehicleResponse>(entity);
+            var bus = RabbitHutch.CreateBus("host=localhost");
+
+            var response = _mapper.Map<VehicleResponse>(entity);
+
+            // Create RabbitMQ notification DTO
+            var notificationDto = new VehicleNotificationDto
+            {
+                BrandName = entity.Brand.Name,
+                Name = entity.Name
+            };
+
+            var vehicleNotification = new VehicleNotification
+            {
+                Vehicle = notificationDto
+            };
+            await bus.PubSub.PublishAsync(vehicleNotification);
+
+            return response;
         }
 
         public override async Task<bool> DeleteAsync(int id)

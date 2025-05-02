@@ -9,6 +9,9 @@ using System.Linq;
 using System;
 using MapsterMapper;
 using CallTaxi.Model;
+using EasyNetQ;
+using CallTaxi.RabbitMQ;
+using CallTaxi.RabbitMQ.Models;
 
 namespace CallTaxi.Services.VehicleStateMachine
 {
@@ -28,7 +31,27 @@ namespace CallTaxi.Services.VehicleStateMachine
             _context.Vehicles.Add(entity);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<VehicleResponse>(entity);
+            // Reload entity with Brand information
+            await _context.Entry(entity).Reference(v => v.Brand).LoadAsync();
+
+            var bus = RabbitHutch.CreateBus("host=localhost");
+
+            var response = _mapper.Map<VehicleResponse>(entity);
+
+            // Create RabbitMQ notification DTO
+            var notificationDto = new VehicleNotificationDto
+            {
+                BrandName = entity.Brand.Name,
+                Name = entity.Name
+            };
+
+            var vehicleNotification = new VehicleNotification
+            {
+                Vehicle = notificationDto
+            };
+            await bus.PubSub.PublishAsync(vehicleNotification);
+
+            return response;
         }
     }
 } 
