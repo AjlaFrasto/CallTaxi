@@ -7,14 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using EasyNetQ;
 using CallTaxi.Subscriber.Models;
+using CallTaxi.Services.Interfaces;
 
 namespace CallTaxi.Services.Services
 {
-    public interface IAdminEmailService
-    {
-        Task UpdateRabbitMQAdminEmailsAsync();
-    }
-
     public class AdminEmailService : IAdminEmailService
     {
         private readonly CallTaxiDbContext _context;

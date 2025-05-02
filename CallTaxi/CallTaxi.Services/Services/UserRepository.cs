@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CallTaxi.Services.Database;
 using CallTaxi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CallTaxi.Services.Database
+namespace CallTaxi.Services.Services
 {
     public class UserRepository : IUserRepository
     {
@@ -27,4 +28,4 @@ namespace CallTaxi.Services.Database
                 .ToListAsync();
         }
     }
-} 
+}

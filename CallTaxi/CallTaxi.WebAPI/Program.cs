@@ -32,8 +32,12 @@ builder.Services.AddTransient<IVehicleService, VehicleService>();
 builder.Services.AddTransient<IDriveRequestService, DriveRequestService>();
 builder.Services.AddTransient<IDriveRequestStatusService, DriveRequestStatusService>();
 builder.Services.AddTransient<IReviewService, ReviewService>();
+
+
+// RabbitMQ
 builder.Services.AddTransient<IAdminEmailService, AdminEmailService>();
 builder.Services.AddSingleton<CallTaxi.Subscriber.Data.IUserRepository, CallTaxi.Subscriber.Data.UserRepository>();
+
 
 // Configure database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=.;Database=CallTaxiDb;User Id=your_user;Password=your_password;TrustServerCertificate=True;Trusted_Connection=True;";
@@ -90,11 +94,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // Initialize admin emails for notifications
-using (var scope = app.Services.CreateScope())
-{
-    var adminEmailService = scope.ServiceProvider.GetRequiredService<IAdminEmailService>();
-    await adminEmailService.UpdateRabbitMQAdminEmailsAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var adminEmailService = scope.ServiceProvider.GetRequiredService<IAdminEmailService>();
+//    await adminEmailService.UpdateRabbitMQAdminEmailsAsync();
+//}
 
 app.UseHttpsRedirection();
 
