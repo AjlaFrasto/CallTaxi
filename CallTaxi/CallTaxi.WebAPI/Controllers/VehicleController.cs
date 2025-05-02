@@ -16,6 +16,10 @@ namespace CallTaxi.WebAPI.Controllers
             _vehicleService = service;
         }
 
+
+        /// <summary>
+        /// Only test if RabbitMQ is installed and CallTaxi.Subscriber project is started
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Administrator,Driver")]
         public override async Task<VehicleResponse> Create([FromBody] VehicleInsertRequest request)
@@ -25,7 +29,7 @@ namespace CallTaxi.WebAPI.Controllers
 
 
         /// <summary>
-        /// Only test if RabbitMQ is installed, every call sends an email through RabbitMQ
+        /// Only test if RabbitMQ is installed and CallTaxi.Subscriber project is started
         /// </summary>
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator,Driver")]

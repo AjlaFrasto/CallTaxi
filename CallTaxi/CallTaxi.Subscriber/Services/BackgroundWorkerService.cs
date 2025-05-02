@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using System.Runtime.Versioning;
 using System.Linq;
 using CallTaxi.Subscriber.Models;
+using CallTaxi.Subscriber.Interfaces;
 
-namespace CallTaxi.Subscriber
+namespace CallTaxi.Subscriber.Services
 {
     public class BackgroundWorkerService : BackgroundService
     {
         private readonly ILogger<BackgroundWorkerService> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailSenderService _emailSender;
         private readonly string _host = "localhost";
         private readonly string _username = "guest";
         private readonly string _password = "guest";
@@ -21,7 +22,7 @@ namespace CallTaxi.Subscriber
 
         public BackgroundWorkerService(
             ILogger<BackgroundWorkerService> logger,
-            IEmailSender emailSender)
+            IEmailSenderService emailSender)
         {
             _logger = logger;
             _emailSender = emailSender;

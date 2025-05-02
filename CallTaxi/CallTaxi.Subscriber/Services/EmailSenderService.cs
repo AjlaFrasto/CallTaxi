@@ -1,9 +1,10 @@
 using System.Net;
 using System.Net.Mail;
+using CallTaxi.Subscriber.Interfaces;
 
-namespace CallTaxi.Subscriber
+namespace CallTaxi.Subscriber.Services
 {
-    public class EmailSender : IEmailSender
+    public class EmailSenderService : IEmailSenderService
     {
         private readonly string _gmailMail = "ironvault.sender@gmail.com";
         private readonly string _gmailPass = "ormd ggqo jipg kzpn";
