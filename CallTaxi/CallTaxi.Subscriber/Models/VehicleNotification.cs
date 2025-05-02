@@ -1,7 +1,6 @@
 using System;
-using CallTaxi.Subscriber.Models;
 
-namespace CallTaxi.Subscriber
+namespace CallTaxi.Subscriber.Models
 {
     public class VehicleNotification
     {

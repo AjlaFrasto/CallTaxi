@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Versioning;
 using System.Linq;
-using CallTaxi.Subscriber.Data;
 using CallTaxi.Subscriber.Models;
 
 namespace CallTaxi.Subscriber
@@ -15,7 +14,6 @@ namespace CallTaxi.Subscriber
     {
         private readonly ILogger<BackgroundWorkerService> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IUserRepository _userRepository;
         private readonly string _host = "localhost";
         private readonly string _username = "guest";
         private readonly string _password = "guest";
@@ -23,12 +21,10 @@ namespace CallTaxi.Subscriber
 
         public BackgroundWorkerService(
             ILogger<BackgroundWorkerService> logger,
-            IEmailSender emailSender,
-            IUserRepository userRepository)
+            IEmailSender emailSender)
         {
             _logger = logger;
             _emailSender = emailSender;
-            _userRepository = userRepository;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,13 +35,10 @@ namespace CallTaxi.Subscriber
                 {
                     using (var bus = RabbitHutch.CreateBus($"host={_host};virtualHost={_virtualhost};username={_username};password={_password}"))
                     {
-                        // Subscribe to vehicle notifications
+                        // Subscribe to vehicle notifications only
                         bus.PubSub.Subscribe<VehicleNotification>("Vehicle_Notifications", HandleVehicleMessage);
-                        
-                        // Subscribe to admin email updates
-                        bus.PubSub.Subscribe<AdminEmailsUpdate>("Admin_Email_Updates", HandleAdminEmailsUpdate);
-                        
-                        _logger.LogInformation("Waiting for notifications...");
+
+                        _logger.LogInformation("Waiting for vehicle notifications...");
                         await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                     }
                 }
@@ -60,33 +53,26 @@ namespace CallTaxi.Subscriber
             }
         }
 
-        private async Task HandleAdminEmailsUpdate(AdminEmailsUpdate update)
-        {
-            _logger.LogInformation($"Received admin emails update with {update.AdminEmails.Count} emails");
-            _userRepository.UpdateNotificationRecipients(update.AdminEmails);
-        }
-
         private async Task HandleVehicleMessage(VehicleNotification notification)
         {
-            var recipients = await _userRepository.GetNotificationRecipientsAsync();
+            var vehicle = notification.Vehicle;
 
-            if (!recipients.Any())
+            if (!vehicle.AdminEmails.Any())
             {
-                _logger.LogWarning("No recipients found to send notifications to");
+                _logger.LogWarning("No admin emails provided in the notification");
                 return;
             }
 
-            var vehicle = notification.Vehicle;
             var subject = "New Vehicle Pending Review";
             var message = $"A new vehicle {vehicle.BrandName} {vehicle.Name} is ready to be accepted or rejected.\n" +
                         $"Please review and take appropriate action.";
 
-            foreach (var email in recipients)
+            foreach (var email in vehicle.AdminEmails)
             {
                 try
                 {
                     await _emailSender.SendEmailAsync(email, subject, message);
-                    _logger.LogInformation($"Notification sent to recipient: {email}");
+                    _logger.LogInformation($"Notification sent to admin: {email}");
                 }
                 catch (Exception ex)
                 {

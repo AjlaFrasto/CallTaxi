@@ -1,5 +1,4 @@
 using CallTaxi.Subscriber;
-using CallTaxi.Subscriber.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -8,7 +7,6 @@ var builder = Host.CreateDefaultBuilder(args)
     {
         // Add RabbitMQ services
         services.AddSingleton<IEmailSender, EmailSender>();
-        services.AddSingleton<IUserRepository, UserRepository>();
         services.AddHostedService<BackgroundWorkerService>();
     });
 

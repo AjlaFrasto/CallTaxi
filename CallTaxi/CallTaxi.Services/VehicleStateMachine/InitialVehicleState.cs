@@ -39,9 +39,13 @@ namespace CallTaxi.Services.VehicleStateMachine
             // Reload entity with Brand information
             await _context.Entry(entity).Reference(v => v.Brand).LoadAsync();
 
-            var rabbitConfig = _configuration.GetSection("RabbitMQ");
-            var connectionString = $"host={rabbitConfig["HostName"]};username={rabbitConfig["UserName"]};password={rabbitConfig["Password"]}";
-            var bus = RabbitHutch.CreateBus(connectionString);
+            // Get admin emails
+            var adminEmails = await _context.Users
+                .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Administrator"))
+                .Select(u => u.Email)
+                .ToListAsync();
+
+            var bus = RabbitHutch.CreateBus("host=localhost");
 
             var response = _mapper.Map<VehicleResponse>(entity);
 
@@ -49,7 +53,8 @@ namespace CallTaxi.Services.VehicleStateMachine
             var notificationDto = new VehicleNotificationDto
             {
                 BrandName = entity.Brand.Name,
-                Name = entity.Name
+                Name = entity.Name,
+                AdminEmails = adminEmails
             };
 
             var vehicleNotification = new VehicleNotification
