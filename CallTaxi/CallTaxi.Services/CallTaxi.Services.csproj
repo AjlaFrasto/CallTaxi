@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CallTaxi.Model\CallTaxi.Model.csproj" />
-    <ProjectReference Include="..\CallTaxi.RabbitMQ\CallTaxi.RabbitMQ.csproj" />
+    <ProjectReference Include="..\CallTaxi.Subscriber\CallTaxi.Subscriber.csproj" />
   </ItemGroup>
 
   <ItemGroup>

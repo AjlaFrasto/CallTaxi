@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CallTaxi.RabbitMQ.Models;
 
-namespace CallTaxi.RabbitMQ.Data
+namespace CallTaxi.Services.Interfaces
 {
     public interface IUserRepository
     {
         Task<List<string>> GetAdminEmailsAsync();
     }
-} 
+}

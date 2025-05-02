@@ -23,7 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CallTaxi.Model\CallTaxi.Model.csproj" />
     <ProjectReference Include="..\CallTaxi.Services\CallTaxi.Services.csproj" />
-    <ProjectReference Include="..\CallTaxi.RabbitMQ\CallTaxi.RabbitMQ.csproj" />
   </ItemGroup>
 
 </Project>

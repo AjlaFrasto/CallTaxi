@@ -10,15 +10,20 @@ using MapsterMapper;
 using CallTaxi.Model;
 using CallTaxi.Services.Database;
 using EasyNetQ;
-using CallTaxi.RabbitMQ;
-using CallTaxi.RabbitMQ.Models;
+using CallTaxi.Subscriber.Models;
+using Microsoft.Extensions.Configuration;
+using CallTaxi.Subscriber;
 
 namespace CallTaxi.Services.VehicleStateMachine
 {
     public class AcceptedVehicleState : BaseVehicleState
     {
-        public AcceptedVehicleState(IServiceProvider serviceProvider, CallTaxiDbContext context, IMapper mapper) : base(serviceProvider, context, mapper)
+        private readonly IConfiguration _configuration;
+
+        public AcceptedVehicleState(IServiceProvider serviceProvider, CallTaxiDbContext context, IMapper mapper, IConfiguration configuration) 
+            : base(serviceProvider, context, mapper)
         {
+            _configuration = configuration;
         }
 
         public override async Task<VehicleResponse> UpdateAsync(int id, VehicleUpdateRequest request)
@@ -36,7 +41,9 @@ namespace CallTaxi.Services.VehicleStateMachine
 
             await _context.SaveChangesAsync();
 
-            var bus = RabbitHutch.CreateBus("host=localhost");
+            var rabbitConfig = _configuration.GetSection("RabbitMQ");
+            var connectionString = $"host={rabbitConfig["HostName"]};username={rabbitConfig["UserName"]};password={rabbitConfig["Password"]}";
+            var bus = RabbitHutch.CreateBus(connectionString);
 
             var response = _mapper.Map<VehicleResponse>(entity);
 
@@ -61,7 +68,6 @@ namespace CallTaxi.Services.VehicleStateMachine
             var entity = await _context.Vehicles.FindAsync(id);
             if (entity == null)
                 return false;
-
 
             // Then perform the actual delete
             _context.Vehicles.Remove(entity);

@@ -4,10 +4,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CallTaxi.RabbitMQ.Data;
 using System.Runtime.Versioning;
+using System.Linq;
+using CallTaxi.Subscriber.Data;
+using CallTaxi.Subscriber.Models;
 
-namespace CallTaxi.RabbitMQ
+namespace CallTaxi.Subscriber
 {
     public class BackgroundWorkerService : BackgroundService
     {
@@ -37,8 +39,13 @@ namespace CallTaxi.RabbitMQ
                 {
                     using (var bus = RabbitHutch.CreateBus($"host={_host};virtualHost={_virtualhost};username={_username};password={_password}"))
                     {
-                        bus.PubSub.Subscribe<VehicleNotification>("Vehicle_Notifications", HandleMessage);
-                        _logger.LogInformation("Waiting for vehicle notifications...");
+                        // Subscribe to vehicle notifications
+                        bus.PubSub.Subscribe<VehicleNotification>("Vehicle_Notifications", HandleVehicleMessage);
+                        
+                        // Subscribe to admin email updates
+                        bus.PubSub.Subscribe<AdminEmailsUpdate>("Admin_Email_Updates", HandleAdminEmailsUpdate);
+                        
+                        _logger.LogInformation("Waiting for notifications...");
                         await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                     }
                 }
@@ -53,13 +60,19 @@ namespace CallTaxi.RabbitMQ
             }
         }
 
-        private async Task HandleMessage(VehicleNotification notification)
+        private async Task HandleAdminEmailsUpdate(AdminEmailsUpdate update)
         {
-            var adminEmails = await _userRepository.GetAdminEmailsAsync();
+            _logger.LogInformation($"Received admin emails update with {update.AdminEmails.Count} emails");
+            _userRepository.UpdateNotificationRecipients(update.AdminEmails);
+        }
 
-            if (!adminEmails.Any())
+        private async Task HandleVehicleMessage(VehicleNotification notification)
+        {
+            var recipients = await _userRepository.GetNotificationRecipientsAsync();
+
+            if (!recipients.Any())
             {
-                _logger.LogWarning("No admin users found to send notifications to");
+                _logger.LogWarning("No recipients found to send notifications to");
                 return;
             }
 
@@ -68,12 +81,12 @@ namespace CallTaxi.RabbitMQ
             var message = $"A new vehicle {vehicle.BrandName} {vehicle.Name} is ready to be accepted or rejected.\n" +
                         $"Please review and take appropriate action.";
 
-            foreach (var email in adminEmails)
+            foreach (var email in recipients)
             {
                 try
                 {
                     await _emailSender.SendEmailAsync(email, subject, message);
-                    _logger.LogInformation($"Notification sent to admin: {email}");
+                    _logger.LogInformation($"Notification sent to recipient: {email}");
                 }
                 catch (Exception ex)
                 {
@@ -82,4 +95,4 @@ namespace CallTaxi.RabbitMQ
             }
         }
     }
-} 
+}

@@ -1,10 +1,10 @@
 using System;
-using CallTaxi.RabbitMQ.Models;
+using CallTaxi.Subscriber.Models;
 
-namespace CallTaxi.RabbitMQ
+namespace CallTaxi.Subscriber
 {
     public class VehicleNotification
     {
         public VehicleNotificationDto Vehicle { get; set; } = null!;
     }
-} 
+}

@@ -10,8 +10,8 @@ using System.Linq;
 using MapsterMapper;
 using CallTaxi.Model;
 using EasyNetQ;
-using CallTaxi.RabbitMQ;
-using CallTaxi.RabbitMQ.Models;
+using CallTaxi.Subscriber.Models;
+using CallTaxi.Subscriber;
 
 namespace CallTaxi.Services.VehicleStateMachine
 {

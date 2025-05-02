@@ -7,8 +7,7 @@ using CallTaxi.WebAPI.Filters;
 using CallTaxi.Services.Services;
 using CallTaxi.Services.Interfaces;
 using System.Reflection;
-using CallTaxi.RabbitMQ;
-using CallTaxi.RabbitMQ.Data;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,15 +32,15 @@ builder.Services.AddTransient<IVehicleService, VehicleService>();
 builder.Services.AddTransient<IDriveRequestService, DriveRequestService>();
 builder.Services.AddTransient<IDriveRequestStatusService, DriveRequestStatusService>();
 builder.Services.AddTransient<IReviewService, ReviewService>();
+builder.Services.AddTransient<IAdminEmailService, AdminEmailService>();
+builder.Services.AddSingleton<CallTaxi.Subscriber.Data.IUserRepository, CallTaxi.Subscriber.Data.UserRepository>();
 
 // Configure database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=.;Database=CallTaxiDb;User Id=your_user;Password=your_password;TrustServerCertificate=True;Trusted_Connection=True;";
 builder.Services.AddDatabaseServices(connectionString);
 
-// Add RabbitMQ services
-builder.Services.AddSingleton<IEmailSender, EmailSender>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
-builder.Services.AddHostedService<BackgroundWorkerService>();
+// Add configuration
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 builder.Services.AddMapster();
 
@@ -88,6 +87,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+// Initialize admin emails for notifications
+using (var scope = app.Services.CreateScope())
+{
+    var adminEmailService = scope.ServiceProvider.GetRequiredService<IAdminEmailService>();
+    await adminEmailService.UpdateRabbitMQAdminEmailsAsync();
 }
 
 app.UseHttpsRedirection();

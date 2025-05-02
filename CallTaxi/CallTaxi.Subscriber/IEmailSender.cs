@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 
-namespace CallTaxi.RabbitMQ
+namespace CallTaxi.Subscriber
 {
     public interface IEmailSender
     {
         Task SendEmailAsync(string email, string subject, string message);
     }
-} 
+}

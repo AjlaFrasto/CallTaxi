@@ -9,15 +9,21 @@ using System.Linq;
 using System;
 using MapsterMapper;
 using EasyNetQ;
-using CallTaxi.RabbitMQ;
-using CallTaxi.RabbitMQ.Models;
+using CallTaxi.Subscriber.Data;
+using Microsoft.Extensions.Configuration;
+using CallTaxi.Subscriber.Models;
+using CallTaxi.Subscriber;
 
 namespace CallTaxi.Services.VehicleStateMachine
 {
     public class RejectedVehicleState : BaseVehicleState
     {
-        public RejectedVehicleState(IServiceProvider serviceProvider, CallTaxiDbContext context, IMapper mapper) : base(serviceProvider, context, mapper)
+        private readonly IConfiguration _configuration;
+
+        public RejectedVehicleState(IServiceProvider serviceProvider, CallTaxiDbContext context, IMapper mapper, IConfiguration configuration) 
+            : base(serviceProvider, context, mapper)
         {
+            _configuration = configuration;
         }
 
         public override async Task<VehicleResponse> UpdateAsync(int id, VehicleUpdateRequest request)
@@ -35,7 +41,9 @@ namespace CallTaxi.Services.VehicleStateMachine
 
             await _context.SaveChangesAsync();
 
-            var bus = RabbitHutch.CreateBus("host=localhost");
+            var rabbitConfig = _configuration.GetSection("RabbitMQ");
+            var connectionString = $"host={rabbitConfig["HostName"]};username={rabbitConfig["UserName"]};password={rabbitConfig["Password"]}";
+            var bus = RabbitHutch.CreateBus(connectionString);
 
             var response = _mapper.Map<VehicleResponse>(entity);
 

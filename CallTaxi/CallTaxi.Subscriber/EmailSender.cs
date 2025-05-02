@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 
-namespace CallTaxi.RabbitMQ
+namespace CallTaxi.Subscriber
 {
     public class EmailSender : IEmailSender
     {
@@ -25,4 +25,4 @@ namespace CallTaxi.RabbitMQ
                               ));
         }
     }
-} 
+}

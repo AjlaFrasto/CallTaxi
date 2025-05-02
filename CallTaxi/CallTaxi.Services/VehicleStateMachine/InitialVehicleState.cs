@@ -10,15 +10,20 @@ using System;
 using MapsterMapper;
 using CallTaxi.Model;
 using EasyNetQ;
-using CallTaxi.RabbitMQ;
-using CallTaxi.RabbitMQ.Models;
+using CallTaxi.Subscriber.Models;
+using Microsoft.Extensions.Configuration;
+using CallTaxi.Subscriber;
 
 namespace CallTaxi.Services.VehicleStateMachine
 {
     public class InitialVehicleState : BaseVehicleState
     {
-        public InitialVehicleState(IServiceProvider serviceProvider, CallTaxiDbContext context, IMapper mapper) : base(serviceProvider, context, mapper)
+        private readonly IConfiguration _configuration;
+
+        public InitialVehicleState(IServiceProvider serviceProvider, CallTaxiDbContext context, IMapper mapper, IConfiguration configuration) 
+            : base(serviceProvider, context, mapper)
         {
+            _configuration = configuration;
         }
 
         public override async Task<VehicleResponse> CreateAsync(VehicleInsertRequest request)
@@ -34,7 +39,9 @@ namespace CallTaxi.Services.VehicleStateMachine
             // Reload entity with Brand information
             await _context.Entry(entity).Reference(v => v.Brand).LoadAsync();
 
-            var bus = RabbitHutch.CreateBus("host=localhost");
+            var rabbitConfig = _configuration.GetSection("RabbitMQ");
+            var connectionString = $"host={rabbitConfig["HostName"]};username={rabbitConfig["UserName"]};password={rabbitConfig["Password"]}";
+            var bus = RabbitHutch.CreateBus(connectionString);
 
             var response = _mapper.Map<VehicleResponse>(entity);
 
