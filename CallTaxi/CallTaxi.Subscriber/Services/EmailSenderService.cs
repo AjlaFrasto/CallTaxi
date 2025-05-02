@@ -6,8 +6,8 @@ namespace CallTaxi.Subscriber.Services
 {
     public class EmailSenderService : IEmailSenderService
     {
-        private readonly string _gmailMail = "ironvault.sender@gmail.com";
-        private readonly string _gmailPass = "ormd ggqo jipg kzpn";
+        private readonly string _gmailMail = "calltaxi.sender@gmail.com";
+        private readonly string _gmailPass = "tlkv xshf zbaw oaab";
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
