@@ -1,0 +1,12 @@
+-- Pokretanje image dockera sa imenom CallTaxi
+
+docker build -t calltaxi .
+
+-- Pregled svih image-a
+
+docker image ls
+
+-- Pokretanje instance image-a na portu calltaxi_dev naziv instance , calltaxi naziv image-a
+ 
+docker run -p 5130:5130 --name calltaxi_dev calltaxi
+
