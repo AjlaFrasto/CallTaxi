@@ -8,6 +8,8 @@ using CallTaxi.Services.Services;
 using CallTaxi.Services.Interfaces;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +36,7 @@ builder.Services.AddTransient<IDriveRequestStatusService, DriveRequestStatusServ
 builder.Services.AddTransient<IReviewService, ReviewService>();
 
 // Configure database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=.;Database=CallTaxiDb;User Id=your_user;Password=your_password;TrustServerCertificate=True;Trusted_Connection=True;";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=.;Database=CallTaxiDb;User Id=sa;Password=QWEasd123!;TrustServerCertificate=True;Trusted_Connection=True;";
 builder.Services.AddDatabaseServices(connectionString);
 
 // Add configuration
@@ -92,5 +94,21 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<CallTaxiDbContext>();
+
+
+    var pendingMigrations = dataContext.Database.GetPendingMigrations().Any();
+
+    if (pendingMigrations)
+    {
+
+        dataContext.Database.Migrate();
+
+
+    }
+}
 
 app.Run();
