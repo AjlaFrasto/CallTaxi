@@ -15,10 +15,10 @@ namespace CallTaxi.Subscriber.Services
     {
         private readonly ILogger<BackgroundWorkerService> _logger;
         private readonly IEmailSenderService _emailSender;
-        private readonly string _host = "localhost";
-        private readonly string _username = "guest";
-        private readonly string _password = "guest";
-        private readonly string _virtualhost = "/";
+        private readonly string _host = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
+        private readonly string _username = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest";
+        private readonly string _password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest";
+        private readonly string _virtualhost = Environment.GetEnvironmentVariable("RABBITMQ_VIRTUALHOST") ?? "/";
 
         public BackgroundWorkerService(
             ILogger<BackgroundWorkerService> logger,

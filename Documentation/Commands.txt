@@ -18,3 +18,6 @@ dotnet ef migrations add SeedInitialData --project .\CallTaxi.Services --startup
 Pokretanje dockera sa imenom CallTaxi
 
 docker build -t CallTaxi .
+
+fail: CallTaxi.Subscriber.Services.BackgroundWorkerService[0]
+      Error in RabbitMQ listener: A task was canceled.

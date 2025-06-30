@@ -10,3 +10,7 @@ docker image ls
  
 docker run -p 5130:5130 --name calltaxi_dev calltaxi
 
+-- Dizanje dockera
+
+docker-compose up --build -- 
+
