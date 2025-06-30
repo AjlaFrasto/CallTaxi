@@ -8,6 +8,8 @@ using System.Runtime.Versioning;
 using System.Linq;
 using CallTaxi.Subscriber.Models;
 using CallTaxi.Subscriber.Interfaces;
+using System.Net.Sockets;
+using System.Net;
 
 namespace CallTaxi.Subscriber.Services
 {
@@ -30,6 +32,31 @@ namespace CallTaxi.Subscriber.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            // Check internet connectivity to smtp.gmail.com
+            try
+            {
+                var addresses = await Dns.GetHostAddressesAsync("smtp.gmail.com");
+                _logger.LogInformation($"smtp.gmail.com resolved to: {string.Join(", ", addresses.Select(a => a.ToString()))}");
+                using (var client = new TcpClient())
+                {
+                    var connectTask = client.ConnectAsync("smtp.gmail.com", 587);
+                    var timeoutTask = Task.Delay(5000, stoppingToken);
+                    var completed = await Task.WhenAny(connectTask, timeoutTask);
+                    if (completed == connectTask && client.Connected)
+                    {
+                        _logger.LogInformation("Successfully connected to smtp.gmail.com:587");
+                    }
+                    else
+                    {
+                        _logger.LogError("Failed to connect to smtp.gmail.com:587 (timeout or error)");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Internet connectivity check failed: {ex.Message}");
+            }
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try

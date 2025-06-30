@@ -45,7 +45,11 @@ namespace CallTaxi.Services.VehicleStateMachine
                 .Select(u => u.Email)
                 .ToListAsync();
 
-            var bus = RabbitHutch.CreateBus("host=localhost");
+            var host = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
+            var username = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest";
+            var password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest";
+            var virtualhost = Environment.GetEnvironmentVariable("RABBITMQ_VIRTUALHOST") ?? "/";
+            var bus = RabbitHutch.CreateBus($"host={host};virtualHost={virtualhost};username={username};password={password}");
 
             var response = _mapper.Map<VehicleResponse>(entity);
 
