@@ -1,7 +1,64 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const LoginPage());
+}
+
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, primary: Colors.red),
+      
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Login'),
+        ),
+        body: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 499),
+            child: Card(
+                child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Image.network(
+                    "https://fit.ba/content/763cbb87-718d-4eca-a991-343858daf424",
+                    width: 150,
+                    height: 150,
+                  ),
+                  const TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Username',
+                      icon: Icon(Icons.person)
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      icon: Icon(Icons.password),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      print('Login');
+                    },
+                    child: const Text('Login'),
+                  )
+                ],
+              ),
+            )),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -28,9 +85,31 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellowAccent),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Container(
+        color: Colors.red,
+        width: 400,
+        height: 499,
+        child: Center(
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text('Hello'),
+            TextButton(
+              onPressed: () {
+                print('object');
+              },
+              child: Text('Click me'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blue,
+                fixedSize: Size(150, 100),
+                padding: EdgeInsets.all(10),
+              ),
+            )
+          ]),
+        ),
+      ),
     );
   }
 }
@@ -104,7 +183,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+            const Text(
+              'You have pushed the button this many times::',
+            ),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
