@@ -1,7 +1,20 @@
+import 'package:calltaxi_desktop_admin/providers/auth_provider.dart';
+import 'package:calltaxi_desktop_admin/providers/city_provider.dart';
+import 'package:calltaxi_desktop_admin/screens/city_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<CityProvider>(
+          create: (context) => CityProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,8 +41,8 @@ class MyApp extends StatelessWidget {
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +70,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
                     TextField(
-                      controller: _usernameController,
+                      controller: usernameController,
                       decoration: InputDecoration(
                         labelText: "Username",
                         prefixIcon: Icon(Icons.account_circle_sharp),
@@ -75,7 +88,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     TextField(
-                      controller: _passwordController,
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: "Password",
@@ -95,8 +108,41 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
-                        String username = _usernameController.text;
-                        String password = _passwordController.text;
+                        AuthProvider.username = usernameController.text;
+                        AuthProvider.password = passwordController.text;
+
+                        try {
+                          print(
+                            "Username: ${AuthProvider.username}, Password: ${AuthProvider.password}",
+                          );
+                          var cityProvider = CityProvider();
+                          var cities = await cityProvider.get();
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CityListScreen(),
+                            ),
+                          );
+                        } on Exception catch (e) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Login failed"),
+                              content: Text(
+                                e.toString().replaceFirst('Exception: ', ''),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        } catch (e) {
+                          print(e);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(

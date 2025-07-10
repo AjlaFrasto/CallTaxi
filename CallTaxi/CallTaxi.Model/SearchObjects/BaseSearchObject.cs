@@ -8,7 +8,7 @@ namespace CallTaxi.Model.SearchObjects
     {
         public string? FTS { get; set; }
         public int? Page { get; set; } = 0;
-        public int? PageSize { get; set; } = 10;
+        public int? PageSize { get; set; } = 30;
         public bool IncludeTotalCount { get; set; } = false;
         public bool RetrieveAll { get; set; } = false;
     }
