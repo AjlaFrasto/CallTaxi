@@ -1,0 +1,3 @@
+Nakon kreiranja part klase da se generiše ostatak : 
+
+dart run build_runner build
