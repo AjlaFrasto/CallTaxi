@@ -19,7 +19,7 @@ class _CityListScreenState extends State<CityListScreen> {
 
   SearchResult<City>? cities;
 
-// Search for cities with ENTER key, not only when button is clicked
+  // Search for cities with ENTER key, not only when button is clicked
   Future<void> _performSearch() async {
     var filter = {"name": nameController.text};
     debugPrint(filter.toString());
@@ -65,14 +65,22 @@ class _CityListScreenState extends State<CityListScreen> {
           Expanded(
             child: TextField(
               decoration: InputDecoration(
-                hintText: "Name",
-                border: OutlineInputBorder(),
+                labelText: "Name",
+                filled: true,
+                fillColor: Colors.grey[200],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Color(0xFFFF6F00)),
+                ),
               ),
               controller: nameController,
               onSubmitted: (value) => _performSearch(),
             ),
           ),
-
           SizedBox(width: 10),
           ElevatedButton(onPressed: _performSearch, child: Text("Search")),
         ],
