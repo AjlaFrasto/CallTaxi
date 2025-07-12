@@ -2,6 +2,7 @@ import 'package:calltaxi_desktop_admin/layouts/master_screen.dart';
 import 'package:calltaxi_desktop_admin/model/city.dart';
 import 'package:calltaxi_desktop_admin/model/search_result.dart';
 import 'package:calltaxi_desktop_admin/providers/city_provider.dart';
+import 'package:calltaxi_desktop_admin/screens/city_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:calltaxi_desktop_admin/utils/text_field_decoration.dart';
@@ -65,13 +66,27 @@ class _CityListScreenState extends State<CityListScreen> {
         children: [
           Expanded(
             child: TextField(
-              decoration: customTextFieldDecoration("Name", prefixIcon: Icons.search),
+              decoration: customTextFieldDecoration(
+                "Name",
+                prefixIcon: Icons.search,
+              ),
               controller: nameController,
               onSubmitted: (value) => _performSearch(),
             ),
           ),
           SizedBox(width: 10),
           ElevatedButton(onPressed: _performSearch, child: Text("Search")),
+          SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CityDetailsScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
+            child: Text("Add City"),
+          ),
         ],
       ),
     );
@@ -90,7 +105,12 @@ class _CityListScreenState extends State<CityListScreen> {
                     ?.map(
                       (e) => DataRow(
                         onSelectChanged: (value) {
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => CityDetailsScreen(city: e)));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CityDetailsScreen(city: e),
+                            ),
+                          );
                         },
                         cells: [DataCell(Text(e.name))],
                       ),
