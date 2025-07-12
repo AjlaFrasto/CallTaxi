@@ -4,6 +4,7 @@ import 'package:calltaxi_desktop_admin/model/search_result.dart';
 import 'package:calltaxi_desktop_admin/providers/city_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:calltaxi_desktop_admin/utils/text_field_decoration.dart';
 
 class CityListScreen extends StatefulWidget {
   const CityListScreen({super.key});
@@ -64,19 +65,7 @@ class _CityListScreenState extends State<CityListScreen> {
         children: [
           Expanded(
             child: TextField(
-              decoration: InputDecoration(
-                labelText: "Name",
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Color(0xFFFF6F00)),
-                ),
-              ),
+              decoration: customTextFieldDecoration("Name", prefixIcon: Icons.search),
               controller: nameController,
               onSubmitted: (value) => _performSearch(),
             ),

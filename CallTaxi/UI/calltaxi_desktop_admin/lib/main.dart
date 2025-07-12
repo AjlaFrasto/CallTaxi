@@ -3,6 +3,7 @@ import 'package:calltaxi_desktop_admin/providers/city_provider.dart';
 import 'package:calltaxi_desktop_admin/screens/city_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:calltaxi_desktop_admin/utils/text_field_decoration.dart';
 
 void main() {
   runApp(
@@ -71,38 +72,18 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(height: 30),
                     TextField(
                       controller: usernameController,
-                      decoration: InputDecoration(
-                        labelText: "Username",
-                        prefixIcon: Icon(Icons.account_circle_sharp),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(color: Color(0xFFFF6F00)),
-                        ),
+                      decoration: customTextFieldDecoration(
+                        "Username",
+                        prefixIcon: Icons.account_circle_sharp,
                       ),
                     ),
                     const SizedBox(height: 10),
                     TextField(
                       controller: passwordController,
                       obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        prefixIcon: Icon(Icons.password),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(color: Color(0xFFFF6F00)),
-                        ),
+                      decoration: customTextFieldDecoration(
+                        "Password",
+                        prefixIcon: Icons.password,
                       ),
                     ),
                     const SizedBox(height: 20),
