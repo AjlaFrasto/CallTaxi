@@ -1,3 +1,4 @@
+import 'package:calltaxi_desktop_admin/main.dart';
 import 'package:flutter/material.dart';
 import '../screens/city_list_screen.dart';
 
@@ -49,8 +50,10 @@ class _MasterScreenState extends State<MasterScreen> {
             ListTile(
               title: Text('Logout'),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
               },
             ),
           ],

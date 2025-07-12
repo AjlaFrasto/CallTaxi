@@ -52,45 +52,72 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
     return MasterScreen(
       title: "City Details",
       showBackButton: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildForm(), _buildSaveButton()],
-      ),
+      child: _buildForm(),
     );
   }
 
   Widget _buildSaveButton() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         ElevatedButton.icon(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          label: Text("Cancel"),       
+          icon: Icon(Icons.cancel),
+          label: Text("Cancel"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[300],
+            foregroundColor: Colors.black87,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
         ),
-        SizedBox(width: 16),
-        ElevatedButton(
+        SizedBox(width: 12),
+        ElevatedButton.icon(
           onPressed: () async {
             formKey.currentState?.saveAndValidate();
             if (formKey.currentState?.validate() ?? false) {
               print(formKey.currentState?.value.toString());
               var request = Map.from(formKey.currentState?.value ?? {});
-              if (widget.city == null) {
-                widget.city = await cityProvider.insert(request);
-              } else {
-                widget.city = await cityProvider.update(
-                  widget.city!.id,
-                  request,
+              try {
+                if (widget.city == null) {
+                  widget.city = await cityProvider.insert(request);
+                } else {
+                  widget.city = await cityProvider.update(
+                    widget.city!.id,
+                    request,
+                  );
+                }
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const CityListScreen(),
+                  ),
+                );
+              } catch (e) {
+
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Error'),
+                    content: Text(e.toString().replaceFirst('Exception: ', '')),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('OK'),
+                      ),
+                    ],
+                  ),
                 );
               }
-
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const CityListScreen()),
-              );
             }
           },
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
-          child: Text("Save"),
+          icon: Icon(Icons.save),
+          label: Text("Save"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.lightBlue,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
         ),
       ],
     );
@@ -101,28 +128,48 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
       return Center(child: CircularProgressIndicator());
     }
 
-    return FormBuilder(
-      key: formKey,
-      initialValue: _initalValue,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            FormBuilderTextField(
-              name: "name",
-              decoration: customTextFieldDecoration(
-                "Name",
-                prefixIcon: Icons.text_fields,
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(maxWidth: 400),
+        child: Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: FormBuilder(
+              key: formKey,
+              initialValue: _initalValue,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'City',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  FormBuilderTextField(
+                    name: "name",
+                    decoration: customTextFieldDecoration(
+                      "Name",
+                      prefixIcon: Icons.text_fields,
+                    ),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.match(
+                        RegExp(r'^[A-Za-z\s]+'),
+                        errorText: 'Only letters and spaces allowed',
+                      ),
+                    ]),
+                  ),
+                  SizedBox(height: 50),
+                  _buildSaveButton(),
+                ],
               ),
-              validator: FormBuilderValidators.compose([
-                FormBuilderValidators.required(),
-                FormBuilderValidators.match(
-                  RegExp(r'^[A-Za-z\s]+'),
-                  errorText: 'Only letters and spaces allowed',
-                ),
-              ]),
             ),
-          ],
+          ),
         ),
       ),
     );
