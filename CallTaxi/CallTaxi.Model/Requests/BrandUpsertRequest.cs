@@ -7,5 +7,7 @@ namespace CallTaxi.Model.Requests
         [Required]
         [MaxLength(50)]
         public string Name { get; set; }
+        public byte[]? Logo { get; set; }
+
     }
 } 

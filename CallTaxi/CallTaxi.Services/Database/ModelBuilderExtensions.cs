@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CallTaxi.Services.Helpers;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace CallTaxi.Services.Database
@@ -185,17 +186,17 @@ namespace CallTaxi.Services.Database
 
             // Seed Brands
             modelBuilder.Entity<Brand>().HasData(
-                new Brand { Id = 1, Name = "Mercedes-Benz" },
-                new Brand { Id = 2, Name = "BMW" },
-                new Brand { Id = 3, Name = "Audi" },
-                new Brand { Id = 4, Name = "Volkswagen" },
-                new Brand { Id = 5, Name = "Toyota" },
-                new Brand { Id = 6, Name = "Honda" },
-                new Brand { Id = 7, Name = "Ford" },
-                new Brand { Id = 8, Name = "Hyundai" },
-                new Brand { Id = 9, Name = "Kia" },
-                new Brand { Id = 10, Name = "Skoda" }
+                new Brand { Id = 1, Name = "Mercedes-Benz", Logo = ImageConversion.ConvertImageToByteArray("Assets","1.png") },
+                new Brand { Id = 2, Name = "BMW", Logo = ImageConversion.ConvertImageToByteArray("Assets", "2.png") },
+                new Brand { Id = 3, Name = "Volkswagen", Logo = ImageConversion.ConvertImageToByteArray("Assets", "3.png") },
+                new Brand { Id = 4, Name = "Audi", Logo = ImageConversion.ConvertImageToByteArray("Assets", "4.png") },
+                new Brand { Id = 5, Name = "Peugeot", Logo = ImageConversion.ConvertImageToByteArray("Assets", "5.png") },
+                new Brand { Id = 6, Name = "Renault", Logo = ImageConversion.ConvertImageToByteArray("Assets", "6.png") },
+                new Brand { Id = 7, Name = "Honda", Logo = ImageConversion.ConvertImageToByteArray("Assets", "7.png") }
             );
+
+
+
 
             // Seed Vehicles
             modelBuilder.Entity<Vehicle>().HasData(
@@ -376,5 +377,10 @@ namespace CallTaxi.Services.Database
                 }
             );
         }
+
+
+
+
+
     }
 } 

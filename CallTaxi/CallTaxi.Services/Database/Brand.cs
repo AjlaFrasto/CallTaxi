@@ -10,7 +10,6 @@ namespace CallTaxi.Services.Database
         [Required]
         [MaxLength(50)]
         public string Name { get; set; }
-
-        //public byte[]? Logo { get; set; }
+        public byte[]? Logo { get; set; }
     }
 }
