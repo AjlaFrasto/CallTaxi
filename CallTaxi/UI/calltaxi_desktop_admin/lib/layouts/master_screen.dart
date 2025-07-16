@@ -1,6 +1,7 @@
 import 'package:calltaxi_desktop_admin/main.dart';
 import 'package:flutter/material.dart';
 import '../screens/city_list_screen.dart';
+import '../screens/brand_list_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -44,6 +45,15 @@ class _MasterScreenState extends State<MasterScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => CityListScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Brands'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => BrandListScreen()),
                 );
               },
             ),

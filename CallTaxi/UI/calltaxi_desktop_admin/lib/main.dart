@@ -1,5 +1,6 @@
 import 'package:calltaxi_desktop_admin/providers/auth_provider.dart';
 import 'package:calltaxi_desktop_admin/providers/city_provider.dart';
+import 'package:calltaxi_desktop_admin/providers/brand_provider.dart';
 import 'package:calltaxi_desktop_admin/screens/city_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,9 @@ void main() {
       providers: [
         ChangeNotifierProvider<CityProvider>(
           create: (context) => CityProvider(),
+        ),
+        ChangeNotifierProvider<BrandProvider>(
+          create: (context) => BrandProvider(),
         ),
       ],
       child: const MyApp(),

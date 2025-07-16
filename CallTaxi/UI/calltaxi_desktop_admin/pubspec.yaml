@@ -39,6 +39,7 @@ dependencies:
   json_annotation: ^4.8.1
   intl: ^0.20.2
   form_builder_validators: ^11.2.0
+  file_picker: ^8.3.7
 
 dev_dependencies:
   flutter_test:
