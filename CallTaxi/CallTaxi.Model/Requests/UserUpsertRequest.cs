@@ -12,7 +12,9 @@ namespace CallTaxi.Model.Requests
         [Required]
         [MaxLength(50)]
         public string LastName { get; set; } = string.Empty;
-        
+
+        public byte[]? Picture { get; set; }
+
         [Required]
         [MaxLength(100)]
         [EmailAddress]

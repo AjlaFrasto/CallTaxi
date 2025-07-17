@@ -21,7 +21,9 @@ namespace CallTaxi.Services.Database
         [MaxLength(100)]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
-        
+
+        public byte[]? Picture { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string Username { get; set; } = string.Empty;

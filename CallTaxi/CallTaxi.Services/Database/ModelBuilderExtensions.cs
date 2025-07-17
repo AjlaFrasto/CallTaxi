@@ -59,7 +59,8 @@ namespace CallTaxi.Services.Database
                     CreatedAt = fixedDate,
                     PhoneNumber = DefaultPhoneNumber,
                     GenderId = 1, // Male
-                    CityId = 5 // Sarajevo
+                    CityId = 5, // Sarajevo
+                    Picture = ImageConversion.ConvertImageToByteArray("Assets", "10.png")
                 },
                 new User 
                 { 
@@ -74,7 +75,8 @@ namespace CallTaxi.Services.Database
                     CreatedAt = fixedDate,
                     PhoneNumber = DefaultPhoneNumber,
                     GenderId = 1, // Male
-                    CityId = 5 // Banja Luka
+                    CityId = 5, // Banja Luka
+                    Picture = ImageConversion.ConvertImageToByteArray("Assets", "11.png")
                 },
                 new User 
                 { 
@@ -89,7 +91,8 @@ namespace CallTaxi.Services.Database
                     CreatedAt = fixedDate,
                     PhoneNumber = DefaultPhoneNumber,
                     GenderId = 1, // Male
-                    CityId = 5 // Tuzla
+                    CityId = 5, // Tuzla
+                    Picture = ImageConversion.ConvertImageToByteArray("Assets", "13.png")
                 },
                 new User 
                 { 
@@ -119,7 +122,8 @@ namespace CallTaxi.Services.Database
                     CreatedAt = fixedDate,
                     PhoneNumber = DefaultPhoneNumber,
                     GenderId = 1, // Male
-                    CityId = 5 // Mostar
+                    CityId = 5, // Mostar
+                    Picture = ImageConversion.ConvertImageToByteArray("Assets", "12.png")
                 }
             );
 
