@@ -10,5 +10,6 @@ namespace CallTaxi.Model.SearchObjects
         public string? Email { get; set; }
         public int? GenderId { get; set; }
         public int? CityId { get; set; }
+        public int? RoleId { get; set; }
     }
 } 

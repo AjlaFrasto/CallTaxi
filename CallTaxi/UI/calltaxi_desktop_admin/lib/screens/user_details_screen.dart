@@ -9,14 +9,41 @@ class UserDetailsScreen extends StatelessWidget {
 
   Widget _buildPicture(String? pictureBase64) {
     if (pictureBase64 == null || pictureBase64.isEmpty) {
-      return Icon(Icons.account_circle, size: 64, color: Colors.grey);
+      return Icon(Icons.account_circle, size: 140, color: Colors.grey[400]);
     }
     try {
       final bytes = base64Decode(pictureBase64);
-      return CircleAvatar(backgroundImage: MemoryImage(bytes), radius: 32);
+      return CircleAvatar(backgroundImage: MemoryImage(bytes), radius: 70);
     } catch (e) {
-      return Icon(Icons.account_circle, size: 64, color: Colors.grey);
+      return Icon(Icons.account_circle, size: 140, color: Colors.grey[400]);
     }
+  }
+
+  Widget _buildInfoRow(String label, String value, {IconData? icon}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 20, color: Colors.blueGrey[700]),
+            SizedBox(width: 8),
+          ],
+          Text(
+            "$label:",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 16),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -26,67 +53,77 @@ class UserDetailsScreen extends StatelessWidget {
       showBackButton: true,
       child: Center(
         child: Container(
-          constraints: BoxConstraints(maxWidth: 400),
+          constraints: BoxConstraints(maxWidth: 420),
           child: Card(
-            elevation: 4,
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 32.0,
+                vertical: 32.0,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildPicture(user.picture),
-                  SizedBox(height: 16),
+                  SizedBox(height: 18),
                   Text(
                     "${user.firstName} ${user.lastName}",
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(user.email, style: TextStyle(fontSize: 16)),
-                  SizedBox(height: 8),
-                  Text(
-                    "Username: ${user.username}",
-                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Phone: ${user.phoneNumber ?? '-'}",
-                    style: TextStyle(fontSize: 16),
+                    "@${user.username}",
+                    style: TextStyle(fontSize: 16, color: Colors.blueGrey[700]),
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Gender: ${user.genderName}",
-                    style: TextStyle(fontSize: 16),
+                  SizedBox(height: 18),
+                  _buildInfoRow("Email", user.email, icon: Icons.email),
+                  _buildInfoRow(
+                    "Phone",
+                    user.phoneNumber ?? '-',
+                    icon: Icons.phone,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "City: ${user.cityName}",
-                    style: TextStyle(fontSize: 16),
+                  _buildInfoRow(
+                    "Gender",
+                    user.genderName,
+                    icon: Icons.person_outline,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Roles: ${user.roles.map((r) => r.name).join(", ")}",
-                    style: TextStyle(fontSize: 16),
+                  _buildInfoRow(
+                    "City",
+                    user.cityName,
+                    icon: Icons.location_city,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Created At: ${user.createdAt.toString().split(" ")[0]}",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Last Login: ${user.lastLoginAt?.toString().split(" ")[0] ?? '-'}",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Active: ", style: TextStyle(fontSize: 16)),
-                      Icon(
-                        user.isActive ? Icons.check : Icons.close,
-                        color: user.isActive ? Colors.green : Colors.red,
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.verified_user,
+                          size: 20,
+                          color: Colors.blueGrey[700],
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          "Active:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(
+                          user.isActive ? Icons.check_circle : Icons.cancel,
+                          color: user.isActive ? Colors.green : Colors.red,
+                          size: 22,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

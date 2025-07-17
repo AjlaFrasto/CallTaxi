@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:calltaxi_desktop_admin/layouts/master_screen.dart';
 import 'package:calltaxi_desktop_admin/model/user.dart';
 import 'package:calltaxi_desktop_admin/model/search_result.dart';
-import 'package:calltaxi_desktop_admin/providers/driver_provider.dart';
+import 'package:calltaxi_desktop_admin/providers/user_provider.dart';
 import 'package:calltaxi_desktop_admin/screens/driver_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,12 +18,15 @@ class DriverListScreen extends StatefulWidget {
 }
 
 class _DriverListScreenState extends State<DriverListScreen> {
-  late DriverProvider driverProvider;
+  late UserProvider userProvider;
   TextEditingController nameController = TextEditingController();
   SearchResult<User>? drivers;
   int _currentPage = 0;
   int _pageSize = 7;
   final List<int> _pageSizeOptions = [5, 7, 10, 20, 50];
+
+  // Set the roleId for 'Driver' role. Update this value to match your DB.
+  static const int driverRoleId = 2; // <-- Set correct roleId for 'Driver'
 
   Future<void> _performSearch({int? page, int? pageSize}) async {
     final int pageToFetch = page ?? _currentPage;
@@ -33,9 +36,9 @@ class _DriverListScreenState extends State<DriverListScreen> {
       "pageSize": pageSizeToUse,
       "includeTotalCount": true,
       "fts": nameController.text,
-      "role": "Driver",
+      "roleId": driverRoleId,
     };
-    var drivers = await driverProvider.get(filter: filter);
+    var drivers = await userProvider.get(filter: filter);
     setState(() {
       this.drivers = drivers;
       _currentPage = pageToFetch;
@@ -47,7 +50,7 @@ class _DriverListScreenState extends State<DriverListScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      driverProvider = context.read<DriverProvider>();
+      userProvider = context.read<UserProvider>();
       await _performSearch(page: 0);
     });
   }

@@ -3,9 +3,9 @@ import 'package:calltaxi_desktop_admin/layouts/master_screen.dart';
 import 'package:calltaxi_desktop_admin/model/user.dart';
 import 'package:flutter/material.dart';
 
-class DriverDetailsScreen extends StatelessWidget {
+class AdminDetailsScreen extends StatelessWidget {
   final User user;
-  const DriverDetailsScreen({super.key, required this.user});
+  const AdminDetailsScreen({super.key, required this.user});
 
   Widget _buildPicture(String? pictureBase64) {
     if (pictureBase64 == null || pictureBase64.isEmpty) {
@@ -49,7 +49,7 @@ class DriverDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
-      title: "Driver Details",
+      title: "Admin Details",
       showBackButton: true,
       child: Center(
         child: Container(

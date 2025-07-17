@@ -3,30 +3,30 @@ import 'package:calltaxi_desktop_admin/layouts/master_screen.dart';
 import 'package:calltaxi_desktop_admin/model/user.dart';
 import 'package:calltaxi_desktop_admin/model/search_result.dart';
 import 'package:calltaxi_desktop_admin/providers/user_provider.dart';
-import 'package:calltaxi_desktop_admin/screens/user_details_screen.dart';
+import 'package:calltaxi_desktop_admin/screens/admin_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:calltaxi_desktop_admin/utils/text_field_decoration.dart';
 import 'package:calltaxi_desktop_admin/utils/custom_data_table.dart';
 import 'package:calltaxi_desktop_admin/utils/custom_pagination.dart';
 
-class UserListScreen extends StatefulWidget {
-  const UserListScreen({super.key});
+class AdminListScreen extends StatefulWidget {
+  const AdminListScreen({super.key});
 
   @override
-  State<UserListScreen> createState() => _UserListScreenState();
+  State<AdminListScreen> createState() => _AdminListScreenState();
 }
 
-class _UserListScreenState extends State<UserListScreen> {
+class _AdminListScreenState extends State<AdminListScreen> {
+  // Set the roleId for 'Administrator' role. Update this value to match your DB.
+  static const int adminRoleId =
+      1; // <-- Set correct roleId for 'Administrator'
   late UserProvider userProvider;
   TextEditingController nameController = TextEditingController();
-  SearchResult<User>? users;
+  SearchResult<User>? admins;
   int _currentPage = 0;
   int _pageSize = 7;
   final List<int> _pageSizeOptions = [5, 7, 10, 20, 50];
-
-  // Set the roleId for 'User' role. Update this value to match your DB.
-  static const int userRoleId = 3; // <-- Set correct roleId for 'User'
 
   Future<void> _performSearch({int? page, int? pageSize}) async {
     final int pageToFetch = page ?? _currentPage;
@@ -36,11 +36,11 @@ class _UserListScreenState extends State<UserListScreen> {
       "pageSize": pageSizeToUse,
       "includeTotalCount": true,
       "fts": nameController.text,
-      "roleId": userRoleId,
+      "roleId": adminRoleId,
     };
-    var users = await userProvider.get(filter: filter);
+    var admins = await userProvider.get(filter: filter);
     setState(() {
-      this.users = users;
+      this.admins = admins;
       _currentPage = pageToFetch;
       _pageSize = pageSizeToUse;
     });
@@ -69,8 +69,8 @@ class _UserListScreenState extends State<UserListScreen> {
 
   Widget _buildResultView() {
     final isEmpty =
-        users == null || users!.items == null || users!.items!.isEmpty;
-    final int totalCount = users?.totalCount ?? 0;
+        admins == null || admins!.items == null || admins!.items!.isEmpty;
+    final int totalCount = admins?.totalCount ?? 0;
     final int totalPages = (totalCount / _pageSize).ceil();
     final bool isFirstPage = _currentPage == 0;
     final bool isLastPage = _currentPage >= totalPages - 1 || totalPages == 0;
@@ -137,7 +137,7 @@ class _UserListScreenState extends State<UserListScreen> {
           ],
           rows: isEmpty
               ? []
-              : users!.items!
+              : admins!.items!
                     .map(
                       (e) => DataRow(
                         cells: [
@@ -178,7 +178,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        UserDetailsScreen(user: e),
+                                        AdminDetailsScreen(user: e),
                                   ),
                                 );
                               },
@@ -189,8 +189,8 @@ class _UserListScreenState extends State<UserListScreen> {
                     )
                     .toList(),
           emptyIcon: Icons.people,
-          emptyText: "No users found.",
-          emptySubtext: "Try adjusting your search or add a new user.",
+          emptyText: "No administrators found.",
+          emptySubtext: "Try adjusting your search or add a new administrator.",
         ),
         SizedBox(height: 10),
         CustomPagination(
@@ -218,7 +218,7 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
-      title: "Users",
+      title: "Administrators",
       child: Center(
         child: Column(
           children: [

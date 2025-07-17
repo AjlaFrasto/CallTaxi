@@ -56,6 +56,11 @@ namespace CallTaxi.Services.Services
                 query = query.Where(u => u.CityId == search.CityId.Value);
             }
 
+            if (search.RoleId.HasValue)
+            {
+                query = query.Where(u => u.UserRoles.Any(ur => ur.RoleId == search.RoleId.Value));
+            }
+
             query = query
                 .Include(u => u.Gender)
                 .Include(u => u.City)
