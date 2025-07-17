@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:calltaxi_desktop_admin/utils/text_field_decoration.dart';
 import 'package:calltaxi_desktop_admin/utils/custom_data_table.dart';
+import 'package:calltaxi_desktop_admin/utils/custom_pagination.dart';
 
 class BrandListScreen extends StatefulWidget {
   const BrandListScreen({super.key});
@@ -21,12 +22,25 @@ class _BrandListScreenState extends State<BrandListScreen> {
   late BrandProvider brandProvider;
   TextEditingController nameController = TextEditingController();
   SearchResult<Brand>? brands;
+  int _currentPage = 0;
+  int _pageSize = 7;
+  final List<int> _pageSizeOptions = [5, 7, 10, 20, 50];
 
-  Future<void> _performSearch() async {
-    var filter = {"name": nameController.text};
+  Future<void> _performSearch({int? page, int? pageSize}) async {
+    final int pageToFetch = page ?? _currentPage;
+    final int pageSizeToUse = pageSize ?? _pageSize;
+    var filter = {
+      "name": nameController.text,
+      "page": pageToFetch,
+      "pageSize": pageSizeToUse,
+      "includeTotalCount": true,
+    };
     var brands = await brandProvider.get(filter: filter);
-    this.brands = brands;
-    setState(() {});
+    setState(() {
+      this.brands = brands;
+      _currentPage = pageToFetch;
+      _pageSize = pageSizeToUse;
+    });
   }
 
   @override
@@ -34,10 +48,7 @@ class _BrandListScreenState extends State<BrandListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       brandProvider = context.read<BrandProvider>();
-      var allBrands = await brandProvider.get();
-      setState(() {
-        brands = allBrands;
-      });
+      await _performSearch(page: 0);
     });
   }
 
@@ -87,46 +98,76 @@ class _BrandListScreenState extends State<BrandListScreen> {
   Widget _buildResultView() {
     final isEmpty =
         brands == null || brands!.items == null || brands!.items!.isEmpty;
-    return CustomDataTableCard(
-      width: 600,
-      height: 450,
-      columns: [
-        DataColumn(
-          label: Text(
-            "Logo",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
+    final int totalCount = brands?.totalCount ?? 0;
+    final int totalPages = (totalCount / _pageSize).ceil();
+    final bool isFirstPage = _currentPage == 0;
+    final bool isLastPage = _currentPage >= totalPages - 1 || totalPages == 0;
+    return Column(
+      children: [
+        CustomDataTableCard(
+          width: 600,
+          height: 450,
+          columns: [
+            DataColumn(
+              label: Text(
+                "Logo",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+            DataColumn(
+              label: Text(
+                "Name",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ],
+          rows: isEmpty
+              ? []
+              : brands!.items!
+                    .map(
+                      (e) => DataRow(
+                        onSelectChanged: (value) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  BrandDetailsScreen(brand: e),
+                            ),
+                          );
+                        },
+                        cells: [
+                          DataCell(_buildLogoCell(e.logo)),
+                          DataCell(
+                            Text(e.name, style: TextStyle(fontSize: 15)),
+                          ),
+                        ],
+                      ),
+                    )
+                    .toList(),
+          emptyIcon: Icons.branding_watermark,
+          emptyText: "No brands found.",
+          emptySubtext: "Try adjusting your search or add a new brand.",
         ),
-        DataColumn(
-          label: Text(
-            "Name",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
+        SizedBox(height: 10),
+        CustomPagination(
+          currentPage: _currentPage,
+          totalPages: totalPages,
+          onPrevious: isFirstPage
+              ? null
+              : () => _performSearch(page: _currentPage - 1),
+          onNext: isLastPage
+              ? null
+              : () => _performSearch(page: _currentPage + 1),
+          showPageSizeSelector: true,
+          pageSize: _pageSize,
+          pageSizeOptions: _pageSizeOptions,
+          onPageSizeChanged: (newSize) {
+            if (newSize != null && newSize != _pageSize) {
+              _performSearch(page: 0, pageSize: newSize);
+            }
+          },
         ),
       ],
-      rows: isEmpty
-          ? []
-          : brands!.items!
-                .map(
-                  (e) => DataRow(
-                    onSelectChanged: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BrandDetailsScreen(brand: e),
-                        ),
-                      );
-                    },
-                    cells: [
-                      DataCell(_buildLogoCell(e.logo)),
-                      DataCell(Text(e.name, style: TextStyle(fontSize: 15))),
-                    ],
-                  ),
-                )
-                .toList(),
-      emptyIcon: Icons.branding_watermark,
-      emptyText: "No brands found.",
-      emptySubtext: "Try adjusting your search or add a new brand.",
     );
   }
 
