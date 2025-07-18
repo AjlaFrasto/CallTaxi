@@ -107,7 +107,8 @@ namespace CallTaxi.Services.Database
                     CreatedAt = fixedDate,
                     PhoneNumber = DefaultPhoneNumber,
                     GenderId = 2, // Female
-                    CityId = 1 // Zenica
+                    CityId = 1, // Zenica
+                    Picture = ImageConversion.ConvertImageToByteArray("Assets", "14.png")
                 },
                 new User 
                 { 
