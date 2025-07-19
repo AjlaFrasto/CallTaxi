@@ -38,6 +38,7 @@ namespace CallTaxi.Services.VehicleStateMachine
 
             // Reload entity with Brand information
             await _context.Entry(entity).Reference(v => v.Brand).LoadAsync();
+            await _context.Entry(entity).Reference(v => v.User).LoadAsync();
 
             // Get admin emails
             var adminEmails = await _context.Users
@@ -53,6 +54,7 @@ namespace CallTaxi.Services.VehicleStateMachine
 
             var response = _mapper.Map<VehicleResponse>(entity);
             response.BrandLogo = entity.Brand?.Logo;
+            response.UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : string.Empty;
 
             // Create RabbitMQ notification DTO
             var notificationDto = new VehicleNotificationDto

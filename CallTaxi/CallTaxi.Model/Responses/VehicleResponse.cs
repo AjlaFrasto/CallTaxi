@@ -15,7 +15,8 @@ namespace CallTaxi.Model.Responses
         public string BrandName { get; set; }
         public byte[]? BrandLogo { get; set; }
         public int UserId { get; set; }
+        public string? UserFullName { get; set; }
         public int VehicleTierId { get; set; }
-        public string VehicleTierName { get; set; }
+        public string? VehicleTierName { get; set; }
     }
 } 

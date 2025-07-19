@@ -82,7 +82,17 @@ namespace CallTaxi.Services.Services
                 query = query.Where(v => v.PetFriendly == search.PetFriendly);
             }
 
-            return query.Include(v => v.Brand).Include(v => v.VehicleTier);
+            // Ensure User is included for UserFullName
+            return query.Include(v => v.Brand).Include(v => v.VehicleTier).Include(v => v.User);
+        }
+
+        protected override VehicleResponse MapToResponse(Vehicle entity)
+        {
+            var response = base.MapToResponse(entity);
+            response.BrandLogo = entity.Brand?.Logo;
+            response.UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : string.Empty;
+            response.VehicleTierName = entity.VehicleTier?.Name;
+            return response;
         }
 
         public async Task<VehicleResponse> AcceptAsync(int id)
