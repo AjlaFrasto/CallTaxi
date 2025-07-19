@@ -52,6 +52,7 @@ namespace CallTaxi.Services.VehicleStateMachine
             var bus = RabbitHutch.CreateBus($"host={host};virtualHost={virtualhost};username={username};password={password}");
 
             var response = _mapper.Map<VehicleResponse>(entity);
+            response.BrandLogo = entity.Brand?.Logo;
 
             // Create RabbitMQ notification DTO
             var notificationDto = new VehicleNotificationDto

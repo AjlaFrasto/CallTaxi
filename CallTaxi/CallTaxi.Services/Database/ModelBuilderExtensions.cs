@@ -209,7 +209,7 @@ namespace CallTaxi.Services.Database
                 {
                     Id = 1,
                     LicensePlate = "A123-ABC",
-                    Name = "Mercedes-Benz E-Class",
+                    Name = "AMG GT",
                     YearOfManufacture = 2022,
                     Color = "Black",
                     BrandId = 1, // Mercedes-Benz
@@ -218,20 +218,22 @@ namespace CallTaxi.Services.Database
                     StateMachine = "Accepted",
                     PetFriendly = true,
                     SeatsCount = 3,
+                    Picture = ImageConversion.ConvertImageToByteArray("Assets", "15.png")
                 },
                 new Vehicle
                 {
                     Id = 2,
                     LicensePlate = "B456-DEF",
-                    Name = "Volkswagen Passat",
+                    Name = "RS6 Avant",
                     YearOfManufacture = 2021,
                     Color = "White",
-                    BrandId = 4, // Volkswagen
+                    BrandId = 4, // Audi
                     VehicleTierId = 1, // Standard
                     UserId = 3, // Second driver
                     StateMachine = "Accepted",
                     PetFriendly = false,
                     SeatsCount = 4,
+                    Picture = ImageConversion.ConvertImageToByteArray("Assets", "16.png")
                 }
             );
 

@@ -23,6 +23,7 @@ namespace CallTaxi.Model.Requests
         [Required]
         [Range(1, 20, ErrorMessage = "Seat count must be between 1 and 20.")]
         public int SeatsCount { get; set; }
+        public byte[]? Picture { get; set; }
 
         [Required]
         public bool PetFriendly { get; set; }
