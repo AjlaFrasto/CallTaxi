@@ -2,22 +2,11 @@ import 'dart:convert';
 import 'package:calltaxi_desktop_admin/layouts/master_screen.dart';
 import 'package:calltaxi_desktop_admin/model/user.dart';
 import 'package:flutter/material.dart';
+import 'package:calltaxi_desktop_admin/utils/custom_picture_design.dart';
 
 class AdminDetailsScreen extends StatelessWidget {
   final User user;
   const AdminDetailsScreen({super.key, required this.user});
-
-  Widget _buildPicture(String? pictureBase64) {
-    if (pictureBase64 == null || pictureBase64.isEmpty) {
-      return Icon(Icons.account_circle, size: 140, color: Colors.grey[400]);
-    }
-    try {
-      final bytes = base64Decode(pictureBase64);
-      return CircleAvatar(backgroundImage: MemoryImage(bytes), radius: 70);
-    } catch (e) {
-      return Icon(Icons.account_circle, size: 140, color: Colors.grey[400]);
-    }
-  }
 
   Widget _buildInfoRow(String label, String value, {IconData? icon}) {
     return Padding(
@@ -26,7 +15,7 @@ class AdminDetailsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 20, color: Colors.blueGrey[700]),
+            Icon(icon, size: 20, color: Colors.orange),
             SizedBox(width: 8),
           ],
           Text(
@@ -68,7 +57,11 @@ class AdminDetailsScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _buildPicture(user.picture),
+                  CustomPictureDesign(
+                    base64: user.picture,
+                    size: 140,
+                    fallbackIcon: Icons.account_circle,
+                  ),
                   SizedBox(height: 18),
                   Text(
                     "${user.firstName} ${user.lastName}",
@@ -106,7 +99,7 @@ class AdminDetailsScreen extends StatelessWidget {
                         Icon(
                           Icons.verified_user,
                           size: 20,
-                          color: Colors.blueGrey[700],
+                          color: Colors.orange,
                         ),
                         SizedBox(width: 8),
                         Text(

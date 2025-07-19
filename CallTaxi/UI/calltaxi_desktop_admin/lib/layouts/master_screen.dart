@@ -5,6 +5,7 @@ import '../screens/brand_list_screen.dart';
 import '../screens/user_list_screen.dart';
 import '../screens/driver_list_screen.dart';
 import '../screens/admin_list_screen.dart';
+import '../screens/vehicle_screen_list.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -84,6 +85,15 @@ class _MasterScreenState extends State<MasterScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => CityListScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Vehicles'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => VehicleScreenList()),
                 );
               },
             ),

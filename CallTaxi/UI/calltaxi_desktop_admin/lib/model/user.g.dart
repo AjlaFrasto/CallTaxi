@@ -2,8 +2,12 @@
 
 part of 'user.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 User _$UserFromJson(Map<String, dynamic> json) => User(
-  id: json['id'] as int? ?? 0,
+  id: (json['id'] as num?)?.toInt() ?? 0,
   firstName: json['firstName'] as String? ?? '',
   lastName: json['lastName'] as String? ?? '',
   email: json['email'] as String? ?? '',
@@ -15,9 +19,9 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
   lastLoginAt: json['lastLoginAt'] == null
       ? null
       : DateTime.parse(json['lastLoginAt'] as String),
-  genderId: json['genderId'] as int? ?? 0,
+  genderId: (json['genderId'] as num?)?.toInt() ?? 0,
   genderName: json['genderName'] as String? ?? '',
-  cityId: json['cityId'] as int? ?? 0,
+  cityId: (json['cityId'] as num?)?.toInt() ?? 0,
   cityName: json['cityName'] as String? ?? '',
   roles:
       (json['roles'] as List<dynamic>?)
@@ -41,7 +45,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
   'genderName': instance.genderName,
   'cityId': instance.cityId,
   'cityName': instance.cityName,
-  'roles': instance.roles != null
-      ? instance.roles.map((e) => e.toJson()).toList()
-      : [],
+  'roles': instance.roles,
 };

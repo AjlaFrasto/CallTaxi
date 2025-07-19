@@ -7,19 +7,21 @@ import 'package:calltaxi_desktop_admin/providers/auth_provider.dart';
 import 'package:calltaxi_desktop_admin/model/search_result.dart';
 
 abstract class BaseProvider<T> with ChangeNotifier {
-  static String? _baseUrl;
-  String _endpoint = "";
+  // Change to protected
+  static String? baseUrl;
+  @protected
+  String endpoint = "";
 
   BaseProvider(String endpoint) {
-    _endpoint = endpoint;
-    _baseUrl = const String.fromEnvironment(
+    this.endpoint = endpoint;
+    baseUrl = const String.fromEnvironment(
       "baseUrl",
       defaultValue: "http://localhost:5130/",
     );
   }
 
   Future<SearchResult<T>> get({dynamic filter}) async {
-    var url = "$_baseUrl$_endpoint";
+    var url = "$baseUrl$endpoint";
 
     if (filter != null) {
       var queryString = getQueryString(filter);
@@ -47,7 +49,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<T> insert(dynamic request) async {
-    var url = "$_baseUrl$_endpoint";
+    var url = "$baseUrl$endpoint";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
@@ -63,7 +65,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<T> update(int id, [dynamic request]) async {
-    var url = "$_baseUrl$_endpoint/$id";
+    var url = "$baseUrl$endpoint/$id";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
@@ -79,7 +81,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<bool> delete(int id) async {
-    var url = "$_baseUrl$_endpoint/$id";
+    var url = "$baseUrl$endpoint/$id";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
