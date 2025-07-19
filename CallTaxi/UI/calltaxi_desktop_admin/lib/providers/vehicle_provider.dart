@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class VehicleProvider extends BaseProvider<Vehicle> {
-  VehicleProvider() : super("Vehicler");
+  VehicleProvider() : super("Vehicle");
 
   @override
   Vehicle fromJson(dynamic json) {

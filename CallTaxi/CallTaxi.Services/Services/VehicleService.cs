@@ -52,6 +52,15 @@ namespace CallTaxi.Services.Services
 
         protected override IQueryable<Vehicle> ApplyFilter(IQueryable<Vehicle> query, VehicleSearchObject search)
         {
+            if (!string.IsNullOrEmpty(search.FTS))
+            {
+                query = query.Where(v =>
+                    v.Name.Contains(search.FTS) ||
+                    v.Brand.Name.Contains(search.FTS) ||
+                    (v.User.FirstName + " " + v.User.LastName).Contains(search.FTS)
+                );
+            }
+
             if (!string.IsNullOrEmpty(search.Name))
             {
                 query = query.Where(v => v.Name.Contains(search.Name));

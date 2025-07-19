@@ -28,11 +28,12 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
   Future<void> _performSearch({int? page, int? pageSize}) async {
     final int pageToFetch = page ?? _currentPage;
     final int pageSizeToUse = pageSize ?? _pageSize;
+    final searchText = nameController.text;
     var filter = {
       "page": pageToFetch,
       "pageSize": pageSizeToUse,
       "includeTotalCount": true,
-      "name": nameController.text,
+      "fts": searchText,
     };
     var vehicles = await vehicleProvider.get(filter: filter);
     setState(() {
@@ -118,7 +119,7 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
-          
+
             DataColumn(
               label: Text(
                 "Year",
@@ -306,7 +307,7 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                   Expanded(
                     child: TextField(
                       decoration: customTextFieldDecoration(
-                        "Name, License Plate...",
+                        "Model, Brand, Driver Name...",
                         prefixIcon: Icons.search,
                       ),
                       controller: nameController,
