@@ -67,9 +67,19 @@ namespace CallTaxi.Services.Services
                 query = query.Where(v => v.BrandId == search.BrandId);
             }
 
+            if (!string.IsNullOrEmpty(search.BrandName))
+            {
+                query = query.Where(v => v.Brand.Name.Contains(search.BrandName));
+            }
+
             if (search.UserId.HasValue)
             {
                 query = query.Where(v => v.UserId == search.UserId);
+            }
+
+            if (!string.IsNullOrEmpty(search.UserFullName))
+            {
+                query = query.Where(v => (v.User.FirstName + " " + v.User.LastName).Contains(search.UserFullName));
             }
 
             if (search.VehicleTierId.HasValue)
