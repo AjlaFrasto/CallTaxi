@@ -97,7 +97,7 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
           columns: [
             DataColumn(
               label: Text(
-                "Brand",
+                "Logo",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
@@ -119,16 +119,9 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
-
             DataColumn(
               label: Text(
-                "Year",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                "Seats",
+                "Driver",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
@@ -189,13 +182,7 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                           ),
                           DataCell(
                             Text(
-                              e.yearOfManufacture.toString(),
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              e.seatsCount.toString(),
+                              e.userFullName ?? '-',
                               style: TextStyle(fontSize: 15),
                             ),
                           ),
