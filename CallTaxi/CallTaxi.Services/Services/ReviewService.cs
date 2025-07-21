@@ -44,7 +44,27 @@ namespace CallTaxi.Services.Services
                 query = query.Where(r => r.Comment != null && r.Comment.Contains(search.FTS));
             }
 
-            return query;
+            return query
+                .Include(r => r.User)
+                .Include(r => r.DriveRequest)
+                    .ThenInclude(dr => dr.Driver);
+        }
+
+        protected override ReviewResponse MapToResponse(Review entity)
+        {
+            var response = base.MapToResponse(entity);
+            // UserFullName from Review.User
+            response.UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : null;
+            // DriverFullName from DriveRequest.Driver
+            if (entity.DriveRequest != null && entity.DriveRequest.Driver != null)
+            {
+                response.DriverFullName = $"{entity.DriveRequest.Driver.FirstName} {entity.DriveRequest.Driver.LastName}";
+            }
+            else
+            {
+                response.DriverFullName = null;
+            }
+            return response;
         }
 
         protected override async Task BeforeInsert(Review entity, ReviewUpsertRequest request)
