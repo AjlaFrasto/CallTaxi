@@ -3,6 +3,8 @@ import 'package:calltaxi_desktop_admin/model/review.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ReviewDetailsScreen extends StatelessWidget {
   final Review review;
@@ -152,11 +154,92 @@ class _ReviewMapWithZoom extends StatefulWidget {
 class _ReviewMapWithZoomState extends State<_ReviewMapWithZoom> {
   late final MapController _mapController;
   double _zoom = 13;
+  List<LatLng>? _routePoints;
+  bool _loadingRoute = false;
+  String? _routeError;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+    _fetchRoute();
+  }
+
+  Future<void> _fetchRoute() async {
+    LatLng? startLatLng;
+    LatLng? endLatLng;
+    try {
+      if (widget.start != null && widget.end != null) {
+        final startParts = widget.start!.split(',');
+        final endParts = widget.end!.split(',');
+        if (startParts.length == 2 && endParts.length == 2) {
+          startLatLng = LatLng(
+            double.parse(startParts[0]),
+            double.parse(startParts[1]),
+          );
+          endLatLng = LatLng(
+            double.parse(endParts[0]),
+            double.parse(endParts[1]),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _routeError = 'Failed to parse locations.';
+      });
+      return;
+    }
+    if (startLatLng == null || endLatLng == null) {
+      setState(() {
+        _routeError = 'Location not available.';
+      });
+      return;
+    }
+    setState(() {
+      _loadingRoute = true;
+      _routeError = null;
+    });
+    try {
+      // Replace with your OpenRouteService API key
+      const apiKey =
+          'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6Ijg0M2ExYWNiOTRkZDQ4MGI5MTVkYTVkNzJhODVhMjZjIiwiaCI6Im11cm11cjY0In0=';
+      final url = Uri.parse(
+        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${startLatLng.longitude},${startLatLng.latitude}&end=${endLatLng.longitude},${endLatLng.latitude}',
+      );
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final geometry = data['features'][0]['geometry'];
+        if (geometry['type'] == 'LineString') {
+          final coords = geometry['coordinates'] as List;
+          final points = coords
+              .map<LatLng>(
+                (c) =>
+                    LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()),
+              )
+              .toList();
+          setState(() {
+            _routePoints = points;
+            _loadingRoute = false;
+          });
+        } else {
+          setState(() {
+            _routeError = 'Route geometry not found.';
+            _loadingRoute = false;
+          });
+        }
+      } else {
+        setState(() {
+          _routeError = 'Failed to fetch route (${response.statusCode})';
+          _loadingRoute = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _routeError = 'Error fetching route.';
+        _loadingRoute = false;
+      });
+    }
   }
 
   @override
@@ -231,11 +314,24 @@ class _ReviewMapWithZoomState extends State<_ReviewMapWithZoom> {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.calltaxi_desktop_admin',
                 ),
-                if (startLatLng != null && endLatLng != null)
+                if (_loadingRoute)
                   PolylineLayer(
                     polylines: [
                       Polyline(
-                        points: [startLatLng, endLatLng],
+                        points: [
+                          if (startLatLng != null) startLatLng,
+                          if (endLatLng != null) endLatLng,
+                        ],
+                        color: Colors.orange,
+                        strokeWidth: 2.0,
+                      ),
+                    ],
+                  ),
+                if (_routePoints != null)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: _routePoints!,
                         color: Colors.blue,
                         strokeWidth: 4.0,
                       ),
@@ -266,6 +362,18 @@ class _ReviewMapWithZoomState extends State<_ReviewMapWithZoom> {
               ],
             ),
           ),
+          if (_routeError != null)
+            Positioned.fill(
+              child: Container(
+                color: Colors.white.withOpacity(0.7),
+                child: Center(
+                  child: Text(
+                    _routeError!,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            ),
           Positioned(
             top: 10,
             right: 10,
