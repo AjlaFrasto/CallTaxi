@@ -64,6 +64,17 @@ namespace CallTaxi.Services.Services
             {
                 response.DriverFullName = null;
             }
+            // Map StartLocation and EndLocation from DriveRequest
+            if (entity.DriveRequest != null)
+            {
+                response.StartLocation = entity.DriveRequest.StartLocation;
+                response.EndLocation = entity.DriveRequest.EndLocation;
+            }
+            else
+            {
+                response.StartLocation = null;
+                response.EndLocation = null;
+            }
             return response;
         }
 
