@@ -41,7 +41,12 @@ namespace CallTaxi.Services.Services
 
             if (!string.IsNullOrEmpty(search.FTS))
             {
-                query = query.Where(r => r.Comment != null && r.Comment.Contains(search.FTS));
+                var fts = search.FTS.ToLower();
+                query = query.Where(r =>
+                    (r.Comment != null && r.Comment.ToLower().Contains(fts)) ||
+                    (r.User.FirstName + " " + r.User.LastName).ToLower().Contains(fts) ||
+                    (r.DriveRequest.Driver != null && (r.DriveRequest.Driver.FirstName + " " + r.DriveRequest.Driver.LastName).ToLower().Contains(fts))
+                );
             }
 
             return query

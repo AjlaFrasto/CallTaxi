@@ -6,6 +6,7 @@ import '../screens/user_list_screen.dart';
 import '../screens/driver_list_screen.dart';
 import '../screens/admin_list_screen.dart';
 import '../screens/vehicle_screen_list.dart';
+import '../screens/review_list_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -94,6 +95,15 @@ class _MasterScreenState extends State<MasterScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => VehicleScreenList()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Reviews'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReviewListScreen()),
                 );
               },
             ),
