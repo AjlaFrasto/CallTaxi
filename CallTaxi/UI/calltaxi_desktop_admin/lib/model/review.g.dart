@@ -2,13 +2,17 @@
 
 part of 'review.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 Review _$ReviewFromJson(Map<String, dynamic> json) => Review(
-  id: json['id'] as int? ?? 0,
-  driveRequestId: json['driveRequestId'] as int? ?? 0,
+  id: (json['id'] as num?)?.toInt() ?? 0,
+  driveRequestId: (json['driveRequestId'] as num?)?.toInt() ?? 0,
   driverFullName: json['driverFullName'] as String?,
-  userId: json['userId'] as int? ?? 0,
+  userId: (json['userId'] as num?)?.toInt() ?? 0,
   userFullName: json['userFullName'] as String?,
-  rating: json['rating'] as int? ?? 0,
+  rating: (json['rating'] as num?)?.toInt() ?? 0,
   comment: json['comment'] as String?,
   createdAt: DateTime.parse(json['createdAt'] as String),
   startLocation: json['startLocation'] as String?,

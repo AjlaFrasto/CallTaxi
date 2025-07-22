@@ -4,6 +4,7 @@ import 'package:calltaxi_desktop_admin/providers/brand_provider.dart';
 import 'package:calltaxi_desktop_admin/providers/user_provider.dart';
 import 'package:calltaxi_desktop_admin/providers/vehicle_provider.dart';
 import 'package:calltaxi_desktop_admin/providers/review_provider.dart';
+import 'package:calltaxi_desktop_admin/providers/driver_request_provider.dart';
 import 'package:calltaxi_desktop_admin/screens/city_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,9 @@ void main() async {
         ),
         ChangeNotifierProvider<ReviewProvider>(
           create: (context) => ReviewProvider(),
+        ),
+        ChangeNotifierProvider<DriverRequestProvider>(
+          create: (context) => DriverRequestProvider(),
         ),
       ],
       child: const MyApp(),
