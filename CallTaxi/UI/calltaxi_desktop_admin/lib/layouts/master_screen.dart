@@ -8,6 +8,7 @@ import '../screens/admin_list_screen.dart';
 import '../screens/vehicle_screen_list.dart';
 import '../screens/review_list_screen.dart';
 import '../screens/drives_list_screen.dart';
+import '../screens/business_report_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -46,6 +47,36 @@ class _MasterScreenState extends State<MasterScreen> {
         child: ListView(
           children: [
             ListTile(
+              title: Text('Business Report'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BusinessReportScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Drives'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => DrivesListScreen()),
+                );
+              },
+            ),
+
+            ListTile(
+              title: Text('Reviews'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReviewListScreen()),
+                );
+              },
+            ),
+            ListTile(
               title: Text('Administrators'),
               onTap: () {
                 Navigator.pushReplacement(
@@ -54,6 +85,7 @@ class _MasterScreenState extends State<MasterScreen> {
                 );
               },
             ),
+
             ListTile(
               title: Text('Drivers'),
               onTap: () {
@@ -69,15 +101,6 @@ class _MasterScreenState extends State<MasterScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => UserListScreen()),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Brands'),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => BrandListScreen()),
                 );
               },
             ),
@@ -100,23 +123,15 @@ class _MasterScreenState extends State<MasterScreen> {
               },
             ),
             ListTile(
-              title: Text('Reviews'),
+              title: Text('Brands'),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => ReviewListScreen()),
+                  MaterialPageRoute(builder: (context) => BrandListScreen()),
                 );
               },
             ),
-            ListTile(
-              title: Text('Drives'),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => DrivesListScreen()),
-                );
-              },
-            ),
+
             ListTile(
               title: Text('Logout'),
               onTap: () {

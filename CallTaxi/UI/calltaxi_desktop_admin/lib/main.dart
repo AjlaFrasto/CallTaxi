@@ -5,6 +5,8 @@ import 'package:calltaxi_desktop_admin/providers/user_provider.dart';
 import 'package:calltaxi_desktop_admin/providers/vehicle_provider.dart';
 import 'package:calltaxi_desktop_admin/providers/review_provider.dart';
 import 'package:calltaxi_desktop_admin/providers/driver_request_provider.dart';
+import 'package:calltaxi_desktop_admin/providers/business_report_provider.dart';
+import 'package:calltaxi_desktop_admin/screens/business_report_screen.dart';
 import 'package:calltaxi_desktop_admin/screens/city_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +35,9 @@ void main() async {
         ),
         ChangeNotifierProvider<DriverRequestProvider>(
           create: (context) => DriverRequestProvider(),
+        ),
+        ChangeNotifierProvider<BusinessReportProvider>(
+          create: (context) => BusinessReportProvider(),
         ),
       ],
       child: const MyApp(),
@@ -124,7 +129,7 @@ class LoginPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CityListScreen(),
+                              builder: (context) => BusinessReportScreen(),
                             ),
                           );
                         } on Exception catch (e) {
