@@ -28,6 +28,7 @@ namespace CallTaxi.Services.Services
                 .Include(x => x.User)
                 .Include(x => x.VehicleTier)
                 .Include(x => x.Status)
+                .Include(x => x.Vehicle!.Brand)
                 .AsQueryable();
 
             query = ApplyFilter(query, search);
@@ -81,7 +82,7 @@ namespace CallTaxi.Services.Services
             
             if (entity.User != null)
             {
-                response.UserName = $"{entity.User.FirstName} {entity.User.LastName}";
+                response.UserFullName = $"{entity.User.FirstName} {entity.User.LastName}";
             }
             
             if (entity.VehicleTier != null)
@@ -98,14 +99,14 @@ namespace CallTaxi.Services.Services
             if (entity.Driver != null)
             {
                 response.DriverId = entity.DriverId;
-                response.DriverName = $"{entity.Driver.FirstName} {entity.Driver.LastName}";
+                response.DriverFullName = $"{entity.Driver.FirstName} {entity.Driver.LastName}";
             }
 
             // Map vehicle information if available
             if (entity.Vehicle != null)
             {
                 response.VehicleId = entity.VehicleId;
-                response.VehicleName = entity.Vehicle.Name;
+                response.VehicleName = entity.Vehicle.Brand != null ? ($"{entity.Vehicle.Brand.Name} {entity.Vehicle.Name}") : entity.Vehicle.Name;
                 response.VehicleLicensePlate = entity.Vehicle.LicensePlate;
             }
 

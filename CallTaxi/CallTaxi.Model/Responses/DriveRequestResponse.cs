@@ -6,13 +6,13 @@ namespace CallTaxi.Model.Responses
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public string UserName { get; set; } = string.Empty;
+        public string UserFullName { get; set; } = string.Empty;
         public int VehicleTierId { get; set; }
         public string VehicleTierName { get; set; } = string.Empty;
 
         // Driver information (nullable)
         public int? DriverId { get; set; }
-        public string? DriverName { get; set; }
+        public string? DriverFullName { get; set; }
 
         // Vehicle information (nullable)
         public int? VehicleId { get; set; }
