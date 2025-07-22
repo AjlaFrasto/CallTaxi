@@ -86,11 +86,7 @@ class DriverDetailsScreen extends StatelessWidget {
                     user.genderName,
                     icon: Icons.person_outline,
                   ),
-                  _buildInfoRow(
-                    "City",
-                    user.cityName,
-                    icon: Icons.location_city,
-                  ),
+                  // Remove city/location row that references user.latitude/longitude or getPlaceName
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 6.0),
                     child: Row(
