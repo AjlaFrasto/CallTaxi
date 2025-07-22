@@ -93,12 +93,18 @@ class _DrivesListScreenState extends State<DrivesListScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
-            DataColumn(
-              label: Text(
-                "Final Price",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              DataColumn(
+                label: Text(
+                  "Final Price",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ), 
+              DataColumn(
+                label: Text(
+                  "Status",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
               ),
-            ),
             DataColumn(
               label: Text(
                 "Details",
@@ -142,9 +148,16 @@ class _DrivesListScreenState extends State<DrivesListScreen> {
                               style: TextStyle(fontSize: 15),
                             ),
                           ),
+                          
                           DataCell(
                             Text(
                               "${e.finalPrice.toStringAsFixed(2)} KM",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                           DataCell(
+                            Text(
+                              e.statusName ?? '-',
                               style: TextStyle(fontSize: 15),
                             ),
                           ),
