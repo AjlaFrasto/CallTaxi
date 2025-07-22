@@ -165,8 +165,9 @@ class _BrandDetailsScreenState extends State<BrandDetailsScreen> {
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
                       FormBuilderValidators.match(
-                        RegExp(r'^[A-Za-z0-9\s]+'),
-                        errorText: 'Only letters, numbers and spaces allowed',
+                        RegExp(r'^[\p{L} ]+$', unicode: true),
+                        errorText:
+                            'Only letters (including international), and spaces allowed',
                       ),
                     ]),
                   ),

@@ -27,12 +27,12 @@ class _DrivesListScreenState extends State<DrivesListScreen> {
   Future<void> _performSearch({int? page, int? pageSize}) async {
     final int pageToFetch = page ?? _currentPage;
     final int pageSizeToUse = pageSize ?? _pageSize;
-    var filter = {
-      "page": pageToFetch,
-      "pageSize": pageSizeToUse,
-      "includeTotalCount": true,
-      "fts": searchController.text,
-    };
+  var filter = {
+    "page": pageToFetch,
+    "pageSize": pageSizeToUse,
+    "includeTotalCount": true,
+    "fts": searchController.text,
+  };
     var drives = await driverRequestProvider.get(filter: filter);
     setState(() {
       this.drives = drives;

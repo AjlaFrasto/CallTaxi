@@ -124,6 +124,16 @@ namespace CallTaxi.Services.Services
 
             if (search != null)
             {
+                if (!string.IsNullOrEmpty(search.FTS))
+                {
+                    var fts = search.FTS.ToLower();
+                    query = query.Where(x =>
+                        (x.User.FirstName + " " + x.User.LastName).ToLower().Contains(fts) ||
+                        (x.Driver != null && (x.Driver.FirstName + " " + x.Driver.LastName).ToLower().Contains(fts)) ||
+                        (x.Vehicle != null && x.Vehicle.Brand != null && (x.Vehicle.Brand.Name + " " + x.Vehicle.Name).ToLower().Contains(fts))
+                    );
+                }
+
                 if (search.UserId.HasValue)
                     query = query.Where(x => x.UserId == search.UserId);
 

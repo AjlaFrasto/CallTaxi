@@ -54,10 +54,12 @@ namespace CallTaxi.Services.Services
         {
             if (!string.IsNullOrEmpty(search.FTS))
             {
+                var fts = search.FTS.ToLower();
                 query = query.Where(v =>
-                    v.Name.Contains(search.FTS) ||
-                    v.Brand.Name.Contains(search.FTS) ||
-                    (v.User.FirstName + " " + v.User.LastName).Contains(search.FTS)
+                    v.Name.ToLower().Contains(fts) ||
+                    v.Brand.Name.ToLower().Contains(fts) ||
+                    (v.User.FirstName + " " + v.User.LastName).ToLower().Contains(fts) ||
+                    (v.Brand.Name + " " + v.Name).ToLower().Contains(fts)
                 );
             }
 
