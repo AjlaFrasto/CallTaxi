@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:calltaxi_desktop_admin/providers/city_provider.dart';
+import 'package:calltaxi_desktop_admin/utils/text_field_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -13,16 +14,15 @@ void main() async {
   // Stripe.urlScheme = 'flutterstripe';
   // await Stripe.instance.applySettings();
 
-
   HttpOverrides.global = MyHttpOverrides();
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider<CityProvider>(
-          create: (_) => CityProvider()),
-
-    ],
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<CityProvider>(create: (_) => CityProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LoginPage(),
-      debugShowCheckedModeBanner: false, 
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -85,9 +85,11 @@ class LoginPage extends StatelessWidget {
             Container(
               height: 400,
               decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/images/login_header.png"),
-                      fit: BoxFit.fill)),
+                image: DecorationImage(
+                  image: AssetImage("assets/images/login_header.png"),
+                  fit: BoxFit.fill,
+                ),
+              ),
             ),
             Container(
               child: Padding(
@@ -97,63 +99,44 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(height: 50),
                     TextField(
                       controller: _usernameController,
-                      decoration: InputDecoration(
-                        labelText: "Username",
-                        prefixIcon: Icon(Icons.account_circle_sharp),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
+                      decoration: customTextFieldDecoration(
+                        "Username",
+                        prefixIcon: Icons.account_circle_sharp,
                       ),
                     ),
                     const SizedBox(height: 10),
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        prefixIcon: Icon(Icons.password),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
+                      decoration: customTextFieldDecoration(
+                        "Password",
+                        prefixIcon: Icons.password,
                       ),
                     ),
                     const SizedBox(height: 40),
                     ElevatedButton(
-                      onPressed: () async {
-                      
-                        
-                      },
+                      onPressed: () async {},
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 15.0), // Button padding
+                          vertical: 15.0,
+                        ), // Button padding
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(10.0), // Rounded corners
+                          borderRadius: BorderRadius.circular(
+                            10.0,
+                          ), // Rounded corners
                         ),
                         minimumSize: const Size(double.infinity, 30),
-                        backgroundColor: Color(0xFF08b7f0),
+                        backgroundColor: Color(0xFFFF6F00),
                       ),
-                      child: const Text("Login",
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
