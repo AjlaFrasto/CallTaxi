@@ -1,7 +1,5 @@
-
-import 'package:calltaxi_desktop_admin/model/city.dart';
-import 'package:calltaxi_desktop_admin/providers/base_provider.dart';
-
+import 'package:calltaxi_mobile_driver/model/city.dart';
+import 'package:calltaxi_mobile_driver/providers/base_provider.dart';
 
 class CityProvider extends BaseProvider<City> {
   CityProvider() : super("City");
@@ -10,5 +8,4 @@ class CityProvider extends BaseProvider<City> {
   City fromJson(dynamic json) {
     return City.fromJson(json);
   }
-
 }

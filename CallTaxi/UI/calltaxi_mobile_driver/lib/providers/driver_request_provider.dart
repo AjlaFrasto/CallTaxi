@@ -1,5 +1,5 @@
-import 'package:calltaxi_desktop_admin/model/driver_request.dart';
-import 'package:calltaxi_desktop_admin/providers/base_provider.dart';
+import 'package:calltaxi_mobile_driver/model/driver_request.dart';
+import 'package:calltaxi_mobile_driver/providers/base_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

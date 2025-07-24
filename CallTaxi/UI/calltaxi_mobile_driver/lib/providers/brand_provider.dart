@@ -1,5 +1,5 @@
-import 'package:calltaxi_desktop_admin/model/brand.dart';
-import 'package:calltaxi_desktop_admin/providers/base_provider.dart';
+import 'package:calltaxi_mobile_driver/model/brand.dart';
+import 'package:calltaxi_mobile_driver/providers/base_provider.dart';
 
 class BrandProvider extends BaseProvider<Brand> {
   BrandProvider() : super("Brand");

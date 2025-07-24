@@ -4,6 +4,7 @@ using CallTaxi.Model.SearchObjects;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using CallTaxi.Services.Interfaces;
+using CallTaxi.Services.Services;
 
 namespace CallTaxi.WebAPI.Controllers
 {
@@ -62,6 +63,15 @@ namespace CallTaxi.WebAPI.Controllers
                 return NotFound();
 
             return NoContent();
+        }
+
+        [HttpPost("authenticate")]
+        public async Task<ActionResult<UserResponse>> Authenticate([FromBody] UserLoginRequest request)
+        {
+            var user = await _userService.AuthenticateAsync(request);
+            if (user == null)
+                return Unauthorized();
+            return Ok(user);
         }
     }
 }
