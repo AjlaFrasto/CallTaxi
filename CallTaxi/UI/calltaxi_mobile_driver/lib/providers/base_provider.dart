@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:calltaxi_mobile_driver/model/search_result.dart';
 import 'package:calltaxi_mobile_driver/providers/auth_provider.dart';
+import 'package:calltaxi_mobile_driver/utils/network_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -14,9 +16,14 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   BaseProvider(String endpoint) {
     this.endpoint = endpoint;
-    baseUrl = const String.fromEnvironment(
+    baseUrl = _getBaseUrl();
+  }
+
+  String _getBaseUrl() {
+    // Use the network utility to get the appropriate base URL
+    return String.fromEnvironment(
       "baseUrl",
-      defaultValue: "http://10.0.2.2:5130/",
+      defaultValue: NetworkUtils.getBaseUrl(),
     );
   }
 
