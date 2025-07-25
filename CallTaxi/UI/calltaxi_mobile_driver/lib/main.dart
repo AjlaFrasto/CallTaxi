@@ -4,6 +4,7 @@ import 'package:calltaxi_mobile_driver/layouts/master_screen.dart';
 import 'package:calltaxi_mobile_driver/providers/auth_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/city_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/vehicle_provider.dart';
 import 'package:calltaxi_mobile_driver/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/debug_screen.dart';
 import 'package:calltaxi_mobile_driver/utils/text_field_decoration.dart';
@@ -24,6 +25,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider<CityProvider>(create: (_) => CityProvider()),
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
+        ChangeNotifierProvider<VehicleProvider>(
+          create: (_) => VehicleProvider(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -281,25 +285,25 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 16),
                             // Debug button for network testing
-                          //   SizedBox(
-                          //     width: double.infinity,
-                          //     child: TextButton(
-                          //       onPressed: () {
-                          //         Navigator.of(context).push(
-                          //           MaterialPageRoute(
-                          //             builder: (context) => DebugScreen(),
-                          //           ),
-                          //         );
-                          //       },
-                          //       child: Text(
-                          //         "Debug Network",
-                          //         style: TextStyle(
-                          //           color: Color(0xFFFF6F00),
-                          //           fontSize: 14,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
+                            //   SizedBox(
+                            //     width: double.infinity,
+                            //     child: TextButton(
+                            //       onPressed: () {
+                            //         Navigator.of(context).push(
+                            //           MaterialPageRoute(
+                            //             builder: (context) => DebugScreen(),
+                            //           ),
+                            //         );
+                            //       },
+                            //       child: Text(
+                            //         "Debug Network",
+                            //         style: TextStyle(
+                            //           color: Color(0xFFFF6F00),
+                            //           fontSize: 14,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
                           ],
                         ),
                       ),
