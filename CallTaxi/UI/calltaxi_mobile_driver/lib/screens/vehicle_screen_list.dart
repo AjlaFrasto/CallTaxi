@@ -113,9 +113,50 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                         ),
                       ),
                       SizedBox(height: 4),
-                      Text(
-                        vehicle.brandName,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      Row(
+                        children: [
+                          // Brand logo
+                          if (vehicle.brandLogo != null &&
+                              vehicle.brandLogo!.isNotEmpty)
+                            Container(
+                              width: 20,
+                              height: 20,
+                              margin: EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 2,
+                                    offset: Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.memory(
+                                  base64Decode(vehicle.brandLogo!),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(
+                                        Icons.branding_watermark,
+                                        size: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                ),
+                              ),
+                            ),
+                          Expanded(
+                            child: Text(
+                              vehicle.brandName,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 4),
                       Text(
