@@ -25,88 +25,186 @@ class ProfileScreen extends StatelessWidget {
     if (user == null) {
       return Center(child: Text('No user data available'));
     }
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 24),
-            CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.orange.shade100,
-              backgroundImage:
-                  (user.picture != null && user.picture!.isNotEmpty)
-                  ? getUserImageProvider(user.picture)
-                  : null,
-              child: user.picture == null || user.picture!.isEmpty
-                  ? Icon(Icons.account_circle, size: 100, color: Colors.orange)
-                  : null,
-            ),
-            SizedBox(height: 18),
-            Text(
-              '${user.firstName} ${user.lastName}',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8),
-            Text(
-              '@${user.username}',
-              style: TextStyle(fontSize: 16, color: Colors.blueGrey[700]),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 18),
-            _buildInfoRow(Icons.email, 'Email', user.email),
-            _buildInfoRow(Icons.phone, 'Phone', user.phoneNumber ?? '-'),
-            _buildInfoRow(Icons.person_outline, 'Gender', user.genderName),
-            _buildInfoRow(Icons.location_city, 'City', user.cityName),
-            SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.verified_user, color: Colors.orange, size: 20),
-                SizedBox(width: 8),
-                Text(
-                  'Active:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                SizedBox(width: 8),
-                Icon(
-                  user.isActive ? Icons.check_circle : Icons.cancel,
-                  color: user.isActive ? Colors.green : Colors.red,
-                  size: 22,
-                ),
-              ],
-            ),
-            SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+    final theme = Theme.of(context);
+    return Scaffold(
+      backgroundColor: Color(0xFFF7F7F7),
+      body: Stack(
         children: [
-          Icon(icon, size: 20, color: Colors.orange),
-          SizedBox(width: 8),
-          Text(
-            '$label:',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          // Gradient header
+          Container(
+            height: 150,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
           ),
-          SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              value,
-              style: TextStyle(fontSize: 16),
-              overflow: TextOverflow.ellipsis,
+          // Main content
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 10),
+                // Avatar with border and shadow
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 16,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
+                      border: Border.all(color: Colors.white, width: 4),
+                    ),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.orange.shade100,
+                      backgroundImage:
+                          (user.picture != null && user.picture!.isNotEmpty)
+                          ? getUserImageProvider(user.picture)
+                          : null,
+                      child: user.picture == null || user.picture!.isEmpty
+                          ? Icon(
+                              Icons.account_circle,
+                              size: 100,
+                              color: Colors.orange,
+                            )
+                          : null,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                // Card with profile info
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Card(
+                    elevation: 6,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 28,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${user.firstName} ${user.lastName}',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFFF6F00),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            '@${user.username}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 18),
+                          Divider(),
+                          _buildInfoTile(Icons.email, 'Email', user.email),
+                          _buildInfoTile(
+                            Icons.phone,
+                            'Phone',
+                            user.phoneNumber ?? '-',
+                          ),
+                          _buildInfoTile(
+                            Icons.person_outline,
+                            'Gender',
+                            user.genderName,
+                          ),
+                          _buildInfoTile(
+                            Icons.location_city,
+                            'City',
+                            user.cityName,
+                          ),
+                          Divider(),
+                          SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.shade50,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.verified_user,
+                                      color: Colors.orange,
+                                      size: 20,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Active:',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      user.isActive
+                                          ? Icons.check_circle
+                                          : Icons.cancel,
+                                      color: user.isActive
+                                          ? Colors.green
+                                          : Colors.red,
+                                      size: 22,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 32),
+                // Optionally, add an edit button or actions here
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoTile(IconData icon, String label, String value) {
+    return ListTile(
+      dense: true,
+      leading: Container(
+        decoration: BoxDecoration(
+          color: Colors.orange.shade50,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: EdgeInsets.all(8),
+        child: Icon(icon, size: 22, color: Colors.orange),
+      ),
+      title: Text(
+        label,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+      ),
+      subtitle: Text(value, style: TextStyle(fontSize: 15)),
+      contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 2),
     );
   }
 }

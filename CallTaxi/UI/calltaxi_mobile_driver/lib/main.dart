@@ -74,11 +74,98 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _handleLogin(BuildContext context) async {
+    setState(() => _isLoading = true);
+    print("Login button pressed");
+    UserProvider userProvider = UserProvider();
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+    print("credentials: $username : $password");
+    AuthProvider.username = username;
+    AuthProvider.password = password;
+    try {
+      print("Calling authenticate...");
+      final user = await userProvider.authenticate(username, password);
+      print("Authenticate returned: $user");
+      if (user != null) {
+        print("User is not null, checking roles...");
+        final hasDriverRole = user.roles.any((role) {
+          print("Role: \\${role.id} - \\${role.name}");
+          return role.id == 2;
+        });
+        print("Has driver role: $hasDriverRole");
+        if (!hasDriverRole) {
+          print("Access denied dialog");
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Access Denied"),
+              content: Text("You do not have permission to access this app."),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("OK"),
+                ),
+              ],
+            ),
+          );
+          setState(() => _isLoading = false);
+          return;
+        }
+        print("Navigating to MasterScreen");
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) =>
+                MasterScreen(title: "Call Taxi Driver", child: ProfileScreen()),
+          ),
+        );
+      } else {
+        print("Login failed dialog");
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Login Failed"),
+            content: Text("Invalid username or password."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print("Exception: $e");
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,98 +238,9 @@ class LoginPage extends StatelessWidget {
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: () async {
-                                  print("Login button pressed");
-                                  UserProvider userProvider = UserProvider();
-                                  final username = _usernameController.text;
-                                  final password = _passwordController.text;
-                                  print("credentials: $username : $password");
-                                  AuthProvider.username = username;
-                                  AuthProvider.password = password;
-                                  try {
-                                    print("Calling authenticate...");
-                                    final user = await userProvider
-                                        .authenticate(username, password);
-                                    print("Authenticate returned: $user");
-                                    if (user != null) {
-                                      print(
-                                        "User is not null, checking roles...",
-                                      );
-                                      final hasDriverRole = user.roles.any((
-                                        role,
-                                      ) {
-                                        print(
-                                          "Role: \\${role.id} - \\${role.name}",
-                                        );
-                                        return role.id == 2;
-                                      });
-                                      print("Has driver role: $hasDriverRole");
-                                      if (!hasDriverRole) {
-                                        print("Access denied dialog");
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: Text("Access Denied"),
-                                            content: Text(
-                                              "You do not have permission to access this app.",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: Text("OK"),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                        return;
-                                      }
-                                      print("Navigating to MasterScreen");
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) => MasterScreen(
-                                            title: "Call Taxi Driver",
-                                            child: ProfileScreen(),
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      print("Login failed dialog");
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: Text("Login Failed"),
-                                          content: Text(
-                                            "Invalid username or password.",
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: Text("OK"),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  } catch (e) {
-                                    print("Exception: $e");
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text("Error"),
-                                        content: Text(e.toString()),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text("OK"),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
+                                onPressed: _isLoading
+                                    ? null
+                                    : () => _handleLogin(context),
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16.0,
@@ -253,13 +251,30 @@ class LoginPage extends StatelessWidget {
                                   backgroundColor: Color(0xFFFF6F00),
                                   elevation: 2,
                                 ),
-                                child: const Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Login",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    if (_isLoading) ...[
+                                      SizedBox(width: 16),
+                                      SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
                             ),
