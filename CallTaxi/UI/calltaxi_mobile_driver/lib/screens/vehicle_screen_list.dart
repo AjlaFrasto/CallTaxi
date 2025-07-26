@@ -90,92 +90,87 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
             children: [
               Row(
                 children: [
-                  // Vehicle Image
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey[200],
-                    ),
-                    child:
-                        vehicle.picture != null && vehicle.picture!.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.memory(
-                              base64Decode(vehicle.picture!),
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(
-                                    Icons.directions_car,
-                                    size: 40,
-                                    color: Colors.grey[600],
-                                  ),
+                  // Vehicle Image with brand logo overlay
+                  Stack(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.grey[200],
+                        ),
+                        child:
+                            vehicle.picture != null &&
+                                vehicle.picture!.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.memory(
+                                  base64Decode(vehicle.picture!),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(
+                                        Icons.directions_car,
+                                        size: 40,
+                                        color: Colors.grey[600],
+                                      ),
+                                ),
+                              )
+                            : Icon(
+                                Icons.directions_car,
+                                size: 40,
+                                color: Colors.grey[600],
+                              ),
+                      ),
+                      // Brand logo in top right corner of vehicle image
+                      if (vehicle.brandLogo != null &&
+                          vehicle.brandLogo!.isNotEmpty)
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1),
+                                ),
+                              ],
                             ),
-                          )
-                        : Icon(
-                            Icons.directions_car,
-                            size: 40,
-                            color: Colors.grey[600],
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.memory(
+                                base64Decode(vehicle.brandLogo!),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(
+                                      Icons.branding_watermark,
+                                      size: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                              ),
+                            ),
                           ),
+                        ),
+                    ],
                   ),
                   SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Combined brand name + vehicle name
                         Text(
-                          vehicle.name,
+                          "${vehicle.brandName} ${vehicle.name}",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            // Brand logo
-                            if (vehicle.brandLogo != null &&
-                                vehicle.brandLogo!.isNotEmpty)
-                              Container(
-                                width: 20,
-                                height: 20,
-                                margin: EdgeInsets.only(right: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 2,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.memory(
-                                    base64Decode(vehicle.brandLogo!),
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Icon(
-                                          Icons.branding_watermark,
-                                          size: 12,
-                                          color: Colors.grey[600],
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            Expanded(
-                              child: Text(
-                                vehicle.brandName,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -189,7 +184,7 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                       ],
                     ),
                   ),
-                  // Status indicator
+                  // Status indicator in top right corner
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(

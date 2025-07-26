@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:calltaxi_mobile_driver/model/brand.dart';
 import 'package:calltaxi_mobile_driver/model/search_result.dart';
@@ -13,6 +14,8 @@ import 'package:calltaxi_mobile_driver/providers/vehicle_tier_provider.dart';
 import 'package:calltaxi_mobile_driver/utils/text_field_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 class VehicleDetailsScreen extends StatefulWidget {
   Vehicle? vehicle;
@@ -25,12 +28,8 @@ class VehicleDetailsScreen extends StatefulWidget {
 }
 
 class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _licensePlateController = TextEditingController();
-  final _colorController = TextEditingController();
-  final _yearController = TextEditingController();
-  final _seatsController = TextEditingController();
+  final _formKey = GlobalKey<FormBuilderState>();
+  Map<String, dynamic> _initialValue = {}; // Store form data like brand screen
 
   late VehicleProvider vehicleProvider;
   BrandProvider? brandProvider;
@@ -46,7 +45,8 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
   Brand? _selectedBrand;
   VehicleTier? _selectedVehicleTier;
   bool _petFriendly = false;
-  Uint8List? _selectedImage;
+  String? _selectedImageBase64; // Store image as base64 string
+  Uint8List? _selectedImage; // Keep for backward compatibility
 
   @override
   void initState() {
@@ -67,17 +67,23 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
   }
 
   void _initializeForm() {
+    // Set up initial values like brand screen
+    _initialValue = {
+      'name': widget.vehicle?.name ?? '',
+      'licensePlate': widget.vehicle?.licensePlate ?? '',
+      'color': widget.vehicle?.color ?? '',
+      'yearOfManufacture': widget.vehicle?.yearOfManufacture?.toString() ?? '',
+      'seatsCount': widget.vehicle?.seatsCount?.toString() ?? '',
+      'petFriendly': widget.vehicle?.petFriendly ?? false,
+      'picture': widget.vehicle?.picture ?? '',
+    };
+
     if (widget.vehicle != null) {
-      _nameController.text = widget.vehicle!.name;
-      _licensePlateController.text = widget.vehicle!.licensePlate;
-      _colorController.text = widget.vehicle!.color;
-      _yearController.text = widget.vehicle!.yearOfManufacture.toString();
-      _seatsController.text = widget.vehicle!.seatsCount.toString();
       _petFriendly = widget.vehicle!.petFriendly;
 
       if (widget.vehicle!.picture != null &&
           widget.vehicle!.picture!.isNotEmpty) {
-        _selectedImage = base64Decode(widget.vehicle!.picture!);
+        _selectedImageBase64 = widget.vehicle!.picture;
       }
     }
   }
@@ -219,7 +225,101 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
   }
 
   Future<void> _pickImage() async {
-    // TODO: Implement image picking
+    try {
+      // Show image source options
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.photo_library),
+                  title: Text("Choose from Gallery"),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await _selectImageFromGallery();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.camera_alt),
+                  title: Text("Take a Photo"),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await _takePhoto();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print("Error showing image picker options: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error selecting image: $e")));
+    }
+  }
+
+  Future<void> _selectImageFromGallery() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        final bytes = await image.readAsBytes();
+        final base64Image = base64Encode(bytes);
+        setState(() {
+          _selectedImageBase64 = base64Image;
+          _selectedImage = bytes; // Keep for backward compatibility
+          _initialValue['picture'] =
+              base64Image; // Store in initial value like brand screen
+        });
+        print("Image selected from gallery: ${image.path}");
+      }
+    } catch (e) {
+      print("Error selecting image from gallery: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error selecting image: $e")));
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        final bytes = await image.readAsBytes();
+        final base64Image = base64Encode(bytes);
+        setState(() {
+          _selectedImageBase64 = base64Image;
+          _selectedImage = bytes; // Keep for backward compatibility
+          _initialValue['picture'] =
+              base64Image; // Store in initial value like brand screen
+        });
+        print("Photo taken: ${image.path}");
+      }
+    } catch (e) {
+      print("Error taking photo: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error taking photo: $e")));
+    }
   }
 
   Future<void> _saveVehicle() async {
@@ -249,37 +349,35 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
     });
 
     try {
-      final request = {
-        'name': _nameController.text,
-        'licensePlate': _licensePlateController.text,
-        'color': _colorController.text,
-        'yearOfManufacture': int.parse(_yearController.text),
-        'seatsCount': int.parse(_seatsController.text),
-        'petFriendly': _petFriendly,
-        'brandId': _selectedBrand!.id,
-        'userId': UserProvider.currentUser!.id,
-        'vehicleTierId': _selectedVehicleTier!.id,
-        'picture': _selectedImage != null
-            ? base64Encode(_selectedImage!)
-            : null,
-      };
+      _formKey.currentState?.saveAndValidate();
+      if (_formKey.currentState?.validate() ?? false) {
+        var request = Map.from(_formKey.currentState?.value ?? {});
 
-      if (widget.vehicle == null) {
-        await vehicleProvider.insert(request);
-        // Call the callback to refresh the list
-        widget.onVehicleSaved?.call();
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Vehicle added successfully")));
-      } else {
-        await vehicleProvider.update(widget.vehicle!.id, request);
-        // Call the callback to refresh the list
-        widget.onVehicleSaved?.call();
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Vehicle updated successfully")));
+        // Send the base64 string directly like the brand screen
+        request['picture'] = _initialValue['picture'];
+
+        request['petFriendly'] = _petFriendly;
+        request['brandId'] = _selectedBrand!.id;
+        request['userId'] = UserProvider.currentUser!.id;
+        request['vehicleTierId'] = _selectedVehicleTier!.id;
+
+        if (widget.vehicle == null) {
+          await vehicleProvider.insert(request);
+          // Call the callback to refresh the list
+          widget.onVehicleSaved?.call();
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Vehicle added successfully")));
+        } else {
+          await vehicleProvider.update(widget.vehicle!.id, request);
+          // Call the callback to refresh the list
+          widget.onVehicleSaved?.call();
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Vehicle updated successfully")),
+          );
+        }
       }
     } catch (e) {
       print("Error saving vehicle: $e");
@@ -430,8 +528,9 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
-        child: Form(
+        child: FormBuilder(
           key: _formKey,
+          initialValue: _initialValue,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -464,12 +563,20 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.grey[300]!),
                     ),
-                    child: _selectedImage != null
+                    child:
+                        _selectedImageBase64 != null &&
+                            _selectedImageBase64!.isNotEmpty
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.memory(
-                              _selectedImage!,
+                              base64Decode(_selectedImageBase64!),
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.error,
+                                    size: 40,
+                                    color: Colors.red,
+                                  ),
                             ),
                           )
                         : Column(
@@ -493,18 +600,16 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
               SizedBox(height: 24),
 
               // Vehicle Name
-              TextFormField(
-                controller: _nameController,
+              FormBuilderTextField(
+                name: 'name',
                 decoration: customTextFieldDecoration(
                   "Model Name",
                   prefixIcon: Icons.directions_car,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter model name";
-                  }
-                  return null;
-                },
+                initialValue: widget.vehicle?.name,
+                validator: FormBuilderValidators.required(
+                  errorText: "Please enter model name",
+                ),
               ),
               SizedBox(height: 16),
 
@@ -513,34 +618,30 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
               SizedBox(height: 16),
 
               // License Plate
-              TextFormField(
-                controller: _licensePlateController,
+              FormBuilderTextField(
+                name: 'licensePlate',
                 decoration: customTextFieldDecoration(
                   "License Plate",
                   prefixIcon: Icons.confirmation_number,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter license plate";
-                  }
-                  return null;
-                },
+                initialValue: widget.vehicle?.licensePlate,
+                validator: FormBuilderValidators.required(
+                  errorText: "Please enter license plate",
+                ),
               ),
               SizedBox(height: 16),
 
               // Color
-              TextFormField(
-                controller: _colorController,
+              FormBuilderTextField(
+                name: 'color',
                 decoration: customTextFieldDecoration(
                   "Color",
                   prefixIcon: Icons.palette,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter color";
-                  }
-                  return null;
-                },
+                initialValue: widget.vehicle?.color,
+                validator: FormBuilderValidators.required(
+                  errorText: "Please enter color",
+                ),
               ),
               SizedBox(height: 16),
 
@@ -548,44 +649,43 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _yearController,
+                    child: FormBuilderTextField(
+                      name: 'yearOfManufacture',
                       decoration: customTextFieldDecoration(
                         "Year",
                         prefixIcon: Icons.calendar_today,
                       ),
+                      initialValue: widget.vehicle?.yearOfManufacture
+                          ?.toString(),
                       keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter year";
-                        }
-                        int? year = int.tryParse(value);
-                        if (year == null || year < 1900 || year > 2100) {
-                          return "Please enter a valid year";
-                        }
-                        return null;
-                      },
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: "Please enter year",
+                        ),
+                        FormBuilderValidators.numeric(
+                          errorText: "Please enter a valid year",
+                        ),
+                      ]),
                     ),
                   ),
                   SizedBox(width: 16),
                   Expanded(
-                    child: TextFormField(
-                      controller: _seatsController,
+                    child: FormBuilderTextField(
+                      name: 'seatsCount',
                       decoration: customTextFieldDecoration(
                         "Seats",
                         prefixIcon: Icons.airline_seat_recline_normal,
                       ),
+                      initialValue: widget.vehicle?.seatsCount?.toString(),
                       keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter seats count";
-                        }
-                        int? seats = int.tryParse(value);
-                        if (seats == null || seats < 1 || seats > 20) {
-                          return "Please enter valid seats count";
-                        }
-                        return null;
-                      },
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: "Please enter seats count",
+                        ),
+                        FormBuilderValidators.numeric(
+                          errorText: "Please enter valid seats count",
+                        ),
+                      ]),
                     ),
                   ),
                 ],
