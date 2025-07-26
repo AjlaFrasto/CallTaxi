@@ -158,17 +158,37 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isMe ? Colors.orange : Colors.grey[200],
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
         ),
-        child: Text(
-          message.message,
-          style: TextStyle(
-            color: isMe ? Colors.white : Colors.black87,
-            fontSize: 16,
-          ),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              message.message,
+              style: TextStyle(
+                color: isMe ? Colors.white : Colors.black87,
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              _formatTime(message.createdAt),
+              style: TextStyle(
+                color: isMe ? Colors.white70 : Colors.grey[600],
+                fontSize: 12,
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  String _formatTime(DateTime dateTime) {
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -205,7 +225,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          "Start a conversation with ${widget.otherPersonName}",
+                          "Start a conversation!",
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[500],
@@ -248,10 +268,13 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                     decoration: InputDecoration(
                       hintText: "Type a message...",
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide.none,
                       ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                       contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
+                        horizontal: 20,
                         vertical: 12,
                       ),
                     ),
@@ -261,10 +284,15 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                   ),
                 ),
                 SizedBox(width: 8),
-                IconButton(
-                  onPressed: _sendMessage,
-                  icon: Icon(Icons.send),
-                  color: Colors.orange,
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFF6F00),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: _sendMessage,
+                    icon: Icon(Icons.send, color: Colors.white),
+                  ),
                 ),
               ],
             ),
