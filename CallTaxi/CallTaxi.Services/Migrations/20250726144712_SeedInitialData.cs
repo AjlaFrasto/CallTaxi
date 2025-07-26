@@ -395,6 +395,21 @@ namespace CallTaxi.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Chats",
+                columns: new[] { "Id", "CreatedAt", "IsRead", "Message", "ReadAt", "ReceiverId", "SenderId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 12, 31, 2, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 2, 4 },
+                    { 2, new DateTime(2023, 12, 31, 3, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 4, 2 },
+                    { 3, new DateTime(2023, 12, 31, 4, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 3, 4 },
+                    { 4, new DateTime(2023, 12, 31, 5, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 4, 3 },
+                    { 5, new DateTime(2023, 12, 31, 6, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 2, 5 },
+                    { 6, new DateTime(2023, 12, 31, 7, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 5, 2 },
+                    { 7, new DateTime(2023, 12, 31, 8, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 3, 5 },
+                    { 8, new DateTime(2023, 12, 31, 9, 0, 0, 0, DateTimeKind.Utc), false, "Hello World", null, 5, 3 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "Id", "DateAssigned", "RoleId", "UserId" },
                 values: new object[,]

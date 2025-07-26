@@ -383,6 +383,40 @@ namespace CallTaxi.Services.Database
                     CreatedAt = fixedDate.AddDays(-2).AddHours(3)
                 }
             );
+
+            // Seed Chats (User <-> Driver communication, exclude admin)
+            // List of user and driver IDs (excluding admin)
+            var userIds = new[] { 4, 5 }; // Users: Ajla Frašto, Elmir Babović
+            var driverIds = new[] { 2, 3 }; // Drivers: Amel Musić, Adil Joldić
+
+            int chatId = 1;
+            foreach (var userId in userIds)
+            {
+                foreach (var driverId in driverIds)
+                {
+                    // User sends "Hello World" to Driver
+                    modelBuilder.Entity<Chat>().HasData(new Chat
+                    {
+                        Id = chatId++,
+                        SenderId = userId,
+                        ReceiverId = driverId,
+                        Message = "Hello World",
+                        CreatedAt = fixedDate.AddDays(-1).AddHours(chatId),
+                        IsRead = false
+                    });
+
+                    // Driver replies "Hello World" to User
+                    modelBuilder.Entity<Chat>().HasData(new Chat
+                    {
+                        Id = chatId++,
+                        SenderId = driverId,
+                        ReceiverId = userId,
+                        Message = "Hello World",
+                        CreatedAt = fixedDate.AddDays(-1).AddHours(chatId),
+                        IsRead = false
+                    });
+                }
+            }
         }
 
 

@@ -124,6 +124,80 @@ namespace CallTaxi.Services.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Chats");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2023, 12, 31, 2, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 2,
+                            SenderId = 4
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2023, 12, 31, 3, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 4,
+                            SenderId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 12, 31, 4, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 3,
+                            SenderId = 4
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 12, 31, 5, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 4,
+                            SenderId = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2023, 12, 31, 6, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 2,
+                            SenderId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2023, 12, 31, 7, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 5,
+                            SenderId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2023, 12, 31, 8, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 3,
+                            SenderId = 5
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2023, 12, 31, 9, 0, 0, 0, DateTimeKind.Utc),
+                            IsRead = false,
+                            Message = "Hello World",
+                            ReceiverId = 5,
+                            SenderId = 3
+                        });
                 });
 
             modelBuilder.Entity("CallTaxi.Services.Database.City", b =>

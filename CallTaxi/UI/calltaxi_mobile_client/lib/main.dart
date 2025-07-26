@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:calltaxi_mobile_client/layouts/master_screen.dart';
 import 'package:calltaxi_mobile_client/providers/auth_provider.dart';
+import 'package:calltaxi_mobile_client/providers/chat_provider.dart';
 import 'package:calltaxi_mobile_client/providers/review_provider.dart';
 import 'package:calltaxi_mobile_client/providers/user_provider.dart';
 import 'package:calltaxi_mobile_client/screens/profile_screen.dart';
@@ -24,6 +25,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider<ChatProvider>(create: (_) => ChatProvider()),
       ],
       child: const MyApp(),
     ),

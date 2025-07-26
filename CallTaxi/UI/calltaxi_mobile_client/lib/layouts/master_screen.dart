@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:calltaxi_mobile_client/screens/profile_screen.dart';
+import 'package:calltaxi_mobile_client/screens/chat_list_screen.dart';
 import 'package:calltaxi_mobile_client/screens/review_list_screen.dart';
 import 'package:calltaxi_mobile_client/providers/user_provider.dart';
 
@@ -29,7 +30,7 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 2) {
+    if (index == 3) {
       // Logout - clear user data and show logout dialog
       UserProvider.currentUser = null;
 
@@ -81,7 +82,7 @@ class _MasterScreenState extends State<MasterScreen> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children: [ProfileScreen(), ReviewListScreen()],
+        children: [ProfileScreen(), ChatListScreen(), ReviewListScreen()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -89,6 +90,7 @@ class _MasterScreenState extends State<MasterScreen> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
           BottomNavigationBarItem(
             icon: Icon(Icons.rate_review),
             label: 'Reviews',

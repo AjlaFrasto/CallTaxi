@@ -9,5 +9,6 @@ namespace CallTaxi.Services.Interfaces
     {
         Task<bool> MarkAsReadAsync(int chatId);
         Task<int> GetUnreadCountAsync(int userId);
+        Task<bool> MarkConversationAsReadAsync(int senderId, int receiverId);
     }
 } 

@@ -77,11 +77,32 @@ namespace CallTaxi.Services.Services
                 .CountAsync();
         }
 
+        public async Task<bool> MarkConversationAsReadAsync(int senderId, int receiverId)
+        {
+            var unreadMessages = await _context.Chats
+                .Where(c => c.SenderId == senderId && c.ReceiverId == receiverId && !c.IsRead)
+                .ToListAsync();
+
+            if (!unreadMessages.Any())
+                return false;
+
+            foreach (var message in unreadMessages)
+            {
+                message.IsRead = true;
+                message.ReadAt = DateTime.UtcNow;
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         protected override ChatResponse MapToResponse(Chat entity)
         {
             var response = _mapper.Map<ChatResponse>(entity);
             response.SenderName = $"{entity.Sender.FirstName} {entity.Sender.LastName}";
+            response.SenderPicture = entity.Sender?.Picture;
             response.ReceiverName = $"{entity.Receiver.FirstName} {entity.Receiver.LastName}";
+            response.ReceiverPicture = entity.Receiver?.Picture;
             return response;
         }
 

@@ -33,5 +33,15 @@ namespace CallTaxi.WebAPI.Controllers
         {
             return await _chatService.GetUnreadCountAsync(userId);
         }
+
+        [HttpPost("mark-conversation-read")]
+        public async Task<IActionResult> MarkConversationAsRead([FromQuery] int senderId, [FromQuery] int receiverId)
+        {
+            var result = await _chatService.MarkConversationAsReadAsync(senderId, receiverId);
+            if (!result)
+                return NotFound();
+
+            return Ok();
+        }
     }
 } 
