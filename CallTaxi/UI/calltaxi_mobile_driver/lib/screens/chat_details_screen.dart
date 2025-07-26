@@ -157,7 +157,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isMe ? Colors.orange : Colors.grey[200],
+          color: isMe ? Colors.lightBlue : Colors.grey[200],
           borderRadius: BorderRadius.circular(18),
         ),
         constraints: BoxConstraints(

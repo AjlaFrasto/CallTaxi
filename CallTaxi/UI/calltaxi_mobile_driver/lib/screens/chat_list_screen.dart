@@ -212,7 +212,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             width: 8,
                             height: 8,
                             decoration: BoxDecoration(
-                              color: Colors.orange,
+                              color: Colors.lightBlue,
                               shape: BoxShape.circle,
                             ),
                           ),
