@@ -29,6 +29,11 @@ namespace CallTaxi.Services.Services
                 query = query.Where(r => r.UserId == search.UserId.Value);
             }
 
+            if (search.DriverId.HasValue)
+            {
+                query = query.Where(r => r.DriveRequest.DriverId == search.DriverId.Value);
+            }
+
             if (search.MinRating.HasValue)
             {
                 query = query.Where(r => r.Rating >= search.MinRating.Value);
@@ -60,14 +65,19 @@ namespace CallTaxi.Services.Services
             var response = base.MapToResponse(entity);
             // UserFullName from Review.User
             response.UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : null;
-            // DriverFullName from DriveRequest.Driver
+            // UserPicture from Review.User
+            response.UserPicture = entity.User?.Picture;
+
+            // DriverFullName and DriverPicture from DriveRequest.Driver
             if (entity.DriveRequest != null && entity.DriveRequest.Driver != null)
             {
                 response.DriverFullName = $"{entity.DriveRequest.Driver.FirstName} {entity.DriveRequest.Driver.LastName}";
+                response.DriverPicture = entity.DriveRequest.Driver.Picture;
             }
             else
             {
                 response.DriverFullName = null;
+                response.DriverPicture = null;
             }
             // Map StartLocation and EndLocation from DriveRequest
             if (entity.DriveRequest != null)

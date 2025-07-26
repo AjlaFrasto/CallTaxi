@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:calltaxi_mobile_driver/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/vehicle_screen_list.dart';
+import 'package:calltaxi_mobile_driver/screens/review_list_screen.dart';
 import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 2) {
+    if (index == 3) {
       // Logout - clear user data and show logout dialog
       UserProvider.currentUser = null;
 
@@ -81,7 +82,7 @@ class _MasterScreenState extends State<MasterScreen> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children: [ProfileScreen(), VehicleScreenList()],
+        children: [ProfileScreen(), VehicleScreenList(), ReviewListScreen()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -92,6 +93,10 @@ class _MasterScreenState extends State<MasterScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_car),
             label: 'Vehicles',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.rate_review),
+            label: 'Reviews',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
         ],
