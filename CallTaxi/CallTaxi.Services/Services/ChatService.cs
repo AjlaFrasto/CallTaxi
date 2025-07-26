@@ -96,6 +96,67 @@ namespace CallTaxi.Services.Services
             return true;
         }
 
+        public async Task<PagedResult<ChatResponse>> GetOptimizedAsync(ChatSearchObject search)
+        {
+            var query = _context.Chats.AsQueryable();
+
+            // Apply filters without including pictures
+            if (search.SenderId.HasValue)
+            {
+                query = query.Where(c => c.SenderId == search.SenderId.Value);
+            }
+
+            if (search.ReceiverId.HasValue)
+            {
+                query = query.Where(c => c.ReceiverId == search.ReceiverId.Value);
+            }
+
+            if (search.IsRead.HasValue)
+            {
+                query = query.Where(c => c.IsRead == search.IsRead.Value);
+            }
+
+            if (search.OnlyUnread == true)
+            {
+                query = query.Where(c => !c.IsRead);
+            }
+
+            if (!string.IsNullOrEmpty(search.FTS))
+            {
+                query = query.Where(c => c.Message.Contains(search.FTS));
+            }
+
+            // Get total count
+            var totalCount = await query.CountAsync();
+
+            // Apply pagination
+            var items = await query
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip((search.Page ?? 0) * (search.PageSize ?? 10))
+                .Take(search.PageSize ?? 10)
+                .Select(c => new ChatResponse
+                {
+                    Id = c.Id,
+                    SenderId = c.SenderId,
+                    SenderName = $"{c.Sender.FirstName} {c.Sender.LastName}",
+                    SenderPicture = null, // Exclude picture for performance
+                    ReceiverId = c.ReceiverId,
+                    ReceiverName = $"{c.Receiver.FirstName} {c.Receiver.LastName}",
+                    ReceiverPicture = null, // Exclude picture for performance
+                    Message = c.Message,
+                    CreatedAt = c.CreatedAt,
+                    IsRead = c.IsRead,
+                    ReadAt = c.ReadAt
+                })
+                .ToListAsync();
+
+            return new PagedResult<ChatResponse>
+            {
+                Items = items,
+                TotalCount = totalCount
+            };
+        }
+
         protected override ChatResponse MapToResponse(Chat entity)
         {
             var response = _mapper.Map<ChatResponse>(entity);

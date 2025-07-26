@@ -63,7 +63,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         "receiverId": widget.otherPersonId,
       };
 
-      var result = await chatProvider.get(filter: filter);
+      var result = await chatProvider.getOptimized(filter: filter);
 
       // Also get messages where current user is receiver and other person is sender
       var filter2 = {
@@ -74,7 +74,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         "receiverId": UserProvider.currentUser!.id,
       };
 
-      var result2 = await chatProvider.get(filter: filter2);
+      var result2 = await chatProvider.getOptimized(filter: filter2);
 
       // Combine both results and sort by creation time
       var allMessages = <Chat>[];
