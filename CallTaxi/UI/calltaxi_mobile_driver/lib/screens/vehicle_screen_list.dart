@@ -6,6 +6,7 @@ import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
 import 'package:calltaxi_mobile_driver/utils/text_field_decoration.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
+import 'package:calltaxi_mobile_driver/screens/vehicle_details_screen.dart';
 
 class VehicleScreenList extends StatefulWidget {
   const VehicleScreenList({super.key});
@@ -66,161 +67,180 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                // Vehicle Image
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey[200],
-                  ),
-                  child: vehicle.picture != null && vehicle.picture!.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.memory(
-                            base64Decode(vehicle.picture!),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Icon(
-                              Icons.directions_car,
-                              size: 40,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        )
-                      : Icon(
-                          Icons.directions_car,
-                          size: 40,
-                          color: Colors.grey[600],
-                        ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        vehicle.name,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          // Brand logo
-                          if (vehicle.brandLogo != null &&
-                              vehicle.brandLogo!.isNotEmpty)
-                            Container(
-                              width: 20,
-                              height: 20,
-                              margin: EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 2,
-                                    offset: Offset(0, 1),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VehicleDetailsScreen(
+                vehicle: vehicle,
+                onVehicleSaved: () {
+                  // Refresh the vehicle list when a vehicle is saved
+                  _performSearch();
+                },
+              ),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  // Vehicle Image
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey[200],
+                    ),
+                    child:
+                        vehicle.picture != null && vehicle.picture!.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.memory(
+                              base64Decode(vehicle.picture!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.directions_car,
+                                    size: 40,
+                                    color: Colors.grey[600],
                                   ),
-                                ],
+                            ),
+                          )
+                        : Icon(
+                            Icons.directions_car,
+                            size: 40,
+                            color: Colors.grey[600],
+                          ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          vehicle.name,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            // Brand logo
+                            if (vehicle.brandLogo != null &&
+                                vehicle.brandLogo!.isNotEmpty)
+                              Container(
+                                width: 20,
+                                height: 20,
+                                margin: EdgeInsets.only(right: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 2,
+                                      offset: Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.memory(
+                                    base64Decode(vehicle.brandLogo!),
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Icon(
+                                          Icons.branding_watermark,
+                                          size: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                  ),
+                                ),
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.memory(
-                                  base64Decode(vehicle.brandLogo!),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(
-                                        Icons.branding_watermark,
-                                        size: 12,
-                                        color: Colors.grey[600],
-                                      ),
+                            Expanded(
+                              child: Text(
+                                vehicle.brandName,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
                                 ),
                               ),
                             ),
-                          Expanded(
-                            child: Text(
-                              vehicle.brandName,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        vehicle.licensePlate,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[500],
-                          fontFamily: 'monospace',
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Status indicator
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(vehicle.stateMachine),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    vehicle.stateMachine,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+                        SizedBox(height: 4),
+                        Text(
+                          vehicle.licensePlate,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[500],
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 12),
-            // Vehicle details
-            Row(
-              children: [
-                _buildDetailChip(Icons.palette, vehicle.color),
-                SizedBox(width: 8),
-                _buildDetailChip(
-                  Icons.calendar_today,
-                  vehicle.yearOfManufacture.toString(),
-                ),
-                SizedBox(width: 8),
-                _buildDetailChip(
-                  Icons.airline_seat_recline_normal,
-                  "${vehicle.seatsCount} seats",
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                if (vehicle.petFriendly)
-                  _buildDetailChip(
-                    Icons.pets,
-                    "Pet Friendly",
-                    color: Colors.green,
-                    textColor: Colors.white,
+                  // Status indicator
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(vehicle.stateMachine),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      vehicle.stateMachine,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                SizedBox(width: 8),
-                if (vehicle.vehicleTierName != null)
-                  _buildDetailChip(Icons.star, vehicle.vehicleTierName!),
-              ],
-            ),
-          ],
+                ],
+              ),
+              SizedBox(height: 12),
+              // Vehicle details
+              Row(
+                children: [
+                  _buildDetailChip(Icons.palette, vehicle.color),
+                  SizedBox(width: 8),
+                  _buildDetailChip(
+                    Icons.calendar_today,
+                    vehicle.yearOfManufacture.toString(),
+                  ),
+                  SizedBox(width: 8),
+                  _buildDetailChip(
+                    Icons.airline_seat_recline_normal,
+                    "${vehicle.seatsCount} seats",
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  if (vehicle.petFriendly)
+                    _buildDetailChip(
+                      Icons.pets,
+                      "Pet Friendly",
+                      color: Colors.green,
+                      textColor: Colors.white,
+                    ),
+                  SizedBox(width: 8),
+                  if (vehicle.vehicleTierName != null)
+                    _buildDetailChip(Icons.star, vehicle.vehicleTierName!),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -283,7 +303,7 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                   child: TextField(
                     controller: searchController,
                     decoration: customTextFieldDecoration(
-                      "Search vehicles...",
+                      "Search",
                       prefixIcon: Icons.search,
                     ),
                     onChanged: (value) {
@@ -301,6 +321,29 @@ class _VehicleScreenListState extends State<VehicleScreenList> {
                     ),
                   ),
                   child: Text("Search", style: TextStyle(color: Colors.white)),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VehicleDetailsScreen(
+                          onVehicleSaved: () {
+                            // Refresh the vehicle list when a vehicle is saved
+                            _performSearch();
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text("Add Car", style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),

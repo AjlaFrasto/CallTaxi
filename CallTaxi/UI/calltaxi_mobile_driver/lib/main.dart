@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:calltaxi_mobile_driver/layouts/master_screen.dart';
 import 'package:calltaxi_mobile_driver/providers/auth_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/brand_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/city_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/vehicle_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/vehicle_tier_provider.dart';
 import 'package:calltaxi_mobile_driver/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/debug_screen.dart';
 import 'package:calltaxi_mobile_driver/utils/text_field_decoration.dart';
@@ -27,6 +29,12 @@ void main() async {
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<VehicleProvider>(
           create: (_) => VehicleProvider(),
+        ),
+        ChangeNotifierProvider<VehicleTierProvider>(
+          create: (_) => VehicleTierProvider(),
+        ),
+        ChangeNotifierProvider<BrandProvider>(
+          create: (_) => BrandProvider(),
         ),
       ],
       child: const MyApp(),
