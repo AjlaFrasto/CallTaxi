@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:calltaxi_mobile_client/model/chat.dart';
-import 'package:calltaxi_mobile_client/model/search_result.dart';
-import 'package:calltaxi_mobile_client/providers/chat_provider.dart';
-import 'package:calltaxi_mobile_client/providers/user_provider.dart';
+import 'package:calltaxi_mobile_driver/model/chat.dart';
+import 'package:calltaxi_mobile_driver/model/search_result.dart';
+import 'package:calltaxi_mobile_driver/providers/chat_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
 
 class ChatDetailsScreen extends StatefulWidget {
   final int otherPersonId;
@@ -21,10 +22,28 @@ class ChatDetailsScreen extends StatefulWidget {
 
 class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
   late ChatProvider chatProvider;
-  TextEditingController messageController = TextEditingController();
+  late TextEditingController _messageController;
+  late ScrollController _scrollController;
   SearchResult<Chat>? messages;
   bool _isLoading = false;
-  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _messageController = TextEditingController();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      await _loadMessages();
+    });
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Future<void> _loadMessages() async {
     if (UserProvider.currentUser == null) {
@@ -86,7 +105,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         }
       });
     } catch (e) {
-      print("Error fetching messages: $e");
+      print("Error loading messages: $e");
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(
         context,
@@ -107,31 +126,20 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
   }
 
   Future<void> _sendMessage() async {
-    if (messageController.text.trim().isEmpty) return;
-
-    final message = messageController.text.trim();
-    messageController.clear();
+    if (_messageController.text.trim().isEmpty) return;
 
     try {
       var request = {
-        "senderId": UserProvider.currentUser!.id,
-        "receiverId": widget.otherPersonId,
-        "message": message,
+        'senderId': UserProvider.currentUser!.id,
+        'receiverId': widget.otherPersonId,
+        'message': _messageController.text.trim(),
       };
 
       await chatProvider.insert(request);
-      await _loadMessages(); // Reload messages
+      _messageController.clear();
 
-      // Scroll to bottom after sending
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
+      // Reload messages to show the new message
+      await _loadMessages();
     } catch (e) {
       print("Error sending message: $e");
       ScaffoldMessenger.of(
@@ -140,17 +148,8 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      chatProvider = Provider.of<ChatProvider>(context, listen: false);
-      await _loadMessages();
-    });
-  }
-
   Widget _buildMessageBubble(Chat message) {
-    final isMe = message.senderId == UserProvider.currentUser!.id;
+    bool isMe = message.senderId == UserProvider.currentUser!.id;
 
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -159,37 +158,17 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isMe ? Colors.orange : Colors.grey[200],
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
         ),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              message.message,
-              style: TextStyle(
-                color: isMe ? Colors.white : Colors.black87,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              _formatTime(message.createdAt),
-              style: TextStyle(
-                color: isMe ? Colors.white70 : Colors.grey[600],
-                fontSize: 12,
-              ),
-            ),
-          ],
+        child: Text(
+          message.message,
+          style: TextStyle(
+            color: isMe ? Colors.white : Colors.black87,
+            fontSize: 16,
+          ),
         ),
       ),
     );
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -197,7 +176,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.otherPersonName),
-        backgroundColor: Color(0xFFFF6F00),
+        backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -226,7 +205,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          "Start a conversation!",
+                          "Start a conversation with ${widget.otherPersonName}",
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[500],
@@ -239,7 +218,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                     onRefresh: _loadMessages,
                     child: ListView.builder(
                       controller: _scrollController,
-                      padding: EdgeInsets.only(top: 16, bottom: 16),
+                      padding: EdgeInsets.only(top: 8, bottom: 8),
                       physics: AlwaysScrollableScrollPhysics(),
                       itemCount: messages!.items?.length ?? 0,
                       itemBuilder: (context, index) {
@@ -265,33 +244,27 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: messageController,
+                    controller: _messageController,
                     decoration: InputDecoration(
                       hintText: "Type a message...",
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(24),
                       ),
-                      filled: true,
-                      fillColor: Colors.grey[100],
                       contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20,
+                        horizontal: 16,
                         vertical: 12,
                       ),
                     ),
+                    maxLines: null,
+                    textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
                 SizedBox(width: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFF6F00),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: _sendMessage,
-                    icon: Icon(Icons.send, color: Colors.white),
-                  ),
+                IconButton(
+                  onPressed: _sendMessage,
+                  icon: Icon(Icons.send),
+                  color: Colors.orange,
                 ),
               ],
             ),

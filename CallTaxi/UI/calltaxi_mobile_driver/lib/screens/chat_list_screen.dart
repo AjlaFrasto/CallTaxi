@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:calltaxi_mobile_client/model/chat.dart';
-import 'package:calltaxi_mobile_client/model/search_result.dart';
-import 'package:calltaxi_mobile_client/providers/chat_provider.dart';
-import 'package:calltaxi_mobile_client/providers/user_provider.dart';
-import 'package:calltaxi_mobile_client/utils/text_field_decoration.dart';
+import 'package:calltaxi_mobile_driver/model/chat.dart';
+import 'package:calltaxi_mobile_driver/model/search_result.dart';
+import 'package:calltaxi_mobile_driver/providers/chat_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
+import 'package:calltaxi_mobile_driver/utils/text_field_decoration.dart';
 import 'package:provider/provider.dart';
-import 'package:calltaxi_mobile_client/screens/chat_details_screen.dart';
-import 'package:calltaxi_mobile_client/screens/user_selection_screen.dart';
+import 'package:calltaxi_mobile_driver/screens/chat_details_screen.dart';
+import 'package:calltaxi_mobile_driver/screens/user_selection_screen.dart';
 import 'dart:convert'; // Added for base64Decode
 
 class ChatListScreen extends StatefulWidget {

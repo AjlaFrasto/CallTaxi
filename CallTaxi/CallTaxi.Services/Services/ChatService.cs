@@ -52,7 +52,7 @@ namespace CallTaxi.Services.Services
 
         protected override async Task BeforeInsert(Chat entity, ChatUpsertRequest request)
         {
-            entity.CreatedAt = DateTime.UtcNow;
+            entity.CreatedAt = DateTime.Now;
             entity.IsRead = false;
             await Task.CompletedTask;
         }

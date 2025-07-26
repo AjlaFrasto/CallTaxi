@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:calltaxi_mobile_driver/layouts/master_screen.dart';
 import 'package:calltaxi_mobile_driver/providers/auth_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/brand_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/chat_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/city_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/review_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
@@ -36,6 +37,7 @@ void main() async {
         ),
         ChangeNotifierProvider<BrandProvider>(create: (_) => BrandProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider<ChatProvider>(create: (_) => ChatProvider()),
       ],
       child: const MyApp(),
     ),
