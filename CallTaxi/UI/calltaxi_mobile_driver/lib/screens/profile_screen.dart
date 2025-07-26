@@ -31,15 +31,11 @@ class ProfileScreen extends StatelessWidget {
       body: Stack(
         children: [
           // Gradient header
-          Container(
+          Image.asset(
+            'assets/images/profile_header.png',
             height: 150,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+            width: double.infinity,
+            fit: BoxFit.cover,
           ),
           // Main content
           SingleChildScrollView(
