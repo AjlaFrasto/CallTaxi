@@ -10,10 +10,12 @@ import 'package:calltaxi_mobile_client/screens/debug_screen.dart';
 import 'package:calltaxi_mobile_client/utils/text_field_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:calltaxi_mobile_client/screens/calltaxi_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
   // Stripe.publishableKey=dotenv.env["STRIPE__PUBKEY"]!;
   // Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
   // Stripe.urlScheme = 'flutterstripe';
@@ -130,8 +132,10 @@ class _LoginPageState extends State<LoginPage> {
         print("Navigating to MasterScreen");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) =>
-                MasterScreen(title: "Call Taxi Client", child: ProfileScreen()),
+            builder: (context) => MasterScreen(
+              title: "Call Taxi Client",
+              child: CallTaxiScreen(),
+            ),
           ),
         );
       } else {

@@ -13,11 +13,12 @@ import 'package:calltaxi_mobile_driver/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/debug_screen.dart';
 import 'package:calltaxi_mobile_driver/utils/text_field_decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
   // Stripe.publishableKey=dotenv.env["STRIPE__PUBKEY"]!;
   // Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
   // Stripe.urlScheme = 'flutterstripe';
