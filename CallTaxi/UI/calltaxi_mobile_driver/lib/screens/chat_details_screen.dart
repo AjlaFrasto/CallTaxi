@@ -94,6 +94,9 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
       // Mark conversation as read when opening chat
       await _markConversationAsRead();
 
+      // Add a small delay to ensure backend processes the read status
+      await Future.delayed(Duration(milliseconds: 500));
+
       // Scroll to bottom after loading
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
@@ -115,11 +118,15 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
 
   Future<void> _markConversationAsRead() async {
     try {
+      print(
+        "Marking conversation as read: ${widget.otherPersonId} -> ${UserProvider.currentUser!.id}",
+      );
       // Mark messages from other person to current user as read
       await chatProvider.markConversationAsRead(
         widget.otherPersonId,
         UserProvider.currentUser!.id,
       );
+      print("Successfully marked conversation as read");
     } catch (e) {
       print("Error marking conversation as read: $e");
     }

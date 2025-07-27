@@ -41,16 +41,12 @@ class ChatProvider extends BaseProvider<Chat> {
 
   Future<void> markConversationAsRead(int senderId, int receiverId) async {
     try {
-      var url = "${BaseProvider.baseUrl}$endpoint/mark-conversation-read";
+      var url =
+          "${BaseProvider.baseUrl}$endpoint/mark-conversation-read?senderId=$senderId&receiverId=$receiverId";
       var uri = Uri.parse(url);
       var headers = createHeaders();
 
-      var jsonRequest = jsonEncode({
-        'senderId': senderId,
-        'receiverId': receiverId,
-      });
-
-      var response = await http.post(uri, headers: headers, body: jsonRequest);
+      var response = await http.post(uri, headers: headers);
 
       if (!isValidResponse(response)) {
         throw Exception("Failed to mark conversation as read");

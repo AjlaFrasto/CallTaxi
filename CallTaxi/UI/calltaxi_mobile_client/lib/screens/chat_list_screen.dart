@@ -151,7 +151,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ),
           ).then((_) {
             // Refresh chat list when returning from chat details
-            _performSearch();
+            // Add a small delay to ensure backend has processed read status
+            Future.delayed(Duration(milliseconds: 300), () {
+              _performSearch();
+            });
           });
         },
         borderRadius: BorderRadius.circular(12),
@@ -212,7 +215,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             width: 8,
                             height: 8,
                             decoration: BoxDecoration(
-                              color: Colors.orange,
+                              color: Colors.lightBlue,
                               shape: BoxShape.circle,
                             ),
                           ),

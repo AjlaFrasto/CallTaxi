@@ -44,7 +44,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         "receiverId": widget.otherPersonId,
       };
 
-      var result = await chatProvider.get(filter: filter);
+      var result = await chatProvider.getOptimized(filter: filter);
 
       // Also get messages where current user is receiver and other person is sender
       var filter2 = {
@@ -55,7 +55,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         "receiverId": UserProvider.currentUser!.id,
       };
 
-      var result2 = await chatProvider.get(filter: filter2);
+      var result2 = await chatProvider.getOptimized(filter: filter2);
 
       // Combine both results and sort by creation time
       var allMessages = <Chat>[];
@@ -74,6 +74,9 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
 
       // Mark conversation as read when opening chat
       await _markConversationAsRead();
+
+      // Add a small delay to ensure backend processes the read status
+      await Future.delayed(Duration(milliseconds: 500));
 
       // Scroll to bottom after loading
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -96,11 +99,15 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
 
   Future<void> _markConversationAsRead() async {
     try {
+      print(
+        "Marking conversation as read: ${widget.otherPersonId} -> ${UserProvider.currentUser!.id}",
+      );
       // Mark messages from other person to current user as read
       await chatProvider.markConversationAsRead(
         widget.otherPersonId,
         UserProvider.currentUser!.id,
       );
+      print("Successfully marked conversation as read");
     } catch (e) {
       print("Error marking conversation as read: $e");
     }
@@ -109,29 +116,18 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
   Future<void> _sendMessage() async {
     if (messageController.text.trim().isEmpty) return;
 
-    final message = messageController.text.trim();
-    messageController.clear();
-
     try {
       var request = {
         "senderId": UserProvider.currentUser!.id,
         "receiverId": widget.otherPersonId,
-        "message": message,
+        "message": messageController.text.trim(),
       };
 
       await chatProvider.insert(request);
-      await _loadMessages(); // Reload messages
+      messageController.clear();
 
-      // Scroll to bottom after sending
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
+      // Reload messages to show the new message
+      await _loadMessages();
     } catch (e) {
       print("Error sending message: $e");
       ScaffoldMessenger.of(
@@ -158,7 +154,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isMe ? Colors.orange : Colors.grey[200],
+          color: isMe ? Colors.lightBlue : Colors.grey[200],
           borderRadius: BorderRadius.circular(18),
         ),
         constraints: BoxConstraints(

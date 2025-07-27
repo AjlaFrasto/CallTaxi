@@ -17,16 +17,16 @@ class Chat {
   final DateTime? readAt;
 
   Chat({
-    this.id = 0,
-    this.senderId = 0,
+    required this.id,
+    required this.senderId,
     this.senderName,
     this.senderPicture,
-    this.receiverId = 0,
+    required this.receiverId,
     this.receiverName,
     this.receiverPicture,
-    this.message = '',
+    required this.message,
     required this.createdAt,
-    this.isRead = false,
+    required this.isRead,
     this.readAt,
   });
 
