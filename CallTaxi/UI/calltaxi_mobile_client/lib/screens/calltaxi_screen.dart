@@ -98,8 +98,19 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
   }
 
   void _onRequestDrivePressed() {
+    int? standardId;
+    for (final t in _tiers) {
+      if (t.name == 'Standard') {
+        standardId = t.id;
+        break;
+      }
+    }
     setState(() {
       _showForm = true;
+      _waitingForDriver = false;
+      _selectedTierId =
+          standardId ?? (_tiers.isNotEmpty ? _tiers.first.id : null);
+      _updateFinalPrice();
     });
   }
 
@@ -237,77 +248,134 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
   }
 
   Widget _buildForm() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Removed 'Request a Drive' text
-            SizedBox(height: 8),
-            CustomMapViewWithSelection(
-              height: 320,
-              width: MediaQuery.of(context).size.width * 0.95,
-              onStartSelected: (loc) {
-                _onStartSelected(loc);
-                _onDistanceChanged(null);
+    return WillPopScope(
+      onWillPop: () async {
+        await _checkPendingDrive();
+        setState(() {
+          _showForm = false;
+          _waitingForDriver = false;
+          _pendingDrive = null;
+          _startLocation = null;
+          _endLocation = null;
+          _distanceKm = null;
+          _selectedTierId = _tiers
+              .firstWhere(
+                (t) => t.name == 'Standard',
+                orElse: () => _tiers.isNotEmpty ? _tiers.first : VehicleTier(),
+              )
+              .id;
+          _basePrice = null;
+          _finalPrice = null;
+        });
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.close, color: Colors.black87),
+              onPressed: () async {
+                await _checkPendingDrive();
+                setState(() {
+                  _showForm = false;
+                  _waitingForDriver = false;
+                  _pendingDrive = null;
+                  _startLocation = null;
+                  _endLocation = null;
+                  _distanceKm = null;
+                  _selectedTierId = _tiers
+                      .firstWhere(
+                        (t) => t.name == 'Standard',
+                        orElse: () =>
+                            _tiers.isNotEmpty ? _tiers.first : VehicleTier(),
+                      )
+                      .id;
+                  _basePrice = null;
+                  _finalPrice = null;
+                });
               },
-              onEndSelected: (loc) async {
-                _onEndSelected(loc);
-              },
-              onDistanceChanged: _onDistanceChanged,
-            ),
-            SizedBox(height: 18),
-            if (_loadingTiers)
-              CircularProgressIndicator()
-            else
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: _tiers.map(_buildTierCard).toList(),
-                ),
-              ),
-            SizedBox(height: 18),
-            if (_finalPrice != null)
-              Text(
-                'Final Price: ${_finalPrice!.toStringAsFixed(2)} KM',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87, // modern, neutral color
-                ),
-              ),
-            SizedBox(height: 24),
-            if (_error != null)
-              Text(_error!, style: TextStyle(color: Colors.red)),
-            SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _submitting ? null : _submitRequest,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black87,
-                minimumSize: Size(double.infinity, 48), // full width, height 48
-                padding: EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.black12, width: 1.2),
-                ),
-                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                elevation: 2,
-              ),
-              child: _submitting
-                  ? SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: Colors.black87,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text('Accept'),
+              tooltip: 'Close',
             ),
           ],
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 8),
+                CustomMapViewWithSelection(
+                  height: 320,
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  onStartSelected: (loc) {
+                    _onStartSelected(loc);
+                    _onDistanceChanged(null);
+                  },
+                  onEndSelected: (loc) async {
+                    _onEndSelected(loc);
+                  },
+                  onDistanceChanged: _onDistanceChanged,
+                ),
+                SizedBox(height: 18),
+                if (_loadingTiers)
+                  CircularProgressIndicator()
+                else
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: _tiers.map(_buildTierCard).toList(),
+                    ),
+                  ),
+                SizedBox(height: 18),
+                if (_finalPrice != null)
+                  Text(
+                    'Final Price: ${_finalPrice!.toStringAsFixed(2)} KM',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                SizedBox(height: 24),
+                if (_error != null)
+                  Text(_error!, style: TextStyle(color: Colors.red)),
+                SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: _submitting ? null : _submitRequest,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    minimumSize: Size(double.infinity, 48),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Colors.black12, width: 1.2),
+                    ),
+                    textStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    elevation: 2,
+                  ),
+                  child: _submitting
+                      ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.black87,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text('Accept'),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -447,7 +515,26 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                 ),
                 SizedBox(height: 32),
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
+                    if (_pendingDrive != null) {
+                      try {
+                        await DriverRequestProvider().cancel(_pendingDrive!.id);
+                        await _checkPendingDrive(); // Refresh state from backend
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to cancel request: $e'),
+                          ),
+                        );
+                      }
+                    }
+                    int? standardId;
+                    for (final t in _tiers) {
+                      if (t.name == 'Standard') {
+                        standardId = t.id;
+                        break;
+                      }
+                    }
                     setState(() {
                       _waitingForDriver = false;
                       _showForm = false;
@@ -455,7 +542,9 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                       _startLocation = null;
                       _endLocation = null;
                       _distanceKm = null;
-                      _selectedTierId = null;
+                      _selectedTierId =
+                          standardId ??
+                          (_tiers.isNotEmpty ? _tiers.first.id : null);
                       _basePrice = null;
                       _finalPrice = null;
                     });
