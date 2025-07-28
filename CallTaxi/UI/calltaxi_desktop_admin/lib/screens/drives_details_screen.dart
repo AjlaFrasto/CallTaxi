@@ -149,6 +149,7 @@ class DrivesDetailsScreen extends StatelessWidget {
                         end: drive.endLocation,
                         height: 400,
                         width: 420,
+                        routeDistance: drive.distance,
                       ),
                     ),
                     SizedBox(width: 32),

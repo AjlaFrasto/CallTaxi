@@ -13,6 +13,7 @@ class CustomMapView extends StatefulWidget {
   final double borderRadius;
   final bool showRouteInfoOverlay;
   final bool showZoomControls;
+  final double? routeDistance;
 
   const CustomMapView({
     Key? key,
@@ -23,6 +24,7 @@ class CustomMapView extends StatefulWidget {
     this.borderRadius = 18,
     this.showRouteInfoOverlay = true,
     this.showZoomControls = true,
+    this.routeDistance,
   }) : super(key: key);
 
   @override
@@ -376,6 +378,39 @@ class _CustomMapViewState extends State<CustomMapView> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+              if (widget.routeDistance != null)
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.straighten, color: Colors.orange, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          "Distance:",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          widget.routeDistance!.toStringAsFixed(2) + ' km',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               if (_routeError != null)
