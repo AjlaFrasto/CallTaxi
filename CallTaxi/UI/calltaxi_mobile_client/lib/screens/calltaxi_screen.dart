@@ -43,7 +43,7 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
       parent: _controller,
       curve: Curves.elasticOut,
     );
-    _controller.forward();
+    _controller.repeat(); // Spin clockwise continuously
     _fetchTiers();
     _checkPendingDrive();
   }
@@ -383,78 +383,96 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
 
   Widget _buildModernRequestCard() {
     return Center(
-      child: GestureDetector(
-        onTap: _onRequestDrivePressed,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
-          width: 340,
-          height: 180,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF232526),
-                Color(0xFF414345),
-                Color(0xFF6a11cb),
-                Color(0xFF2575fc),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.18),
-                blurRadius: 24,
-                spreadRadius: 2,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Icon(
-                  Icons.local_taxi,
-                  size: 64,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black26,
-                      blurRadius: 12,
-                      offset: Offset(2, 2),
+              Text(
+                'Need a Ride?',
+                style: TextStyle(
+                  color: Color(0xFFFF6F00),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  letterSpacing: 1.1,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Tap below to request a taxi quickly and safely.',
+                style: TextStyle(color: Colors.black54, fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 28),
+              // Spinning animated circular button (no image above)
+              Center(
+                child: Column(
+                  children: [
+                    AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle:
+                              _controller.value *
+                              2 *
+                              3.14159, // Continuous clockwise rotation
+                          child: GestureDetector(
+                            onTap: _onRequestDrivePressed,
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF4CAF50),
+                                    Color(0xFF4CAF50),
+                                    Color(0xFF4CAF50),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.green.withOpacity(0.25),
+                                    blurRadius: 18,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.local_taxi,
+                                  size: 65,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 18),
+                    Text(
+                      'Request',
+                      style: TextStyle(
+                        color: Color(0xFFFF6F00),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                        letterSpacing: 1.1,
+                      ),
                     ),
                   ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 32.0,
-                    horizontal: 8,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Need a Ride?',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 26,
-                          letterSpacing: 1.1,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Tap to request a taxi quickly and safely.',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
