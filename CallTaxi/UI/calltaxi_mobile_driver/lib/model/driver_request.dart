@@ -16,6 +16,7 @@ class DriverRequest {
   final String? vehicleLicensePlate;
   final String? startLocation;
   final String? endLocation;
+  final double distance;
   final double basePrice;
   final double finalPrice;
   final DateTime createdAt;
@@ -37,6 +38,7 @@ class DriverRequest {
     this.vehicleLicensePlate,
     this.startLocation,
     this.endLocation,
+    this.distance = 0.0,
     this.basePrice = 0.0,
     this.finalPrice = 0.0,
     required this.createdAt,

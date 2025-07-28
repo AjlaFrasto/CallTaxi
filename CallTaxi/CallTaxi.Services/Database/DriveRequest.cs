@@ -27,6 +27,9 @@ namespace CallTaxi.Services.Database
         public string EndLocation { get; set; } = string.Empty;
 
         [Required]
+        public decimal Distance { get; set; }
+
+        [Required]
         public decimal BasePrice { get; set; }
 
         [Required]

@@ -237,6 +237,7 @@ namespace CallTaxi.Services.Migrations
                     VehicleId = table.Column<int>(type: "int", nullable: true),
                     StartLocation = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     EndLocation = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Distance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     FinalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -432,12 +433,16 @@ namespace CallTaxi.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "DriveRequests",
-                columns: new[] { "Id", "AcceptedAt", "BasePrice", "CompletedAt", "CreatedAt", "DriverId", "EndLocation", "FinalPrice", "StartLocation", "StatusId", "UserId", "VehicleId", "VehicleTierId" },
+                columns: new[] { "Id", "AcceptedAt", "BasePrice", "CompletedAt", "CreatedAt", "Distance", "DriverId", "EndLocation", "FinalPrice", "StartLocation", "StatusId", "UserId", "VehicleId", "VehicleTierId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 12, 27, 1, 0, 0, 0, DateTimeKind.Utc), 20.00m, new DateTime(2023, 12, 27, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 27, 0, 0, 0, 0, DateTimeKind.Utc), 2, "43.8247222,18.3313889", 25.00m, "43.8562586,18.4130763", 3, 4, 1, 2 },
-                    { 2, new DateTime(2023, 12, 29, 1, 0, 0, 0, DateTimeKind.Utc), 10.00m, new DateTime(2023, 12, 29, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 29, 0, 0, 0, 0, DateTimeKind.Utc), 3, "44.2036111,17.9077778", 12.00m, "44.2019444,17.9080556", 3, 4, 2, 1 },
-                    { 3, new DateTime(2023, 12, 30, 1, 0, 0, 0, DateTimeKind.Utc), 15.00m, new DateTime(2023, 12, 30, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 30, 0, 0, 0, 0, DateTimeKind.Utc), 2, "43.3458333,17.8083333", 18.00m, "43.3372222,17.8150000", 3, 5, 1, 2 }
+                    { 1, new DateTime(2023, 12, 27, 1, 0, 0, 0, DateTimeKind.Utc), 25.5m, new DateTime(2023, 12, 27, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 27, 0, 0, 0, 0, DateTimeKind.Utc), 8.5m, 2, "43.8247222,18.3313889", 31.875m, "43.8562586,18.4130763", 3, 4, 1, 2 },
+                    { 2, new DateTime(2023, 12, 29, 1, 0, 0, 0, DateTimeKind.Utc), 3.6m, new DateTime(2023, 12, 29, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 29, 0, 0, 0, 0, DateTimeKind.Utc), 1.2m, 3, "44.2036111,17.9077778", 3.6m, "44.2019444,17.9080556", 3, 4, 2, 1 },
+                    { 3, new DateTime(2023, 12, 30, 1, 0, 0, 0, DateTimeKind.Utc), 6.3m, new DateTime(2023, 12, 30, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 30, 0, 0, 0, 0, DateTimeKind.Utc), 2.1m, 2, "43.3458333,17.8083333", 9.45m, "43.3372222,17.8150000", 3, 5, 1, 3 },
+                    { 4, new DateTime(2023, 12, 24, 1, 0, 0, 0, DateTimeKind.Utc), 36.0m, new DateTime(2023, 12, 24, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 24, 0, 0, 0, 0, DateTimeKind.Utc), 12.0m, 2, "43.8198,18.2621", 45.000m, "43.8563,18.4131", 3, 4, 1, 2 },
+                    { 5, new DateTime(2023, 12, 22, 1, 0, 0, 0, DateTimeKind.Utc), 30.0m, new DateTime(2023, 12, 22, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 22, 0, 0, 0, 0, DateTimeKind.Utc), 10.0m, 2, "43.8486,18.3564", 37.500m, "43.8563,18.4131", 3, 4, 1, 2 },
+                    { 6, new DateTime(2023, 12, 20, 1, 0, 0, 0, DateTimeKind.Utc), 7.5m, new DateTime(2023, 12, 20, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 20, 0, 0, 0, 0, DateTimeKind.Utc), 2.5m, 2, "43.3461111,17.8083333", 11.25m, "43.3372222,17.8150000", 3, 5, 1, 3 },
+                    { 7, new DateTime(2023, 12, 18, 1, 0, 0, 0, DateTimeKind.Utc), 9.6m, new DateTime(2023, 12, 18, 2, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 12, 18, 0, 0, 0, 0, DateTimeKind.Utc), 3.2m, 2, "43.356389,17.805278", 14.4m, "43.3461111,17.8083333", 3, 5, 1, 3 }
                 });
 
             migrationBuilder.InsertData(

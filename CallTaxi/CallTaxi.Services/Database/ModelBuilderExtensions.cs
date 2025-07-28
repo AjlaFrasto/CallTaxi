@@ -307,8 +307,9 @@ namespace CallTaxi.Services.Database
                     VehicleId = 1, // Mercedes-Benz E-Class
                     StartLocation = "43.8562586,18.4130763", // Sarajevo City Center (Baščaršija)
                     EndLocation = "43.8247222,18.3313889", // Sarajevo International Airport
-                    BasePrice = 20.00m,
-                    FinalPrice = 25.00m,
+                    Distance = 8.5m,
+                    BasePrice = 8.5m * 3m, // 25.5
+                    FinalPrice = 8.5m * 3m * 1.25m, // 31.875
                     CreatedAt = fixedDate.AddDays(-5),
                     AcceptedAt = fixedDate.AddDays(-5).AddHours(1),
                     CompletedAt = fixedDate.AddDays(-5).AddHours(2),
@@ -324,28 +325,102 @@ namespace CallTaxi.Services.Database
                     VehicleId = 2, // Volkswagen Passat
                     StartLocation = "44.2019444,17.9080556", // Zenica Train Station
                     EndLocation = "44.2036111,17.9077778", // Zenica City Center (Trg Alije Izetbegovića)
-                    BasePrice = 10.00m,
-                    FinalPrice = 12.00m,
+                    Distance = 1.2m,
+                    BasePrice = 1.2m * 3m, // 3.6
+                    FinalPrice = 1.2m * 3m, // 3.6
                     CreatedAt = fixedDate.AddDays(-3),
                     AcceptedAt = fixedDate.AddDays(-3).AddHours(1),
                     CompletedAt = fixedDate.AddDays(-3).AddHours(2),
                     StatusId = 3 // Completed
                 },
-                // User 5's completed drive (Premium tier)
+                // User 5's completed drive (Luxury tier)
                 new DriveRequest
                 {
                     Id = 3,
                     UserId = 5, // Elmir Babović
-                    VehicleTierId = 2, // Premium
+                    VehicleTierId = 3, // Luxury
                     DriverId = 2, // Amel Musić
                     VehicleId = 1, // Mercedes-Benz E-Class
                     StartLocation = "43.3372222,17.8150000", // Mostar Old Bridge (Stari Most)
                     EndLocation = "43.3458333,17.8083333", // Mostar Train Station
-                    BasePrice = 15.00m,
-                    FinalPrice = 18.00m,
+                    Distance = 2.1m,
+                    BasePrice = 2.1m * 3m, // 6.3
+                    FinalPrice = 2.1m * 3m * 1.5m, // 9.45
                     CreatedAt = fixedDate.AddDays(-2),
                     AcceptedAt = fixedDate.AddDays(-2).AddHours(1),
                     CompletedAt = fixedDate.AddDays(-2).AddHours(2),
+                    StatusId = 3 // Completed
+                },
+                // User 4's third completed drive (Premium tier)
+                new DriveRequest
+                {
+                    Id = 4,
+                    UserId = 4, // Ajla Frašto
+                    VehicleTierId = 2, // Premium
+                    DriverId = 2, // Amel Musić
+                    VehicleId = 1, // Mercedes-Benz E-Class
+                    StartLocation = "43.8563,18.4131", // Sarajevo City Center
+                    EndLocation = "43.8198,18.2621", // Ilidža
+                    Distance = 12.0m,
+                    BasePrice = 12.0m * 3m, // 36.0
+                    FinalPrice = 12.0m * 3m * 1.25m, // 45.0
+                    CreatedAt = fixedDate.AddDays(-8),
+                    AcceptedAt = fixedDate.AddDays(-8).AddHours(1),
+                    CompletedAt = fixedDate.AddDays(-8).AddHours(2),
+                    StatusId = 3 // Completed
+                },
+                // User 4's fourth completed drive (Premium tier)
+                new DriveRequest
+                {
+                    Id = 5,
+                    UserId = 4, // Ajla Frašto
+                    VehicleTierId = 2, // Premium
+                    DriverId = 2, // Amel Musić
+                    VehicleId = 1, // Mercedes-Benz E-Class
+                    StartLocation = "43.8563,18.4131", // Sarajevo City Center
+                    EndLocation = "43.8486,18.3564", // Ilidža Thermal Riviera
+                    Distance = 10.0m,
+                    BasePrice = 10.0m * 3m, // 30.0
+                    FinalPrice = 10.0m * 3m * 1.25m, // 37.5
+                    CreatedAt = fixedDate.AddDays(-10),
+                    AcceptedAt = fixedDate.AddDays(-10).AddHours(1),
+                    CompletedAt = fixedDate.AddDays(-10).AddHours(2),
+                    StatusId = 3 // Completed
+                },
+                // User 5's fourth completed drive (Luxury tier)
+                new DriveRequest
+                {
+                    Id = 6,
+                    UserId = 5, // Elmir Babović
+                    VehicleTierId = 3, // Luxury
+                    DriverId = 2, // Amel Musić
+                    VehicleId = 1, // Mercedes-Benz E-Class
+                    StartLocation = "43.3372222,17.8150000", // Mostar Old Bridge (Stari Most)
+                    EndLocation = "43.3461111,17.8083333", // Mostar Bus Station
+                    Distance = 2.5m,
+                    BasePrice = 7.5m,
+                    FinalPrice = 11.25m,
+                    CreatedAt = fixedDate.AddDays(-12),
+                    AcceptedAt = fixedDate.AddDays(-12).AddHours(1),
+                    CompletedAt = fixedDate.AddDays(-12).AddHours(2),
+                    StatusId = 3 // Completed
+                },
+                // User 5's fifth completed drive (Luxury tier)
+                new DriveRequest
+                {
+                    Id = 7,
+                    UserId = 5, // Elmir Babović
+                    VehicleTierId = 3, // Luxury
+                    DriverId = 2, // Amel Musić
+                    VehicleId = 1, // Mercedes-Benz E-Class
+                    StartLocation = "43.3461111,17.8083333", // Mostar Bus Station
+                    EndLocation = "43.356389,17.805278", // Mostar University Dzemal Bijedic
+                    Distance = 3.2m,
+                    BasePrice = 9.6m,
+                    FinalPrice = 14.4m,
+                    CreatedAt = fixedDate.AddDays(-14),
+                    AcceptedAt = fixedDate.AddDays(-14).AddHours(1),
+                    CompletedAt = fixedDate.AddDays(-14).AddHours(2),
                     StatusId = 3 // Completed
                 }
             );

@@ -21,6 +21,7 @@ namespace CallTaxi.Model.Responses
 
         public string StartLocation { get; set; } = string.Empty;
         public string EndLocation { get; set; } = string.Empty;
+        public decimal Distance { get; set; }
         public decimal BasePrice { get; set; }
         public decimal FinalPrice { get; set; }
         public DateTime CreatedAt { get; set; }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTaxi.Services.Migrations
 {
     [DbContext(typeof(CallTaxiDbContext))]
-    [Migration("20250726144712_SeedInitialData")]
+    [Migration("20250728125504_SeedInitialData")]
     partial class SeedInitialData
     {
         /// <inheritdoc />
@@ -345,6 +345,9 @@ namespace CallTaxi.Services.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("Distance")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int?>("DriverId")
                         .HasColumnType("int");
 
@@ -392,12 +395,13 @@ namespace CallTaxi.Services.Migrations
                         {
                             Id = 1,
                             AcceptedAt = new DateTime(2023, 12, 27, 1, 0, 0, 0, DateTimeKind.Utc),
-                            BasePrice = 20.00m,
+                            BasePrice = 25.5m,
                             CompletedAt = new DateTime(2023, 12, 27, 2, 0, 0, 0, DateTimeKind.Utc),
                             CreatedAt = new DateTime(2023, 12, 27, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Distance = 8.5m,
                             DriverId = 2,
                             EndLocation = "43.8247222,18.3313889",
-                            FinalPrice = 25.00m,
+                            FinalPrice = 31.875m,
                             StartLocation = "43.8562586,18.4130763",
                             StatusId = 3,
                             UserId = 4,
@@ -408,12 +412,13 @@ namespace CallTaxi.Services.Migrations
                         {
                             Id = 2,
                             AcceptedAt = new DateTime(2023, 12, 29, 1, 0, 0, 0, DateTimeKind.Utc),
-                            BasePrice = 10.00m,
+                            BasePrice = 3.6m,
                             CompletedAt = new DateTime(2023, 12, 29, 2, 0, 0, 0, DateTimeKind.Utc),
                             CreatedAt = new DateTime(2023, 12, 29, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Distance = 1.2m,
                             DriverId = 3,
                             EndLocation = "44.2036111,17.9077778",
-                            FinalPrice = 12.00m,
+                            FinalPrice = 3.6m,
                             StartLocation = "44.2019444,17.9080556",
                             StatusId = 3,
                             UserId = 4,
@@ -424,17 +429,86 @@ namespace CallTaxi.Services.Migrations
                         {
                             Id = 3,
                             AcceptedAt = new DateTime(2023, 12, 30, 1, 0, 0, 0, DateTimeKind.Utc),
-                            BasePrice = 15.00m,
+                            BasePrice = 6.3m,
                             CompletedAt = new DateTime(2023, 12, 30, 2, 0, 0, 0, DateTimeKind.Utc),
                             CreatedAt = new DateTime(2023, 12, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Distance = 2.1m,
                             DriverId = 2,
                             EndLocation = "43.3458333,17.8083333",
-                            FinalPrice = 18.00m,
+                            FinalPrice = 9.45m,
                             StartLocation = "43.3372222,17.8150000",
                             StatusId = 3,
                             UserId = 5,
                             VehicleId = 1,
+                            VehicleTierId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AcceptedAt = new DateTime(2023, 12, 24, 1, 0, 0, 0, DateTimeKind.Utc),
+                            BasePrice = 36.0m,
+                            CompletedAt = new DateTime(2023, 12, 24, 2, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2023, 12, 24, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Distance = 12.0m,
+                            DriverId = 2,
+                            EndLocation = "43.8198,18.2621",
+                            FinalPrice = 45.000m,
+                            StartLocation = "43.8563,18.4131",
+                            StatusId = 3,
+                            UserId = 4,
+                            VehicleId = 1,
                             VehicleTierId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AcceptedAt = new DateTime(2023, 12, 22, 1, 0, 0, 0, DateTimeKind.Utc),
+                            BasePrice = 30.0m,
+                            CompletedAt = new DateTime(2023, 12, 22, 2, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2023, 12, 22, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Distance = 10.0m,
+                            DriverId = 2,
+                            EndLocation = "43.8486,18.3564",
+                            FinalPrice = 37.500m,
+                            StartLocation = "43.8563,18.4131",
+                            StatusId = 3,
+                            UserId = 4,
+                            VehicleId = 1,
+                            VehicleTierId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AcceptedAt = new DateTime(2023, 12, 20, 1, 0, 0, 0, DateTimeKind.Utc),
+                            BasePrice = 7.5m,
+                            CompletedAt = new DateTime(2023, 12, 20, 2, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2023, 12, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Distance = 2.5m,
+                            DriverId = 2,
+                            EndLocation = "43.3461111,17.8083333",
+                            FinalPrice = 11.25m,
+                            StartLocation = "43.3372222,17.8150000",
+                            StatusId = 3,
+                            UserId = 5,
+                            VehicleId = 1,
+                            VehicleTierId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AcceptedAt = new DateTime(2023, 12, 18, 1, 0, 0, 0, DateTimeKind.Utc),
+                            BasePrice = 9.6m,
+                            CompletedAt = new DateTime(2023, 12, 18, 2, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2023, 12, 18, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Distance = 3.2m,
+                            DriverId = 2,
+                            EndLocation = "43.356389,17.805278",
+                            FinalPrice = 14.4m,
+                            StartLocation = "43.3461111,17.8083333",
+                            StatusId = 3,
+                            UserId = 5,
+                            VehicleId = 1,
+                            VehicleTierId = 3
                         });
                 });
 

@@ -7,16 +7,16 @@ part of 'chat.dart';
 // **************************************************************************
 
 Chat _$ChatFromJson(Map<String, dynamic> json) => Chat(
-  id: (json['id'] as num?)?.toInt() ?? 0,
-  senderId: (json['senderId'] as num?)?.toInt() ?? 0,
+  id: (json['id'] as num).toInt(),
+  senderId: (json['senderId'] as num).toInt(),
   senderName: json['senderName'] as String?,
   senderPicture: json['senderPicture'] as String?,
-  receiverId: (json['receiverId'] as num?)?.toInt() ?? 0,
+  receiverId: (json['receiverId'] as num).toInt(),
   receiverName: json['receiverName'] as String?,
   receiverPicture: json['receiverPicture'] as String?,
-  message: json['message'] as String? ?? '',
+  message: json['message'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
-  isRead: json['isRead'] as bool? ?? false,
+  isRead: json['isRead'] as bool,
   readAt: json['readAt'] == null
       ? null
       : DateTime.parse(json['readAt'] as String),

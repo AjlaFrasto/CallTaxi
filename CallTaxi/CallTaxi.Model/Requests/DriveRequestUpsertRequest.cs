@@ -19,6 +19,9 @@ namespace CallTaxi.Model.Requests
         public string EndLocation { get; set; } = string.Empty;
 
         [Required]
+        public decimal Distance { get; set; }
+
+        [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Base price must be greater than 0")]
         public decimal BasePrice { get; set; }
     }
