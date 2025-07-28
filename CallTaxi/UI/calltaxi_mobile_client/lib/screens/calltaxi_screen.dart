@@ -517,9 +517,9 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                                     ),
                                     gradient: LinearGradient(
                                       colors: [
-                                        Color(0xFF66BB6A),
-                                        Color(0xFF81C784),
-                                        Color(0xFFA5D6A7),
+                                        Color(0xFFFF8C00),
+                                        Color(0xFFFFA726),
+                                        Color(0xFFFFCC80),
                                       ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
@@ -527,7 +527,7 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                                     boxShadow: [
                                       BoxShadow(
                                         color: Color(
-                                          0xFF66BB6A,
+                                          0xFFFF8C00,
                                         ).withOpacity(0.3),
                                         blurRadius: 18,
                                         spreadRadius: 2,
