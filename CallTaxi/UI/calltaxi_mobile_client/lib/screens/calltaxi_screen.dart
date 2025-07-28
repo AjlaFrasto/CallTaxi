@@ -303,11 +303,10 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 8),
                 CustomMapViewWithSelection(
                   height: 320,
                   width: MediaQuery.of(context).size.width * 0.95,
