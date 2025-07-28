@@ -37,13 +37,13 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 700),
+      duration: Duration(milliseconds: 1000), // Slower for smoother pulsing
     );
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.elasticOut,
+      curve: Curves.easeInOut, // Smoother curve for up and down motion
     );
-    _controller.repeat(); // Spin clockwise continuously
+    _controller.repeat(reverse: true); // This creates the up and down motion
     _fetchTiers();
     _checkPendingDrive();
   }
@@ -416,41 +416,39 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                     AnimatedBuilder(
                       animation: _controller,
                       builder: (context, child) {
-                        return Transform.rotate(
-                          angle:
-                              _controller.value *
-                              2 *
-                              3.14159, // Continuous clockwise rotation
-                          child: GestureDetector(
-                            onTap: _onRequestDrivePressed,
-                            child: Container(
-                              width: 150,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 4,
-                                ),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFF4CAF50),
-                                    Color(0xFF4CAF50),
-                                    Color(0xFF4CAF50),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.green.withOpacity(0.25),
-                                    blurRadius: 18,
-                                    spreadRadius: 2,
-                                    offset: Offset(0, 6),
-                                  ),
+                        return GestureDetector(
+                          onTap: _onRequestDrivePressed,
+                          child: Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.black, width: 4),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xFF66BB6A),
+                                  Color(0xFF81C784),
+                                  Color(0xFFA5D6A7),
                                 ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              child: Center(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xFF66BB6A).withOpacity(0.3),
+                                  blurRadius: 18,
+                                  spreadRadius: 2,
+                                  offset: Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Transform.scale(
+                                scale:
+                                    1.0 +
+                                    0.3 *
+                                        _scaleAnimation
+                                            .value, // More pronounced pulsing
                                 child: Icon(
                                   Icons.local_taxi,
                                   size: 65,
@@ -484,108 +482,140 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
 
   Widget _buildModernWaitingScreen() {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
-        child: Card(
-          elevation: 10,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 36),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 600),
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF6a11cb), Color(0xFF2575fc)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.hourglass_top,
-                      color: Colors.white,
-                      size: 44,
-                    ),
-                  ),
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Looking for Driver',
+                style: TextStyle(
+                  color: Color(0xFF6a11cb),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  letterSpacing: 1.1,
                 ),
-                SizedBox(height: 24),
-                Text(
-                  'Looking for a driver...',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF232526),
-                  ),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  'Hang tight! We’re matching you with the nearest available driver.',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 32),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    if (_pendingDrive != null) {
-                      try {
-                        await DriverRequestProvider().cancel(_pendingDrive!.id);
-                        await _checkPendingDrive(); // Refresh state from backend
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Failed to cancel request: $e'),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Please wait while we find your driver...',
+                style: TextStyle(color: Colors.black54, fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 28),
+              // Animated waiting icon
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return GestureDetector(
+                    onTap: () {}, // No action needed for waiting
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.black, width: 4),
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFF6a11cb),
+                            Color(0xFF2575fc),
+                            Color(0xFF4a148c),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF6a11cb).withOpacity(0.3),
+                            blurRadius: 18,
+                            spreadRadius: 2,
+                            offset: Offset(0, 6),
                           ),
-                        );
-                      }
+                        ],
+                      ),
+                      child: Center(
+                        child: Transform.scale(
+                          scale:
+                              1.0 +
+                              0.3 * _scaleAnimation.value, // Pulsing hourglass
+                          child: Icon(
+                            Icons.hourglass_top,
+                            size: 65,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 18),
+              Text(
+                'Searching...',
+                style: TextStyle(
+                  color: Color(0xFF6a11cb),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  letterSpacing: 1.1,
+                ),
+              ),
+              SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  if (_pendingDrive != null) {
+                    try {
+                      await DriverRequestProvider().cancel(_pendingDrive!.id);
+                      await _checkPendingDrive(); // Refresh state from backend
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to cancel request: $e')),
+                      );
                     }
-                    int? standardId;
-                    for (final t in _tiers) {
-                      if (t.name == 'Standard') {
-                        standardId = t.id;
-                        break;
-                      }
+                  }
+                  int? standardId;
+                  for (final t in _tiers) {
+                    if (t.name == 'Standard') {
+                      standardId = t.id;
+                      break;
                     }
-                    setState(() {
-                      _waitingForDriver = false;
-                      _showForm = false;
-                      _pendingDrive = null;
-                      _startLocation = null;
-                      _endLocation = null;
-                      _distanceKm = null;
-                      _selectedTierId =
-                          standardId ??
-                          (_tiers.isNotEmpty ? _tiers.first.id : null);
-                      _basePrice = null;
-                      _finalPrice = null;
-                    });
-                  },
-                  icon: Icon(Icons.cancel, color: Colors.white),
-                  label: Text(
-                    'Cancel Request',
-                    style: TextStyle(color: Colors.white),
+                  }
+                  setState(() {
+                    _waitingForDriver = false;
+                    _showForm = false;
+                    _pendingDrive = null;
+                    _startLocation = null;
+                    _endLocation = null;
+                    _distanceKm = null;
+                    _selectedTierId =
+                        standardId ??
+                        (_tiers.isNotEmpty ? _tiers.first.id : null);
+                    _basePrice = null;
+                    _finalPrice = null;
+                  });
+                },
+                icon: Icon(Icons.cancel, color: Colors.white),
+                label: Text(
+                  'Cancel Request',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  minimumSize: Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    minimumSize: Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
