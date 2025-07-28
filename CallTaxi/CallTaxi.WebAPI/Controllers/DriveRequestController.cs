@@ -36,5 +36,11 @@ namespace CallTaxi.WebAPI.Controllers
         {
             return await _driveRequestService.CancelRequest(id);
         }
+
+        [HttpPost("{id}/pay")]
+        public async Task<DriveRequestResponse> MarkAsPaid(int id)
+        {
+            return await _driveRequestService.MarkAsPaid(id);
+        }
     }
 } 

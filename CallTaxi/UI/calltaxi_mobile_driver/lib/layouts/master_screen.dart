@@ -88,6 +88,7 @@ class _MasterScreenState extends State<MasterScreen> {
           VehicleScreenList(),
           ChatListScreen(),
           ReviewListScreen(),
+          Container(), // Placeholder for logout (index 4)
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTaxi.Services.Migrations
 {
     [DbContext(typeof(CallTaxiDbContext))]
-    [Migration("20250728125504_SeedInitialData")]
+    [Migration("20250728202728_SeedInitialData")]
     partial class SeedInitialData
     {
         /// <inheritdoc />
@@ -557,6 +557,12 @@ namespace CallTaxi.Services.Migrations
                             Id = 4,
                             Description = "Request has been cancelled",
                             Name = "Cancelled"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Request has been paid and waiting for completion",
+                            Name = "Paid"
                         });
                 });
 

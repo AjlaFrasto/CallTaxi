@@ -17,6 +17,7 @@ namespace CallTaxi.Services.Services
         private const int STATUS_ACCEPTED = 2;
         private const int STATUS_COMPLETED = 3;
         private const int STATUS_CANCELLED = 4;
+        private const int STATUS_PAID = 5;
 
         public DriveRequestService(CallTaxiDbContext context, IMapper mapper) : base(context, mapper)
         {
@@ -242,11 +243,11 @@ namespace CallTaxi.Services.Services
             if (request == null)
                 throw new Exception("Drive request not found");
 
-            var acceptedStatus = await _context.DriveRequestStatuses
-                .FirstOrDefaultAsync(s => s.Name == "Accepted");
+            var paidStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Paid");
 
-            if (request.StatusId != acceptedStatus?.Id)
-                throw new Exception("Cannot complete a request that is not in accepted state");
+            if (request.StatusId != paidStatus?.Id)
+                throw new Exception("Cannot complete a request that is not in paid state");
 
             var completedStatus = await _context.DriveRequestStatuses
                 .FirstOrDefaultAsync(s => s.Name == "Completed");
@@ -283,6 +284,33 @@ namespace CallTaxi.Services.Services
                 throw new Exception("Cancelled status not found");
 
             request.StatusId = cancelledStatus.Id;
+
+            await _context.SaveChangesAsync();
+
+            return MapToResponse(request);
+        }
+
+        public async Task<DriveRequestResponse> MarkAsPaid(int id)
+        {
+            var request = await _context.DriveRequests
+                .FirstOrDefaultAsync(dr => dr.Id == id);
+
+            if (request == null)
+                throw new Exception("Drive request not found");
+
+            var acceptedStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Accepted");
+
+            if (request.StatusId != acceptedStatus?.Id)
+                throw new Exception("Can only mark accepted requests as paid");
+
+            var paidStatus = await _context.DriveRequestStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Paid");
+
+            if (paidStatus == null)
+                throw new Exception("Paid status not found");
+
+            request.StatusId = paidStatus.Id;
 
             await _context.SaveChangesAsync();
 

@@ -554,6 +554,12 @@ namespace CallTaxi.Services.Migrations
                             Id = 4,
                             Description = "Request has been cancelled",
                             Name = "Cancelled"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Request has been paid and waiting for completion",
+                            Name = "Paid"
                         });
                 });
 

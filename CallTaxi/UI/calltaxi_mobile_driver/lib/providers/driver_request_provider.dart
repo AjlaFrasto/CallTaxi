@@ -50,4 +50,17 @@ class DriverRequestProvider extends BaseProvider<DriverRequest> {
       throw Exception("Unknown error");
     }
   }
+
+  Future<DriverRequest> pay(int id) async {
+    var url = "${BaseProvider.baseUrl}${endpoint}/$id/pay";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.post(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return DriverRequest.fromJson(data);
+    } else {
+      throw Exception("Unknown error");
+    }
+  }
 }

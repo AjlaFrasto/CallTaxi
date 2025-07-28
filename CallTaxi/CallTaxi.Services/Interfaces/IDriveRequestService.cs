@@ -10,5 +10,6 @@ namespace CallTaxi.Services.Interfaces
         Task<DriveRequestResponse> AcceptRequest(int id, int driverId, int vehicleId);
         Task<DriveRequestResponse> CompleteRequest(int id);
         Task<DriveRequestResponse> CancelRequest(int id);
+        Task<DriveRequestResponse> MarkAsPaid(int id);
     }
 } 

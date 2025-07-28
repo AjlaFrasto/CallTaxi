@@ -293,6 +293,13 @@ namespace CallTaxi.Services.Database
                     Name = "Cancelled",
                     Description = "Request has been cancelled"
                 }
+                ,
+                new DriveRequestStatus
+                {
+                    Id = 5,
+                    Name = "Paid",
+                    Description = "Request has been paid and waiting for completion"
+                }
             );
 
             // Seed DriveRequests (Completed)

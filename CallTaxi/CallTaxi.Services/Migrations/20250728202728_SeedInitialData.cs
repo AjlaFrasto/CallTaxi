@@ -351,7 +351,8 @@ namespace CallTaxi.Services.Migrations
                     { 1, "Request is waiting to be accepted by a driver", "Pending" },
                     { 2, "Request has been accepted by a driver", "Accepted" },
                     { 3, "Drive has been completed", "Completed" },
-                    { 4, "Request has been cancelled", "Cancelled" }
+                    { 4, "Request has been cancelled", "Cancelled" },
+                    { 5, "Request has been paid and waiting for completion", "Paid" }
                 });
 
             migrationBuilder.InsertData(

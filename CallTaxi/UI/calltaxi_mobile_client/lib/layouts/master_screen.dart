@@ -31,7 +31,7 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 3) {
+    if (index == 4) {
       // Logout - clear user data and show logout dialog
       UserProvider.currentUser = null;
 
@@ -88,6 +88,7 @@ class _MasterScreenState extends State<MasterScreen> {
           ProfileScreen(),
           ChatListScreen(),
           ReviewListScreen(),
+          Container(), // Placeholder for logout (index 4)
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
