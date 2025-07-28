@@ -6,5 +6,6 @@ namespace CallTaxi.Services.Interfaces
 {
     public interface IVehicleTierService : ICRUDService<VehicleTierResponse, VehicleTierSearchObject, VehicleTierUpsertRequest, VehicleTierUpsertRequest>
     {
+        VehicleTierResponse RecommendForUser(int userId);
     }
 }

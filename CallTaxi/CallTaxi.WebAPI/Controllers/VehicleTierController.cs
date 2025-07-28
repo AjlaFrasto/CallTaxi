@@ -35,5 +35,12 @@ namespace CallTaxi.WebAPI.Controllers
         {
             return await _crudService.DeleteAsync(id);
         }
+
+        [HttpGet("recommend/{userId}")]
+        public ActionResult<VehicleTierResponse> RecommendForUser(int userId)
+        {
+            var result = ((IVehicleTierService)_crudService).RecommendForUser(userId);
+            return Ok(result);
+        }
     }
 } 

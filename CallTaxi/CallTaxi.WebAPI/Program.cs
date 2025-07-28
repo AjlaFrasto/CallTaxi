@@ -110,6 +110,16 @@ using (var scope = app.Services.CreateScope())
 
 
     }
+    // Train the recommender model in background after startup
+    _ = Task.Run(async () =>  // The underscore tells the compiler we're intentionally ignoring the result
+    {
+        // Wait a bit for the app to fully start
+        await Task.Delay(2000);
+        using (var trainingScope = app.Services.CreateScope())
+        {
+            VehicleTierService.TrainModelAtStartup(trainingScope.ServiceProvider);
+        }
+    });
 }
 
 app.Run();
