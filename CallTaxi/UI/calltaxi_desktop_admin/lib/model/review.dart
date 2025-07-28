@@ -14,6 +14,8 @@ class Review {
   final DateTime createdAt;
   final String? startLocation;
   final String? endLocation;
+  final double distance;
+
 
   Review({
     this.id = 0,
@@ -26,6 +28,7 @@ class Review {
     required this.createdAt,
     this.startLocation,
     this.endLocation,
+    this.distance = 0.0,
   });
 
   factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);

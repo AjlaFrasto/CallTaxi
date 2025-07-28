@@ -84,11 +84,13 @@ namespace CallTaxi.Services.Services
             {
                 response.StartLocation = entity.DriveRequest.StartLocation;
                 response.EndLocation = entity.DriveRequest.EndLocation;
+                response.Distance = entity.DriveRequest.Distance;
             }
             else
             {
                 response.StartLocation = null;
                 response.EndLocation = null;
+                response.Distance = null;
             }
             return response;
         }

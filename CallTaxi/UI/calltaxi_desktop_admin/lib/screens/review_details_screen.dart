@@ -148,6 +148,10 @@ class ReviewDetailsScreen extends StatelessWidget {
                         end: review.endLocation,
                         height: 400,
                         width: 420,
+                        routeDistance:
+                            (review.distance == null || review.distance.isNaN)
+                            ? null
+                            : review.distance,
                       ),
                     ),
                     SizedBox(width: 32),

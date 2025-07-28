@@ -17,6 +17,7 @@ Review _$ReviewFromJson(Map<String, dynamic> json) => Review(
   createdAt: DateTime.parse(json['createdAt'] as String),
   startLocation: json['startLocation'] as String?,
   endLocation: json['endLocation'] as String?,
+  distance: (json['distance'] as num?)?.toDouble() ?? 0.0,
 );
 
 Map<String, dynamic> _$ReviewToJson(Review instance) => <String, dynamic>{
@@ -30,4 +31,5 @@ Map<String, dynamic> _$ReviewToJson(Review instance) => <String, dynamic>{
   'createdAt': instance.createdAt.toIso8601String(),
   'startLocation': instance.startLocation,
   'endLocation': instance.endLocation,
+  'distance': instance.distance,
 };
