@@ -6,10 +6,10 @@ class NetworkUtils {
     if (Platform.isAndroid) {
       // For physical devices, use your computer's actual IP address
       // Found from ipconfig: 192.168.1.106
-      return "http://192.168.1.106:5130/";
+      //return "http://192.168.1.106:5130/";
 
       // For emulator testing, you can temporarily change this to:
-      // return "http://10.0.2.2:5130/";
+      return "http://10.0.2.2:5130/";
     } else {
       return "http://localhost:5130/";
     }
