@@ -3,23 +3,33 @@ import 'dart:io';
 import 'package:calltaxi_mobile_client/layouts/master_screen.dart';
 import 'package:calltaxi_mobile_client/providers/auth_provider.dart';
 import 'package:calltaxi_mobile_client/providers/chat_provider.dart';
+import 'package:calltaxi_mobile_client/providers/driver_request_provider.dart';
 import 'package:calltaxi_mobile_client/providers/review_provider.dart';
 import 'package:calltaxi_mobile_client/providers/user_provider.dart';
 import 'package:calltaxi_mobile_client/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_client/screens/debug_screen.dart';
 import 'package:calltaxi_mobile_client/utils/text_field_decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 import 'package:provider/provider.dart';
 import 'package:calltaxi_mobile_client/screens/calltaxi_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:calltaxi_mobile_client/layouts/master_screen.dart';
+import 'package:calltaxi_mobile_client/providers/auth_provider.dart';
+import 'package:calltaxi_mobile_client/providers/chat_provider.dart';
+import 'package:calltaxi_mobile_client/providers/review_provider.dart';
+import 'package:calltaxi_mobile_client/providers/user_provider.dart';
+import 'package:calltaxi_mobile_client/screens/profile_screen.dart';
+import 'package:calltaxi_mobile_client/screens/debug_screen.dart';
+import 'package:calltaxi_mobile_client/utils/text_field_decoration.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  // Stripe.publishableKey=dotenv.env["STRIPE__PUBKEY"]!;
-  // Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
-  // Stripe.urlScheme = 'flutterstripe';
-  // await Stripe.instance.applySettings();
+  stripe.Stripe.publishableKey = dotenv.env["STRIPE_PUBLISHABLE_KEY"] ?? "";
+  stripe.Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
+  stripe.Stripe.urlScheme = 'flutterstripe';
+  await stripe.Stripe.instance.applySettings();
 
   HttpOverrides.global = MyHttpOverrides();
   runApp(
@@ -28,6 +38,9 @@ void main() async {
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
         ChangeNotifierProvider<ChatProvider>(create: (_) => ChatProvider()),
+        ChangeNotifierProvider<DriverRequestProvider>(
+          create: (_) => DriverRequestProvider(),
+        ),
       ],
       child: const MyApp(),
     ),

@@ -9,3 +9,7 @@ flutter devices
 Pokrenuti neki od njih 
 
 flutter run -d ime-device-a
+
+Flutter CARD: 
+
+4242424242424242

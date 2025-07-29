@@ -6,6 +6,11 @@ import 'package:calltaxi_mobile_client/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:calltaxi_mobile_client/model/driver_request.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CallTaxiScreen extends StatefulWidget {
   const CallTaxiScreen({Key? key}) : super(key: key);
@@ -33,6 +38,17 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
   DriverRequest? _pendingDrive;
   int? _recommendedTierId; // Add this variable for recommended tier
   bool _driveAccepted = false; // Track if drive is accepted
+
+  // Payment screen state
+  bool _showPaymentForm = false;
+  bool _paymentCompleted = false;
+  final _paymentFormKey = GlobalKey<FormBuilderState>();
+  double _amountInUsd = 0.0;
+  final double _bamToUsdRate = 0.55; // Approximate BAM to USD rate
+
+  // Store payment details for success screen
+  double _paidAmount = 0.0;
+  String _paidDriverName = '';
 
   @override
   void initState() {
@@ -221,6 +237,7 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
         'vehicleTierId': _selectedTierId,
         'startLocation': _startLocation,
         'endLocation': _endLocation,
+        'distance': _distanceKm,
         'basePrice': _basePrice,
       };
       await provider.insert(req);
@@ -930,12 +947,9 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                     SizedBox(height: 16),
                     ElevatedButton.icon(
                       onPressed: () async {
-                        // TODO: Implement payment logic
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Payment feature coming soon!'),
-                          ),
-                        );
+                        if (_pendingDrive != null) {
+                          _showPaymentScreen();
+                        }
                       },
                       icon: Icon(Icons.payment, color: Colors.white),
                       label: Text(
@@ -964,8 +978,634 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
     );
   }
 
+  void _showPaymentScreen() {
+    if (_pendingDrive != null) {
+      _amountInUsd = _pendingDrive!.finalPrice * _bamToUsdRate;
+      // Reset payment details
+      _paidAmount = 0.0;
+      _paidDriverName = '';
+      setState(() {
+        _showPaymentForm = true;
+        _paymentCompleted = false;
+      });
+    }
+  }
+
+  Future<bool> _processPayment(Map<String, dynamic> formData) async {
+    // Simulate payment processing
+    await Future.delayed(Duration(seconds: 2));
+    return true;
+  }
+
+  void _fillWithPlaceholderData() {
+    final currentState = _paymentFormKey.currentState;
+    if (currentState != null) {
+      final user = UserProvider.currentUser;
+      final userFullName = user != null
+          ? '${user.firstName} ${user.lastName}'
+          : 'User';
+      currentState.patchValue({
+        'name': userFullName,
+        'address': 'Ferhadija 12',
+        'city': 'Sarajevo',
+        'state': 'FBiH',
+        'country': 'BA',
+        'pincode': '71000',
+      });
+    }
+  }
+
+  void _clearAllFields() {
+    final currentState = _paymentFormKey.currentState;
+    if (currentState != null) {
+      currentState.reset();
+      // Re-set the name field with user's name
+      final user = UserProvider.currentUser;
+      final userFullName = user != null
+          ? '${user.firstName} ${user.lastName}'
+          : 'User';
+      currentState.patchValue({'name': userFullName});
+    }
+  }
+
+  Widget _buildPaymentForm() {
+    final user = UserProvider.currentUser;
+    final userFullName = user != null
+        ? '${user.firstName} ${user.lastName}'
+        : 'User';
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Payment"),
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        leading: _paymentCompleted
+            ? null // Hide back button when payment is completed
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  setState(() {
+                    _showPaymentForm = false;
+                    _paymentCompleted = false;
+                  });
+                },
+              ),
+        automaticallyImplyLeading:
+            !_paymentCompleted, // Disable back gesture when completed
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: _paymentCompleted
+              ? _buildPaymentSuccessScreen()
+              : _buildPaymentFormContent(userFullName),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentFormContent(String userFullName) {
+    final commonDecoration = InputDecoration(
+      filled: true,
+      fillColor: Colors.grey[200],
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: const BorderSide(color: Colors.blue),
+      ),
+    );
+
+    return FormBuilder(
+      key: _paymentFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAmountField(),
+          const SizedBox(height: 16),
+          _buildTextField(
+            'name',
+            'Full Name',
+            initialValue: userFullName,
+            placeholder: "John Doe",
+            decoration: commonDecoration,
+          ),
+          const SizedBox(height: 10),
+          _buildTextField(
+            'address',
+            'Address',
+            placeholder: "Street No. 1",
+            decoration: commonDecoration,
+          ),
+          const SizedBox(height: 10),
+          _buildCityAndStateFields(commonDecoration),
+          const SizedBox(height: 10),
+          _buildCountryAndPincodeFields(commonDecoration),
+          const SizedBox(height: 20),
+          _buildQuickFillButtons(),
+          const SizedBox(height: 30),
+          _buildSubmitButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAmountField() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.green.shade200),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.attach_money, color: Colors.green, size: 20),
+              SizedBox(width: 8),
+              Text(
+                'Payment Amount',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.green,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Text(
+            '${_pendingDrive?.finalPrice.toStringAsFixed(2) ?? '0.00'} KM',
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 4),
+          Text(
+            '≈ ${_amountInUsd.toStringAsFixed(2)} USD',
+            style: TextStyle(color: Colors.black54, fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCityAndStateFields(InputDecoration decoration) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 5,
+          child: _buildTextField(
+            'city',
+            'City',
+            placeholder: "Sarajevo",
+            decoration: decoration,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          flex: 5,
+          child: _buildTextField(
+            'state',
+            'State/Province',
+            placeholder: "FBiH",
+            decoration: decoration,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCountryAndPincodeFields(InputDecoration decoration) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 5,
+          child: _buildTextField(
+            'country',
+            'Country',
+            placeholder: "BA",
+            decoration: decoration,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          flex: 5,
+          child: _buildTextField(
+            'pincode',
+            'Postal Code',
+            keyboardType: TextInputType.number,
+            isNumeric: true,
+            placeholder: "71000",
+            decoration: decoration,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(
+    String name,
+    String labelText, {
+    TextInputType keyboardType = TextInputType.text,
+    bool isNumeric = false,
+    String? placeholder,
+    String? initialValue,
+    InputDecoration? decoration,
+  }) {
+    return FormBuilderTextField(
+      name: name,
+      initialValue: initialValue,
+      decoration:
+          decoration?.copyWith(labelText: labelText, hintText: placeholder) ??
+          InputDecoration(labelText: labelText, hintText: placeholder),
+      validator: isNumeric
+          ? FormBuilderValidators.compose([
+              FormBuilderValidators.required(
+                errorText: 'This field is required.',
+              ),
+              FormBuilderValidators.numeric(
+                errorText: 'This field must be numeric',
+              ),
+            ])
+          : FormBuilderValidators.compose([
+              FormBuilderValidators.required(
+                errorText: 'This field is required.',
+              ),
+            ]),
+      keyboardType: keyboardType,
+    );
+  }
+
+  Widget _buildQuickFillButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Quick Fill Options',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.green,
+          ),
+        ),
+        SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _fillWithPlaceholderData(),
+                icon: Icon(Icons.auto_fix_high, color: Colors.white, size: 18),
+                label: Text(
+                  'Fill Demo Data',
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _clearAllFields(),
+                icon: Icon(Icons.clear, color: Colors.white, size: 18),
+                label: Text(
+                  'Clear All',
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      height: 50,
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+        child: const Text(
+          "Proceed to Payment",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        onPressed: () async {
+          await _processStripePayment();
+        },
+      ),
+    );
+  }
+
+  Widget _buildPaymentSuccessScreen() {
+    return Center(
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(Icons.check_circle, size: 80, color: Colors.green),
+              SizedBox(height: 20),
+              Text(
+                'Payment Successful!',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  letterSpacing: 1.1,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Your payment has been processed successfully.',
+                style: TextStyle(color: Colors.black54, fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 32),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Amount: ${_paidAmount.toStringAsFixed(2)} KM',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Driver: $_paidDriverName',
+                      style: TextStyle(color: Colors.black54, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _showPaymentForm = false;
+                    _paymentCompleted = false;
+                    _showForm = false;
+                    _waitingForDriver = false;
+                    _driveAccepted = false;
+                    _pendingDrive = null;
+                    _startLocation = null;
+                    _endLocation = null;
+                    _distanceKm = null;
+                    _selectedTierId = _tiers
+                        .firstWhere(
+                          (t) => t.name == 'Standard',
+                          orElse: () =>
+                              _tiers.isNotEmpty ? _tiers.first : VehicleTier(),
+                        )
+                        .id;
+                    _basePrice = null;
+                    _finalPrice = null;
+                    // Reset payment details
+                    _paidAmount = 0.0;
+                    _paidDriverName = '';
+                    _amountInUsd = 0.0;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  minimumSize: Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: Text('OK', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Stripe Payment Methods
+  Future<void> initPaymentSheet(Map<String, dynamic> formData) async {
+    try {
+      // Create a real payment intent
+      final data = await createPaymentIntent(
+        amount: (_amountInUsd * 100).round().toString(),
+        currency: 'USD',
+        name: _pendingDrive?.userFullName ?? 'User',
+        address: formData['address'],
+        pin: formData['pincode'],
+        city: formData['city'],
+        state: formData['state'],
+        country: formData['country'],
+      );
+
+      await stripe.Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: stripe.SetupPaymentSheetParameters(
+          customFlow: false,
+          merchantDisplayName: 'CallTaxi',
+          paymentIntentClientSecret: data['client_secret'],
+          customerEphemeralKeySecret: data['ephemeralKey'],
+          customerId: data['id'],
+          style: ThemeMode.dark,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> createPaymentIntent({
+    required String amount,
+    required String currency,
+    required String name,
+    required String address,
+    required String pin,
+    required String city,
+    required String state,
+    required String country,
+  }) async {
+    try {
+      // First, create a customer
+      final customerResponse = await http.post(
+        Uri.parse('https://api.stripe.com/v1/customers'),
+        headers: {
+          'Authorization':
+              'Bearer sk_test_51Q39sMBeXPnhF0hOvSAgJz8QSD5CxoTfQCfAEpMT7QJwYW0LfpgrsSLe2W7H4SnlKRDY6HPnqX2t8pXVDBtzPcW200okymr8j7',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'name': name,
+          'email': 'test@example.com',
+          'metadata[address]': address,
+          'metadata[city]': city,
+          'metadata[state]': state,
+          'metadata[country]': country,
+        },
+      );
+
+      if (customerResponse.statusCode != 200) {
+        throw Exception('Failed to create customer: ${customerResponse.body}');
+      }
+
+      final customerData = jsonDecode(customerResponse.body);
+      final customerId = customerData['id'];
+
+      // Create ephemeral key
+      final ephemeralKeyResponse = await http.post(
+        Uri.parse('https://api.stripe.com/v1/ephemeral_keys'),
+        headers: {
+          'Authorization':
+              'Bearer sk_test_51Q39sMBeXPnhF0hOvSAgJz8QSD5CxoTfQCfAEpMT7QJwYW0LfpgrsSLe2W7H4SnlKRDY6HPnqX2t8pXVDBtzPcW200okymr8j7',
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Stripe-Version': '2023-10-16',
+        },
+        body: {'customer': customerId},
+      );
+
+      if (ephemeralKeyResponse.statusCode != 200) {
+        throw Exception(
+          'Failed to create ephemeral key: ${ephemeralKeyResponse.body}',
+        );
+      }
+
+      final ephemeralKeyData = jsonDecode(ephemeralKeyResponse.body);
+
+      // Create payment intent
+      final paymentIntentResponse = await http.post(
+        Uri.parse('https://api.stripe.com/v1/payment_intents'),
+        headers: {
+          'Authorization':
+              'Bearer sk_test_51Q39sMBeXPnhF0hOvSAgJz8QSD5CxoTfQCfAEpMT7QJwYW0LfpgrsSLe2W7H4SnlKRDY6HPnqX2t8pXVDBtzPcW200okymr8j7',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'amount': amount,
+          'currency': currency.toLowerCase(),
+          'customer': customerId,
+          'payment_method_types[]': 'card',
+          'description': 'CallTaxi Payment for $name',
+          'metadata[name]': name,
+          'metadata[address]': address,
+          'metadata[city]': city,
+          'metadata[state]': state,
+          'metadata[country]': country,
+        },
+      );
+
+      if (paymentIntentResponse.statusCode == 200) {
+        final paymentIntentData = jsonDecode(paymentIntentResponse.body);
+        return {
+          'client_secret': paymentIntentData['client_secret'],
+          'ephemeralKey': ephemeralKeyData['secret'],
+          'id': customerId,
+          'amount': amount,
+          'currency': currency,
+        };
+      } else {
+        throw Exception(
+          'Failed to create payment intent: ${paymentIntentResponse.body}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error creating payment intent: $e');
+    }
+  }
+
+  Future<void> _processStripePayment() async {
+    try {
+      if (_paymentFormKey.currentState?.saveAndValidate() ?? false) {
+        final formData = _paymentFormKey.currentState?.value;
+        await initPaymentSheet(formData!);
+
+        await stripe.Stripe.instance.presentPaymentSheet();
+
+        // Store payment details for success screen
+        _paidAmount = _pendingDrive?.finalPrice ?? 0.0;
+        _paidDriverName = _pendingDrive?.driverFullName ?? 'Unknown Driver';
+
+        // Mark drive as paid
+        if (_pendingDrive != null) {
+          final provider = DriverRequestProvider();
+          await provider.pay(_pendingDrive!.id);
+
+          // Refresh the drive data
+          await _checkPendingDrive();
+        }
+
+        setState(() {
+          _paymentCompleted = true;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment successful!'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Payment failed: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_showPaymentForm) {
+      return _buildPaymentForm();
+    }
     if (_driveAccepted && _pendingDrive != null) {
       return _buildAcceptedDriveScreen();
     }
