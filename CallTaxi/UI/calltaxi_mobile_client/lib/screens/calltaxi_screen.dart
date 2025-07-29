@@ -478,117 +478,119 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
   Widget _buildModernRequestCard() {
     return RefreshIndicator(
       onRefresh: _checkPendingDrive,
-      child: SingleChildScrollView(
+      child: CustomScrollView(
         physics: AlwaysScrollableScrollPhysics(),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Center(
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28.0,
-                  vertical: 32,
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Need a Ride?',
-                      style: TextStyle(
-                        color: Color(0xFFFF6F00),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        letterSpacing: 1.1,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0,
+                    vertical: 32,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Need a Ride?',
+                        style: TextStyle(
+                          color: Color(0xFFFF6F00),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          letterSpacing: 1.1,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Tap below to request a taxi quickly and safely.',
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 28),
-                    // Spinning animated circular button (no image above)
-                    Center(
-                      child: Column(
-                        children: [
-                          AnimatedBuilder(
-                            animation: _controller,
-                            builder: (context, child) {
-                              return GestureDetector(
-                                onTap: _onRequestDrivePressed,
-                                child: Container(
-                                  width: 150,
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 4,
-                                    ),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xFFFF8C00),
-                                        Color(0xFFFFA726),
-                                        Color(0xFFFFCC80),
+                      SizedBox(height: 10),
+                      Text(
+                        'Tap below to request a taxi quickly and safely.',
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      // Spinning animated circular button (no image above)
+                      Center(
+                        child: Column(
+                          children: [
+                            AnimatedBuilder(
+                              animation: _controller,
+                              builder: (context, child) {
+                                return GestureDetector(
+                                  onTap: _onRequestDrivePressed,
+                                  child: Container(
+                                    width: 150,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 4,
+                                      ),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFFFF8C00),
+                                          Color(0xFFFFA726),
+                                          Color(0xFFFFCC80),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(
+                                            0xFFFF8C00,
+                                          ).withOpacity(0.3),
+                                          blurRadius: 18,
+                                          spreadRadius: 2,
+                                          offset: Offset(0, 6),
+                                        ),
                                       ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(
-                                          0xFFFF8C00,
-                                        ).withOpacity(0.3),
-                                        blurRadius: 18,
-                                        spreadRadius: 2,
-                                        offset: Offset(0, 6),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Transform.scale(
-                                      scale:
-                                          1.0 +
-                                          0.3 *
-                                              _scaleAnimation
-                                                  .value, // More pronounced pulsing
-                                      child: Icon(
-                                        Icons.local_taxi,
-                                        size: 65,
-                                        color: Colors.white,
+                                    child: Center(
+                                      child: Transform.scale(
+                                        scale:
+                                            1.0 +
+                                            0.3 *
+                                                _scaleAnimation
+                                                    .value, // More pronounced pulsing
+                                        child: Icon(
+                                          Icons.local_taxi,
+                                          size: 65,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: 18),
-                          Text(
-                            'Request',
-                            style: TextStyle(
-                              color: Color(0xFFFF6F00),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22,
-                              letterSpacing: 1.1,
+                                );
+                              },
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 18),
+                            Text(
+                              'Request',
+                              style: TextStyle(
+                                color: Color(0xFFFF6F00),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -596,161 +598,166 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
   Widget _buildModernWaitingScreen() {
     return RefreshIndicator(
       onRefresh: _checkPendingDrive,
-      child: SingleChildScrollView(
+      child: CustomScrollView(
         physics: AlwaysScrollableScrollPhysics(),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Center(
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28.0,
-                  vertical: 32,
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Looking for Driver',
-                      style: TextStyle(
-                        color: Color(0xFF6a11cb),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        letterSpacing: 1.1,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Please wait while we find your driver...',
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 28),
-                    // Animated waiting icon
-                    AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return GestureDetector(
-                          onTap: () {}, // No action needed for waiting
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.black, width: 4),
-                              gradient: LinearGradient(
-                                colors: [
-                                  Color(0xFF6a11cb),
-                                  Color(0xFF2575fc),
-                                  Color(0xFF4a148c),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xFF6a11cb).withOpacity(0.3),
-                                  blurRadius: 18,
-                                  spreadRadius: 2,
-                                  offset: Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Transform.scale(
-                                scale:
-                                    1.0 +
-                                    0.3 *
-                                        _scaleAnimation
-                                            .value, // Pulsing hourglass
-                                child: Icon(
-                                  Icons.hourglass_top,
-                                  size: 65,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 18),
-                    Text(
-                      'Please be patient...',
-                      style: TextStyle(
-                        color: Color(0xFF6a11cb),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                    SizedBox(height: 32),
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        if (_pendingDrive != null) {
-                          try {
-                            await DriverRequestProvider().cancel(
-                              _pendingDrive!.id,
-                            );
-                            await _checkPendingDrive(); // Refresh state from backend
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Failed to cancel request: $e'),
-                              ),
-                            );
-                          }
-                        }
-                        int? standardId;
-                        for (final t in _tiers) {
-                          if (t.name == 'Standard') {
-                            standardId = t.id;
-                            break;
-                          }
-                        }
-                        setState(() {
-                          _waitingForDriver = false;
-                          _showForm = false;
-                          _pendingDrive = null;
-                          _startLocation = null;
-                          _endLocation = null;
-                          _distanceKm = null;
-                          _selectedTierId =
-                              standardId ??
-                              (_tiers.isNotEmpty ? _tiers.first.id : null);
-                          _basePrice = null;
-                          _finalPrice = null;
-                        });
-                      },
-                      icon: Icon(Icons.cancel, color: Colors.white),
-                      label: Text(
-                        'Cancel Request',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        minimumSize: Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        textStyle: TextStyle(
-                          fontSize: 16,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0,
+                    vertical: 32,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Looking for Driver',
+                        style: TextStyle(
+                          color: Color(0xFF6a11cb),
                           fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          letterSpacing: 1.1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Please wait while we find your driver...',
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      // Animated waiting icon
+                      AnimatedBuilder(
+                        animation: _controller,
+                        builder: (context, child) {
+                          return GestureDetector(
+                            onTap: () {}, // No action needed for waiting
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF6a11cb),
+                                    Color(0xFF2575fc),
+                                    Color(0xFF4a148c),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFF6a11cb).withOpacity(0.3),
+                                    blurRadius: 18,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Transform.scale(
+                                  scale:
+                                      1.0 +
+                                      0.3 *
+                                          _scaleAnimation
+                                              .value, // Pulsing hourglass
+                                  child: Icon(
+                                    Icons.hourglass_top,
+                                    size: 65,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 18),
+                      Text(
+                        'Please be patient...',
+                        style: TextStyle(
+                          color: Color(0xFF6a11cb),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                          letterSpacing: 1.1,
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 32),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          if (_pendingDrive != null) {
+                            try {
+                              await DriverRequestProvider().cancel(
+                                _pendingDrive!.id,
+                              );
+                              await _checkPendingDrive(); // Refresh state from backend
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to cancel request: $e'),
+                                ),
+                              );
+                            }
+                          }
+                          int? standardId;
+                          for (final t in _tiers) {
+                            if (t.name == 'Standard') {
+                              standardId = t.id;
+                              break;
+                            }
+                          }
+                          setState(() {
+                            _waitingForDriver = false;
+                            _showForm = false;
+                            _pendingDrive = null;
+                            _startLocation = null;
+                            _endLocation = null;
+                            _distanceKm = null;
+                            _selectedTierId =
+                                standardId ??
+                                (_tiers.isNotEmpty ? _tiers.first.id : null);
+                            _basePrice = null;
+                            _finalPrice = null;
+                          });
+                        },
+                        icon: Icon(Icons.cancel, color: Colors.white),
+                        label: Text(
+                          'Cancel Request',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          minimumSize: Size(double.infinity, 48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -758,222 +765,232 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
   Widget _buildAcceptedDriveScreen() {
     return RefreshIndicator(
       onRefresh: _checkPendingDrive,
-      child: SingleChildScrollView(
+      child: CustomScrollView(
         physics: AlwaysScrollableScrollPhysics(),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Center(
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28.0,
-                  vertical: 32,
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Driver Found!',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        letterSpacing: 1.1,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0,
+                    vertical: 32,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Driver Found!',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          letterSpacing: 1.1,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Your driver is on the way to pick you up.',
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 28),
-                    // Animated checkmark icon
-                    AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return GestureDetector(
-                          onTap: () {}, // No action needed
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.black, width: 4),
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.green,
-                                  Color(0xFF66BB6A),
-                                  Color(0xFF81C784),
+                      SizedBox(height: 10),
+                      Text(
+                        'Your driver is on the way to pick you up.',
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      // Animated checkmark icon
+                      AnimatedBuilder(
+                        animation: _controller,
+                        builder: (context, child) {
+                          return GestureDetector(
+                            onTap: () {}, // No action needed
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.green,
+                                    Color(0xFF66BB6A),
+                                    Color(0xFF81C784),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.green.withOpacity(0.3),
+                                    blurRadius: 18,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 6),
+                                  ),
                                 ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.green.withOpacity(0.3),
-                                  blurRadius: 18,
-                                  spreadRadius: 2,
-                                  offset: Offset(0, 6),
+                              child: Center(
+                                child: Transform.scale(
+                                  scale:
+                                      1.0 +
+                                      0.2 *
+                                          _scaleAnimation
+                                              .value, // Gentle pulsing
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    size: 65,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 32),
+                      // Driver info section with actual driver name
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.green.shade200),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Driver Information',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                  ),
                                 ),
                               ],
                             ),
-                            child: Center(
-                              child: Transform.scale(
-                                scale:
-                                    1.0 +
-                                    0.2 *
-                                        _scaleAnimation.value, // Gentle pulsing
-                                child: Icon(
-                                  Icons.check_circle,
-                                  size: 65,
-                                  color: Colors.white,
-                                ),
+                            SizedBox(height: 8),
+                            Text(
+                              _pendingDrive?.driverFullName ??
+                                  'Driver details loading...',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                               ),
+                              textAlign: TextAlign.center,
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 32),
-                    // Driver info section with actual driver name
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.green.shade200),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.person, color: Colors.green, size: 20),
-                              SizedBox(width: 8),
+                            if (_pendingDrive?.vehicleName != null) ...[
+                              SizedBox(height: 4),
                               Text(
-                                'Driver Information',
+                                _pendingDrive!.vehicleName!,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.green,
+                                  color: Colors.black54,
+                                  fontSize: 14,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ],
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            _pendingDrive?.driverFullName ??
-                                'Driver details loading...',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                            if (_pendingDrive?.vehicleLicensePlate != null) ...[
+                              SizedBox(height: 2),
+                              Text(
+                                'Plate: ${_pendingDrive!.vehicleLicensePlate}',
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.green.shade200),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.payment,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Payment Information',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          if (_pendingDrive?.vehicleName != null) ...[
-                            SizedBox(height: 4),
+                            SizedBox(height: 8),
                             Text(
-                              _pendingDrive!.vehicleName!,
+                              'You can pay now or when the drive is complete',
                               style: TextStyle(
-                                color: Colors.black54,
+                                color: Colors.black87,
                                 fontSize: 14,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           ],
-                          if (_pendingDrive?.vehicleLicensePlate != null) ...[
-                            SizedBox(height: 2),
-                            Text(
-                              'Plate: ${_pendingDrive!.vehicleLicensePlate}',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.green.shade200),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.payment,
-                                color: Colors.green,
-                                size: 20,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                'Payment Information',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'You can pay now or when the drive is complete',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        if (_pendingDrive != null) {
-                          _showPaymentScreen();
-                        }
-                      },
-                      icon: Icon(Icons.payment, color: Colors.white),
-                      label: Text(
-                        'Pay Now',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        minimumSize: Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        textStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          if (_pendingDrive != null) {
+                            _showPaymentScreen();
+                          }
+                        },
+                        icon: Icon(Icons.payment, color: Colors.white),
+                        label: Text(
+                          'Pay Now',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          minimumSize: Size(double.infinity, 48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
