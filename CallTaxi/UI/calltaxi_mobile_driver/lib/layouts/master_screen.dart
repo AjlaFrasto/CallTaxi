@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:calltaxi_mobile_driver/screens/calltaxi_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/vehicle_screen_list.dart';
 import 'package:calltaxi_mobile_driver/screens/chat_list_screen.dart';
@@ -31,7 +32,7 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 4) {
+    if (index == 5) {
       // Logout - clear user data and show logout dialog
       UserProvider.currentUser = null;
 
@@ -84,11 +85,11 @@ class _MasterScreenState extends State<MasterScreen> {
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: [
+          CallTaxiScreen(),
           ProfileScreen(),
           VehicleScreenList(),
           ChatListScreen(),
           ReviewListScreen(),
-          Container(), // Placeholder for logout (index 4)
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -96,6 +97,10 @@ class _MasterScreenState extends State<MasterScreen> {
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_taxi),
+            label: 'Call Taxi',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_car),
