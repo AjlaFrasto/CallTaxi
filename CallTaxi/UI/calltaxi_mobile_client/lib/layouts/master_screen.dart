@@ -1,9 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:calltaxi_mobile_client/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_client/screens/chat_list_screen.dart';
+import 'package:calltaxi_mobile_client/screens/drives_list_screen.dart';
 import 'package:calltaxi_mobile_client/screens/review_list_screen.dart';
 import 'package:calltaxi_mobile_client/providers/user_provider.dart';
 import 'package:calltaxi_mobile_client/screens/calltaxi_screen.dart';
+
+class CustomPageViewScrollPhysics extends ScrollPhysics {
+  final int currentIndex;
+
+  const CustomPageViewScrollPhysics({
+    required this.currentIndex,
+    ScrollPhysics? parent,
+  }) : super(parent: parent);
+
+  @override
+  CustomPageViewScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return CustomPageViewScrollPhysics(
+      currentIndex: currentIndex,
+      parent: buildParent(ancestor),
+    );
+  }
+
+  @override
+  double applyBoundaryConditions(ScrollMetrics position, double value) {
+    // Prevent swiping from profile (index 4) to logout (index 5)
+    if (currentIndex == 4 && value > position.pixels) {
+      return value - position.pixels;
+    }
+    return super.applyBoundaryConditions(position, value);
+  }
+
+  @override
+  bool shouldAcceptUserOffset(ScrollMetrics position) {
+    // Prevent swiping from profile (index 4) to logout (index 5)
+    if (currentIndex == 4) {
+      return false;
+    }
+    return super.shouldAcceptUserOffset(position);
+  }
+}
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({super.key, required this.child, required this.title});
@@ -31,7 +67,7 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 4) {
+    if (index == 5) {
       // Logout - clear user data and show logout dialog
       UserProvider.currentUser = null;
 
@@ -82,13 +118,21 @@ class _MasterScreenState extends State<MasterScreen> {
       ),
       body: PageView(
         controller: _pageController,
-        onPageChanged: _onPageChanged,
+        onPageChanged: (index) {
+          // Prevent swiping to logout (index 5)
+          if (index == 5) {
+            // Don't allow navigation to logout via swipe
+            return;
+          }
+          _onPageChanged(index);
+        },
+        physics: const AlwaysScrollableScrollPhysics(),
         children: [
           CallTaxiScreen(),
-          ProfileScreen(),
           ChatListScreen(),
+          DrivesListScreen(),
           ReviewListScreen(),
-          Container(), // Placeholder for logout (index 4)
+          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -100,12 +144,13 @@ class _MasterScreenState extends State<MasterScreen> {
             icon: Icon(Icons.local_taxi),
             label: 'Call Taxi',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
+          BottomNavigationBarItem(icon: Icon(Icons.drive_eta), label: 'Drives'),
           BottomNavigationBarItem(
             icon: Icon(Icons.rate_review),
             label: 'Reviews',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
         ],
       ),
