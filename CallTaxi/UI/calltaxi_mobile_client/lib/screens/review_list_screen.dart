@@ -5,6 +5,8 @@ import 'package:calltaxi_mobile_client/providers/review_provider.dart';
 import 'package:calltaxi_mobile_client/providers/user_provider.dart';
 import 'package:calltaxi_mobile_client/utils/text_field_decoration.dart';
 import 'package:provider/provider.dart';
+import 'package:calltaxi_mobile_client/screens/review_details_screen.dart';
+import 'package:calltaxi_mobile_client/screens/drive_selection_screen.dart';
 import 'dart:convert'; // Added for base64Decode
 
 class ReviewListScreen extends StatefulWidget {
@@ -74,69 +76,86 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                // Driver avatar
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.orange.shade100,
-                  backgroundImage: driverImageProvider,
-                  child: driverImageProvider == null
-                      ? Icon(Icons.person, color: Colors.orange, size: 24)
-                      : null,
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        review.driverFullName ?? 'Unknown Driver',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailsScreen(review: review),
+            ),
+          ).then((_) {
+            // Refresh review list when returning from review details
+            _performSearch();
+          });
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  // Driver avatar
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.orange.shade100,
+                    backgroundImage: driverImageProvider,
+                    child: driverImageProvider == null
+                        ? Icon(Icons.person, color: Colors.orange, size: 24)
+                        : null,
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          review.driverFullName ?? 'Unknown Driver',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        '${review.createdAt.day}/${review.createdAt.month}/${review.createdAt.year}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
-                    ],
+                        Text(
+                          '${review.createdAt.day}/${review.createdAt.month}/${review.createdAt.year}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Rating stars
+                  Row(
+                    children: List.generate(5, (index) {
+                      return Icon(
+                        index < review.rating ? Icons.star : Icons.star_border,
+                        color: Colors.orange,
+                        size: 20,
+                      );
+                    }),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              // Comment
+              if (review.comment != null && review.comment!.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    review.comment!,
+                    style: TextStyle(fontSize: 14, color: Colors.grey[800]),
                   ),
                 ),
-                // Rating stars
-                Row(
-                  children: List.generate(5, (index) {
-                    return Icon(
-                      index < review.rating ? Icons.star : Icons.star_border,
-                      color: Colors.orange,
-                      size: 20,
-                    );
-                  }),
-                ),
-              ],
-            ),
-            SizedBox(height: 12),
-            // Comment
-            if (review.comment != null && review.comment!.isNotEmpty)
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  review.comment!,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[800]),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -147,7 +166,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
     return Scaffold(
       body: Column(
         children: [
-          // Search bar
+          // Search bar and New Review button
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -161,19 +180,33 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                     ),
                     onChanged: (value) {
                       setState(() => _searchText = value);
+                      _performSearch();
                     },
                   ),
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: _performSearch,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DriveSelectionScreen(),
+                      ),
+                    ).then((_) {
+                      // Refresh review list when returning from drive selection
+                      _performSearch();
+                    });
+                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFF6F00),
+                    backgroundColor: Colors.lightBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text("Search", style: TextStyle(color: Colors.white)),
+                  child: Text(
+                    "New Review",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
