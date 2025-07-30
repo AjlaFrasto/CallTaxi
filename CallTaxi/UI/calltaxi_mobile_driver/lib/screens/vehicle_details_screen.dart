@@ -366,16 +366,24 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
           // Call the callback to refresh the list
           widget.onVehicleSaved?.call();
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("Vehicle added successfully")));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Vehicle added successfully"),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         } else {
           await vehicleProvider.update(widget.vehicle!.id, request);
           // Call the callback to refresh the list
           widget.onVehicleSaved?.call();
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Vehicle updated successfully")),
+            SnackBar(
+              content: Text("Vehicle updated successfully"),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
           );
         }
       }

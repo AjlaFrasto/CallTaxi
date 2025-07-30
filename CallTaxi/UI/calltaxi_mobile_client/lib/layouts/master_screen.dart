@@ -129,8 +129,8 @@ class _MasterScreenState extends State<MasterScreen> {
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
           CallTaxiScreen(),
-          ChatListScreen(),
           DrivesListScreen(),
+          ChatListScreen(),
           ReviewListScreen(),
           ProfileScreen(),
         ],
@@ -141,11 +141,11 @@ class _MasterScreenState extends State<MasterScreen> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_taxi),
+            icon: Icon(Icons.search),
             label: 'Call Taxi',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.route), label: 'Drives'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
-          BottomNavigationBarItem(icon: Icon(Icons.drive_eta), label: 'Drives'),
           BottomNavigationBarItem(
             icon: Icon(Icons.rate_review),
             label: 'Reviews',

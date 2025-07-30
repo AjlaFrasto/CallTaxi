@@ -87,10 +87,10 @@ class _MasterScreenState extends State<MasterScreen> {
         onPageChanged: _onPageChanged,
         children: [
           CallTaxiScreen(onTabChanged: _onItemTapped),
-          VehicleScreenList(),
           DrivesListScreen(onTabChanged: _onItemTapped),
           ChatListScreen(),
           ReviewListScreen(),
+          VehicleScreenList(),
           ProfileScreen(),
         ],
       ),
@@ -99,19 +99,16 @@ class _MasterScreenState extends State<MasterScreen> {
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_taxi),
-            label: 'Call Taxi',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car),
-            label: 'Vehicles',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.drive_eta), label: 'Drives'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Call Taxi'),
+          BottomNavigationBarItem(icon: Icon(Icons.route), label: 'Drives'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
           BottomNavigationBarItem(
             icon: Icon(Icons.rate_review),
             label: 'Reviews',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_car),
+            label: 'Vehicles',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),

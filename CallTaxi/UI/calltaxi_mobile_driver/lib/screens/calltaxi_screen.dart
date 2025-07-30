@@ -148,9 +148,9 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
   }
 
   void _onFindDrivePressed() {
-    // Use the callback to switch to the drives list tab (index 3)
+    // Use the callback to switch to the drives list tab (index 1)
     if (widget.onTabChanged != null) {
-      widget.onTabChanged!(3); // Switch to DrivesListScreen tab
+      widget.onTabChanged!(1); // Switch to DrivesListScreen tab
     } else {
       // Fallback: show a message to the user
       ScaffoldMessenger.of(context).showSnackBar(
