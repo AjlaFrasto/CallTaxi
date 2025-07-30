@@ -4,6 +4,7 @@ import 'package:calltaxi_mobile_driver/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/vehicle_screen_list.dart';
 import 'package:calltaxi_mobile_driver/screens/chat_list_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/review_list_screen.dart';
+import 'package:calltaxi_mobile_driver/screens/drives_list_screen.dart';
 import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -32,7 +33,7 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 5) {
+    if (index == 6) {
       // Logout - clear user data and show logout dialog
       UserProvider.currentUser = null;
 
@@ -85,11 +86,12 @@ class _MasterScreenState extends State<MasterScreen> {
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: [
-          CallTaxiScreen(),
-          ProfileScreen(),
+          CallTaxiScreen(onTabChanged: _onItemTapped),
           VehicleScreenList(),
+          DrivesListScreen(onTabChanged: _onItemTapped),
           ChatListScreen(),
           ReviewListScreen(),
+          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -101,16 +103,17 @@ class _MasterScreenState extends State<MasterScreen> {
             icon: Icon(Icons.local_taxi),
             label: 'Call Taxi',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_car),
             label: 'Vehicles',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.drive_eta), label: 'Drives'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
           BottomNavigationBarItem(
             icon: Icon(Icons.rate_review),
             label: 'Reviews',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
         ],
       ),

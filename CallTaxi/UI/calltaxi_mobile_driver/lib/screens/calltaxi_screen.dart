@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:calltaxi_mobile_driver/model/driver_request.dart';
+import 'package:calltaxi_mobile_driver/providers/driver_request_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class CallTaxiScreen extends StatefulWidget {
-  const CallTaxiScreen({Key? key}) : super(key: key);
+  final Function(int)? onTabChanged;
+
+  const CallTaxiScreen({Key? key, this.onTabChanged}) : super(key: key);
 
   @override
   State<CallTaxiScreen> createState() => _CallTaxiScreenState();
@@ -11,20 +17,41 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  bool _showForm = false;
+  bool _isLoading = false;
+  DriverRequest? _currentDrive;
+  late DriverRequestProvider driverRequestProvider;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1000), // Slower for smoother pulsing
+      duration: Duration(milliseconds: 1000),
     );
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOut, // Smoother curve for up and down motion
+      curve: Curves.easeInOut,
     );
-    _controller.repeat(reverse: true); // This creates the up and down motion
+    _controller.repeat(reverse: true);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      driverRequestProvider = Provider.of<DriverRequestProvider>(
+        context,
+        listen: false,
+      );
+      await _checkCurrentDrive();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Check for current drives when the screen becomes visible
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _checkCurrentDrive();
+      }
+    });
   }
 
   @override
@@ -33,17 +60,114 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
     super.dispose();
   }
 
-  void _onFindDrivePressed() {
+  Future<void> _checkCurrentDrive() async {
+    if (UserProvider.currentUser == null) return;
+
     setState(() {
-      _showForm = true;
+      _isLoading = true;
     });
-    // For now, do nothing on click as requested
+
+    try {
+     // Check for accepted drives first
+      final acceptedResult = await driverRequestProvider.get(
+        filter: {
+          "driverId": UserProvider.currentUser!.id,
+          "status": "Accepted",
+          "page": 0,
+          "pageSize": 1,
+        },
+      );
+
+      // Check for paid drives
+      final paidResult = await driverRequestProvider.get(
+        filter: {
+          "driverId": UserProvider.currentUser!.id,
+          "status": "Paid",
+          "page": 0,
+          "pageSize": 1,
+        },
+      );
+
+      // Prioritize paid drives over accepted drives
+      if (paidResult.items != null && paidResult.items!.isNotEmpty) {
+        setState(() {
+          _currentDrive = paidResult.items!.first;
+          _isLoading = false;
+        });
+      } else if (acceptedResult.items != null &&
+          acceptedResult.items!.isNotEmpty) {
+        setState(() {
+          _currentDrive = acceptedResult.items!.first;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _currentDrive = null;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error checking current drive: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
-  Widget _buildModernFindDriveCard() {
+  Future<void> _completeDrive() async {
+    if (_currentDrive == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await driverRequestProvider.complete(_currentDrive!.id);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Drive completed successfully!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Refresh the screen
+      await _checkCurrentDrive();
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to complete drive: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _onFindDrivePressed() {
+    // Use the callback to switch to the drives list tab (index 3)
+    if (widget.onTabChanged != null) {
+      widget.onTabChanged!(3); // Switch to DrivesListScreen tab
+    } else {
+      // Fallback: show a message to the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Go to the "Drives" tab to see available drives'),
+          duration: Duration(seconds: 3),
+          action: SnackBarAction(label: 'OK', onPressed: () {}),
+        ),
+      );
+    }
+  }
+
+  // State 1: Find Drive Screen (no active drive)
+  Widget _buildFindDriveScreen() {
     return RefreshIndicator(
       onRefresh: () async {
-        // Refresh logic will be added later
+        await _checkCurrentDrive();
       },
       child: CustomScrollView(
         physics: AlwaysScrollableScrollPhysics(),
@@ -82,7 +206,6 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 28),
-                      // Spinning animated circular button
                       Center(
                         child: Column(
                           children: [
@@ -123,10 +246,7 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                                     child: Center(
                                       child: Transform.scale(
                                         scale:
-                                            1.0 +
-                                            0.3 *
-                                                _scaleAnimation
-                                                    .value, // More pronounced pulsing
+                                            1.0 + 0.3 * _scaleAnimation.value,
                                         child: Icon(
                                           Icons.search,
                                           size: 65,
@@ -162,97 +282,439 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
     );
   }
 
-  Widget _buildForm() {
-    return WillPopScope(
-      onWillPop: () async {
-        setState(() {
-          _showForm = false;
-        });
-        return false;
+  // State 2: Drive In Progress Screen (status Accepted = 2)
+  Widget _buildDriveInProgressScreen() {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _checkCurrentDrive();
       },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.close, color: Colors.black87),
-              onPressed: () {
-                setState(() {
-                  _showForm = false;
-                });
-              },
-              tooltip: 'Close',
-            ),
-          ],
-        ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.search,
-                  size: 80,
-                  color: Colors.grey.shade400,
+      child: CustomScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
                 ),
-                SizedBox(height: 20),
-                Text(
-                  'Drive Search',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0,
+                    vertical: 32,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Drive In Progress',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          letterSpacing: 1.1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'You are currently on a drive.',
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      // Animated taxi icon
+                      AnimatedBuilder(
+                        animation: _controller,
+                        builder: (context, child) {
+                          return GestureDetector(
+                            onTap: () {}, // No action needed
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue,
+                                    Color(0xFF42A5F5),
+                                    Color(0xFF64B5F6),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.blue.withOpacity(0.3),
+                                    blurRadius: 18,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Transform.scale(
+                                  scale: 1.0 + 0.2 * _scaleAnimation.value,
+                                  child: Icon(
+                                    Icons.local_taxi,
+                                    size: 65,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 32),
+                      // Client info section
+                      if (_currentDrive != null) ...[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.blue.shade200),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: Colors.blue,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Client Information',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                _currentDrive!.userFullName ?? 'Unknown Client',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.blue.shade200),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.payment,
+                                    color: Colors.blue,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Payment Information',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                '${_currentDrive!.finalPrice.toStringAsFixed(2)} KM',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Waiting for client payment',
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'This feature will be implemented soon.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _showForm = false;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black87,
-                    minimumSize: Size(double.infinity, 48),
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: Colors.black12, width: 1.2),
-                    ),
-                    textStyle: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    elevation: 2,
-                  ),
-                  child: Text('Back'),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  // State 3: Complete Drive Screen (status Paid = 5)
+  Widget _buildCompleteDriveScreen() {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _checkCurrentDrive();
+      },
+      child: CustomScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0,
+                    vertical: 32,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Payment Received',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          letterSpacing: 1.1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'The client has paid for the drive.',
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      // Animated payment icon
+                      AnimatedBuilder(
+                        animation: _controller,
+                        builder: (context, child) {
+                          return GestureDetector(
+                            onTap: () {}, // No action needed
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.green,
+                                    Color(0xFF66BB6A),
+                                    Color(0xFF81C784),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.green.withOpacity(0.3),
+                                    blurRadius: 18,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Transform.scale(
+                                  scale: 1.0 + 0.2 * _scaleAnimation.value,
+                                  child: Icon(
+                                    Icons.payment,
+                                    size: 65,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 32),
+                      // Client info section
+                      if (_currentDrive != null) ...[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.green.shade200),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: Colors.green,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Client Information',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                _currentDrive!.userFullName ?? 'Unknown Client',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.green.shade200),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.payment,
+                                    color: Colors.green,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Payment Information',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                '${_currentDrive!.finalPrice.toStringAsFixed(2)} KM',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Payment received successfully',
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: _isLoading ? null : _completeDrive,
+                          icon: Icon(Icons.check_circle, color: Colors.white),
+                          label: Text(
+                            _isLoading ? 'Completing...' : 'Complete Drive',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            minimumSize: Size(double.infinity, 48),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            textStyle: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_showForm) {
-      return _buildForm();
+    if (_isLoading) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    return _buildModernFindDriveCard();
+
+    // Determine which screen to show based on current drive status
+    if (_currentDrive == null) {
+      // No active drive - show Find Drive screen
+      return _buildFindDriveScreen();
+    } else if (_currentDrive!.statusName?.toLowerCase() == 'accepted') {
+      // Drive is accepted but not paid - show Drive In Progress screen
+      return _buildDriveInProgressScreen();
+    } else if (_currentDrive!.statusName?.toLowerCase() == 'paid') {
+      // Drive is paid - show Complete Drive screen
+      return _buildCompleteDriveScreen();
+    } else {
+      // Fallback to Find Drive screen
+      return _buildFindDriveScreen();
+    }
   }
-} 
+}

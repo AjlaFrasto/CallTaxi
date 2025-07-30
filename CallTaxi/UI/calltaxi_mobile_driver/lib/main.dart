@@ -9,6 +9,7 @@ import 'package:calltaxi_mobile_driver/providers/review_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/user_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/vehicle_provider.dart';
 import 'package:calltaxi_mobile_driver/providers/vehicle_tier_provider.dart';
+import 'package:calltaxi_mobile_driver/providers/driver_request_provider.dart';
 import 'package:calltaxi_mobile_driver/screens/profile_screen.dart';
 import 'package:calltaxi_mobile_driver/screens/debug_screen.dart';
 import 'package:calltaxi_mobile_driver/utils/text_field_decoration.dart';
@@ -39,6 +40,9 @@ void main() async {
         ChangeNotifierProvider<BrandProvider>(create: (_) => BrandProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
         ChangeNotifierProvider<ChatProvider>(create: (_) => ChatProvider()),
+        ChangeNotifierProvider<DriverRequestProvider>(
+          create: (_) => DriverRequestProvider(),
+        ),
       ],
       child: const MyApp(),
     ),
