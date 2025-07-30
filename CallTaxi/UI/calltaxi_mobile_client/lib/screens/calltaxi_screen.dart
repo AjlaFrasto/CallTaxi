@@ -1364,6 +1364,16 @@ class _CallTaxiScreenState extends State<CallTaxiScreen>
                 style: TextStyle(color: Colors.black54, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
+              SizedBox(height: 8),
+              Text(
+                'You can now review your drive experience!',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
               SizedBox(height: 32),
               Container(
                 padding: EdgeInsets.all(16),
