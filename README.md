@@ -38,12 +38,6 @@
 - **Card Number:** 4242 4242 4242 4242
 - **Rest of the data:** Can be done arbitrarily
 
-## Stripe Payment System
-
-### Stipe Test Card
-- **Card Number:** 4242 4242 4242 4242
-- **Rest of the data:** Can be done arbitrarily
-
 ## 4 .env Files
 - **Root the of project:** For sql and rabbitmq configuration
 - **Root of the desktop-admin app:** For OpenRouteService api key 
