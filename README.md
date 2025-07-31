@@ -92,7 +92,10 @@ CallTaxi/
 - **Root of the mobile-driver app:** For OpenRouteService api key 
 - **Root of the mobile-client app:** For OpenRouteService api key and Stripe keys
 
-## 🛠️ Development Commands
+
+
+
+# 🛠️ Development Commands
 
 # Create new migration
 dotnet ef migrations add MigrationName --project .\CallTaxi.Services --startup-project .\CallTaxi.WebAPI
