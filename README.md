@@ -19,7 +19,7 @@ CallTaxi/
 └── Dockerfile.notifications
 ```
 
-### Desktop Admin Dashboard
+## Desktop Admin Dashboard
 - **Location**: `UI/calltaxi_desktop_admin/`
 - **Purpose**: Administrative interface for managing vehicles, drivers, and business operations
 - **Features**: Brand management, vehicle monitoring, business reports
@@ -28,7 +28,7 @@ CallTaxi/
 - **Username:** admin
 - **Password:** test
 
-### Mobile Driver App
+## Mobile Driver App
 - **Location**: `UI/calltaxi_mobile_driver/`
 - **Purpose**: Driver-facing mobile application
 - **Features**: Ride acceptance, navigation, earnings tracking
@@ -37,7 +37,7 @@ CallTaxi/
 - **Username:** driver
 - **Password:** test
 
-### Mobile Client App
+## Mobile Client App
 - **Location**: `UI/calltaxi_mobile_client/`
 - **Purpose**: Customer-facing mobile application
 - **Features**: Ride booking, payment integration, real-time tracking
@@ -46,21 +46,21 @@ CallTaxi/
 - **Username:** user
 - **Password:** test
 
-### Web API
+## Web API
 - **Port**: 5130
 - **Features**: RESTful API endpoints, authentication, business logic
 - **Swagger**: Available at `http://localhost:5130/swagger`
 
-### Subscriber Service
+## Subscriber Service
 - **Port**: 7111
 - **Features**: Background processing, email notifications, RabbitMQ integration
 
-### Database
+## Database
 - **SQL Server**: Port 1401
 - **Database**: CallTaxiDb
 - **Features**: Entity Framework Core, migrations, seeding
 
-### Message Queue
+## Message Queue
 - **RabbitMQ**: Ports 5672 (AMQP), 15672 (Management)
 - **Features**: Asynchronous messaging, notification processing
 
@@ -97,7 +97,7 @@ CallTaxi/
 # Create new migration
 dotnet ef migrations add MigrationName --project .\CallTaxi.Services --startup-project .\CallTaxi.WebAPI
 
-# Executes the migrations
+# Execute the migrations
 update-database
 
 # Build and start all services
@@ -114,14 +114,14 @@ dart run build_runner build
 
 # Desktop Admin
 cd UI/calltaxi_desktop_admin
-flutter run -d windows  # or -d macos, -d linux
+flutter run -d windows  // or -d macos, -d linux
 
 # Mobile Client
 cd UI/calltaxi_mobile_client
-flutter run -d chrome   # for web
-flutter run -d ime-device-a  # for Android device
+flutter run -d chrome   // for web
+flutter run -d ime-device-a  // for Android device
 
 # Mobile Driver
 cd UI/calltaxi_mobile_driver
-flutter run -d chrome   # for web
-flutter run -d ime-device-a  # for Android device
+flutter run -d chrome   // for web
+flutter run -d ime-device-a  // for Android device
