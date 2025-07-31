@@ -114,14 +114,19 @@ dart run build_runner build
 
 # Desktop Admin
 cd UI/calltaxi_desktop_admin
-flutter run -d windows  // or -d macos, -d linux
+
+flutter run -d windows  # or -d macos, -d linux
 
 # Mobile Client
 cd UI/calltaxi_mobile_client
-flutter run -d chrome   // for web
-flutter run -d ime-device-a  // for Android device
+
+flutter run -d chrome   # for web
+
+flutter run -d ime-device-a  # for Android device
 
 # Mobile Driver
 cd UI/calltaxi_mobile_driver
-flutter run -d chrome   // for web
-flutter run -d ime-device-a  // for Android device
+
+flutter run -d chrome   # for web
+
+flutter run -d ime-device-a  # for Android device
