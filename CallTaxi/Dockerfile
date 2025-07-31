@@ -13,5 +13,6 @@ RUN dotnet publish "CallTaxi.WebAPI/CallTaxi.WebAPI.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
+COPY CallTaxi.WebAPI/Assets ./Assets
 
 ENTRYPOINT ["dotnet", "CallTaxi.WebAPI.dll"]

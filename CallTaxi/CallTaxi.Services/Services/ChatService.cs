@@ -65,7 +65,7 @@ namespace CallTaxi.Services.Services
                 return false;
 
             chat.IsRead = true;
-            chat.ReadAt = DateTime.UtcNow;
+            chat.ReadAt = DateTime.Now;
             await _context.SaveChangesAsync();
             return true;
         }
@@ -89,7 +89,7 @@ namespace CallTaxi.Services.Services
             foreach (var message in unreadMessages)
             {
                 message.IsRead = true;
-                message.ReadAt = DateTime.UtcNow;
+                message.ReadAt = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTaxi.Services.Migrations
 {
     [DbContext(typeof(CallTaxiDbContext))]
-    [Migration("20250728202728_SeedInitialData")]
+    [Migration("20250731161301_SeedInitialData")]
     partial class SeedInitialData
     {
         /// <inheritdoc />
