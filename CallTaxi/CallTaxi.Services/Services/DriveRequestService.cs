@@ -228,7 +228,7 @@ namespace CallTaxi.Services.Services
             request.StatusId = acceptedStatus.Id;
             request.DriverId = driverId;
             request.VehicleId = vehicleId;
-            request.AcceptedAt = DateTime.UtcNow;
+            request.AcceptedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
@@ -256,7 +256,7 @@ namespace CallTaxi.Services.Services
                 throw new Exception("Completed status not found");
 
             request.StatusId = completedStatus.Id;
-            request.CompletedAt = DateTime.UtcNow;
+            request.CompletedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
